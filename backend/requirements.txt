@@ -10,3 +10,6 @@ pytest
 httpx
 yfinance
 email-validator
+passlib[bcrypt]
+argon2-cffi
+email-validator
