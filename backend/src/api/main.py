@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import logging
 import os
+import sqlite3
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
@@ -22,6 +24,7 @@ if str(BACKEND_SRC) not in sys.path:
     sys.path.append(str(BACKEND_SRC))
 
 from api.assets import ASSET_METADATA, router as assets_router
+from api.auth import router as auth_router, hash_password
 from api.limiter import limiter
 from api.predict import router as predict_router
 from engine.preprocessing import compute_indicators, load_and_preprocess
@@ -61,6 +64,92 @@ def _resolve_database_path() -> Path:
     elif raw.startswith("sqlite://"):
         raw = raw.replace("sqlite://", "", 1)
     return Path(raw).expanduser().resolve()
+
+
+def _initialize_database(db_path: Path) -> None:
+    """Initialize database schema and seed users."""
+    conn = sqlite3.connect(str(db_path))
+    cursor = conn.cursor()
+    
+    # Create users table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            is_admin BOOLEAN DEFAULT 0,
+            created_at TEXT NOT NULL
+        )
+    """)
+    
+    # Create prediction_log table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS prediction_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            asset_symbol TEXT NOT NULL,
+            predicted_return REAL NOT NULL,
+            signal TEXT NOT NULL,
+            confidence REAL NOT NULL,
+            timestamp TEXT NOT NULL,
+            FOREIGN KEY (username) REFERENCES users(username)
+        )
+    """)
+    
+    conn.commit()
+    
+    # Seed admin user
+    admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
+    admin_hash = hash_password(admin_password)
+    try:
+        cursor.execute(
+            "INSERT INTO users (username, email, password_hash, is_admin, created_at) VALUES (?, ?, ?, ?, ?)",
+            ("admin", "admin@example.com", admin_hash, True, datetime.utcnow().isoformat())
+        )
+        LOGGER.info("Admin user seeded")
+    except sqlite3.IntegrityError:
+        LOGGER.info("Admin user already exists")
+    
+    # Seed demo user
+    demo_hash = hash_password("demo123")
+    try:
+        cursor.execute(
+            "INSERT INTO users (username, email, password_hash, is_admin, created_at) VALUES (?, ?, ?, ?, ?)",
+            ("demo", "demo@example.com", demo_hash, False, datetime.utcnow().isoformat())
+        )
+        LOGGER.info("Demo user seeded")
+    except sqlite3.IntegrityError:
+        LOGGER.info("Demo user already exists")
+    
+    # Seed 10 prediction history rows for demo user
+    demo_predictions = [
+        ("demo", "BTC", 2.5, "BUY", 0.75, datetime.utcnow().isoformat()),
+        ("demo", "ETH", -1.2, "HOLD", 0.55, datetime.utcnow().isoformat()),
+        ("demo", "BNB", 1.8, "HOLD", 0.60, datetime.utcnow().isoformat()),
+        ("demo", "SOL", 3.1, "BUY", 0.81, datetime.utcnow().isoformat()),
+        ("demo", "ADA", -0.5, "HOLD", 0.50, datetime.utcnow().isoformat()),
+        ("demo", "DANGCEM.LG", 2.2, "BUY", 0.72, datetime.utcnow().isoformat()),
+        ("demo", "MTNN.LG", -2.1, "SELL", 0.71, datetime.utcnow().isoformat()),
+        ("demo", "AIRTELAFRI.LG", 0.8, "HOLD", 0.54, datetime.utcnow().isoformat()),
+        ("demo", "BUACEMENT.LG", 1.5, "HOLD", 0.58, datetime.utcnow().isoformat()),
+        ("demo", "GTCO.LG", 2.9, "BUY", 0.79, datetime.utcnow().isoformat()),
+    ]
+    
+    cursor.execute("DELETE FROM prediction_log WHERE username = ?", ("demo",))
+    for username, asset, pred_ret, signal, conf, ts in demo_predictions:
+        try:
+            cursor.execute(
+                "INSERT INTO prediction_log (username, asset_symbol, predicted_return, signal, confidence, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
+                (username, asset, pred_ret, signal, conf, ts)
+            )
+        except sqlite3.IntegrityError:
+            pass
+    
+    conn.commit()
+    conn.close()
+    LOGGER.info("Database initialized and seeded")
+
 
 
 def _load_data_cache(data_dir: Path, asset_symbols: List[str]) -> Dict[str, pd.DataFrame]:
@@ -113,6 +202,7 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
         allow_headers=["*"],
     )
 
+    app.include_router(auth_router)
     app.include_router(assets_router)
     app.include_router(predict_router)
 
@@ -127,6 +217,9 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
             data_dir = Path(__file__).resolve().parents[2] / "data"
             model_path = Path(os.getenv("MODEL_PATH", str(Path(__file__).resolve().parents[2] / "model.joblib")))
             asset_symbols = [asset.symbol for asset in ASSET_METADATA]
+
+            # Initialize database
+            _initialize_database(app.state.database_path)
 
             app.state.data_cache = _load_data_cache(data_dir, asset_symbols)
             try:
