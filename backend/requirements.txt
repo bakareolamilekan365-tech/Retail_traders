@@ -3,13 +3,11 @@ uvicorn[standard]
 pandas
 numpy
 scikit-learn
-passlib[argon2]
+passlib[bcrypt]
 python-jose[cryptography]
 slowapi
 pytest
 httpx
 yfinance
 email-validator
-passlib[bcrypt]
-argon2-cffi
-email-validator
+bcrypt==3.2.2

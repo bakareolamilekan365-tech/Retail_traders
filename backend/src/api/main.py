@@ -23,6 +23,7 @@ BACKEND_SRC = Path(__file__).resolve().parents[1]
 if str(BACKEND_SRC) not in sys.path:
     sys.path.append(str(BACKEND_SRC))
 
+from api.admin import router as admin_router
 from api.assets import ASSET_METADATA, router as assets_router
 from api.auth import router as auth_router, hash_password
 from api.limiter import limiter
@@ -84,18 +85,20 @@ def _initialize_database(db_path: Path) -> None:
     """)
     
     # Create prediction_log table
-    cursor.execute("""
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS prediction_log (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            asset_symbol TEXT NOT NULL,
-            predicted_return REAL NOT NULL,
+            user_id INTEGER,
+            asset TEXT NOT NULL,
             signal TEXT NOT NULL,
+            expected_return REAL NOT NULL,
             confidence REAL NOT NULL,
             timestamp TEXT NOT NULL,
-            FOREIGN KEY (username) REFERENCES users(username)
+            FOREIGN KEY (user_id) REFERENCES users(id)
         )
-    """)
+        """
+    )
     
     conn.commit()
     
@@ -122,29 +125,41 @@ def _initialize_database(db_path: Path) -> None:
     except sqlite3.IntegrityError:
         LOGGER.info("Demo user already exists")
     
+    demo_user_row = cursor.execute(
+        "SELECT id FROM users WHERE username = ?",
+        ("demo",),
+    ).fetchone()
+    demo_user_id = demo_user_row[0] if demo_user_row else None
+
     # Seed 10 prediction history rows for demo user
-    demo_predictions = [
-        ("demo", "BTC", 2.5, "BUY", 0.75, datetime.utcnow().isoformat()),
-        ("demo", "ETH", -1.2, "HOLD", 0.55, datetime.utcnow().isoformat()),
-        ("demo", "BNB", 1.8, "HOLD", 0.60, datetime.utcnow().isoformat()),
-        ("demo", "SOL", 3.1, "BUY", 0.81, datetime.utcnow().isoformat()),
-        ("demo", "ADA", -0.5, "HOLD", 0.50, datetime.utcnow().isoformat()),
-        ("demo", "DANGCEM.LG", 2.2, "BUY", 0.72, datetime.utcnow().isoformat()),
-        ("demo", "MTNN.LG", -2.1, "SELL", 0.71, datetime.utcnow().isoformat()),
-        ("demo", "AIRTELAFRI.LG", 0.8, "HOLD", 0.54, datetime.utcnow().isoformat()),
-        ("demo", "BUACEMENT.LG", 1.5, "HOLD", 0.58, datetime.utcnow().isoformat()),
-        ("demo", "GTCO.LG", 2.9, "BUY", 0.79, datetime.utcnow().isoformat()),
-    ]
-    
-    cursor.execute("DELETE FROM prediction_log WHERE username = ?", ("demo",))
-    for username, asset, pred_ret, signal, conf, ts in demo_predictions:
-        try:
-            cursor.execute(
-                "INSERT INTO prediction_log (username, asset_symbol, predicted_return, signal, confidence, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
-                (username, asset, pred_ret, signal, conf, ts)
-            )
-        except sqlite3.IntegrityError:
-            pass
+    if demo_user_id is not None:
+        demo_predictions = [
+            (demo_user_id, "BTC", "BUY", 2.5, 0.75, datetime.utcnow().isoformat()),
+            (demo_user_id, "ETH", "HOLD", -1.2, 0.55, datetime.utcnow().isoformat()),
+            (demo_user_id, "BNB", "HOLD", 1.8, 0.60, datetime.utcnow().isoformat()),
+            (demo_user_id, "SOL", "BUY", 3.1, 0.81, datetime.utcnow().isoformat()),
+            (demo_user_id, "ADA", "HOLD", -0.5, 0.50, datetime.utcnow().isoformat()),
+            (demo_user_id, "DANGCEM", "BUY", 2.2, 0.72, datetime.utcnow().isoformat()),
+            (demo_user_id, "MTNN", "SELL", -2.1, 0.71, datetime.utcnow().isoformat()),
+            (demo_user_id, "AIRTELAFRI", "HOLD", 0.8, 0.54, datetime.utcnow().isoformat()),
+            (demo_user_id, "BUACEMENT", "HOLD", 1.5, 0.58, datetime.utcnow().isoformat()),
+            (demo_user_id, "GTCO", "BUY", 2.9, 0.79, datetime.utcnow().isoformat()),
+        ]
+
+        cursor.execute("DELETE FROM prediction_log WHERE user_id = ?", (demo_user_id,))
+        for user_id, asset, signal, expected_return, confidence, ts in demo_predictions:
+            try:
+                cursor.execute(
+                    """
+                    INSERT INTO prediction_log (user_id, asset, signal, expected_return, confidence, timestamp)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (user_id, asset, signal, expected_return, confidence, ts),
+                )
+            except sqlite3.IntegrityError:
+                pass
+    else:
+        LOGGER.warning("Demo user ID not found; skipping prediction seed data.")
     
     conn.commit()
     conn.close()
@@ -205,6 +220,7 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
     app.include_router(auth_router)
     app.include_router(assets_router)
     app.include_router(predict_router)
+    app.include_router(admin_router)
 
     app.state.data_cache = {}
     app.state.model = None
