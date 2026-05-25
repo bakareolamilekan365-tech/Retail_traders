@@ -12,3 +12,9 @@ dist/
 *.iml
 .DS_Store
 Thumbs.db
+
+# Agent prompts (private)
+agent.prompt.md
+agent.instructions.md
+agent.context.md
+agent.tasks.md
