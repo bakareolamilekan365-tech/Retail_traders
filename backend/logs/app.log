@@ -1,0 +1,43 @@
+2026-05-25 05:42:42,481 INFO src.api.main: Admin user already exists
+2026-05-25 05:42:42,956 INFO src.api.main: Demo user already exists
+2026-05-25 05:42:43,027 INFO watchfiles.main: 1 change detected
+2026-05-25 05:42:43,257 INFO src.api.main: Database initialized and seeded
+2026-05-25 05:42:43,381 INFO watchfiles.main: 3 changes detected
+2026-05-25 05:43:22,535 INFO watchfiles.main: 1 change detected
+2026-05-25 05:44:39,163 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:44:39,960 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:45:14,671 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:45:15,168 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:45:18,366 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:45:18,731 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:47:02,523 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:47:03,547 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:48:29,818 INFO watchfiles.main: 1 change detected
+2026-05-25 05:49:04,523 INFO watchfiles.main: 1 change detected
+2026-05-25 05:49:26,644 INFO watchfiles.main: 1 change detected
+2026-05-25 05:49:40,389 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:49:40,637 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:50:39,064 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:50:39,317 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:50:59,018 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:50:59,326 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:51:14,821 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:51:15,196 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:51:36,515 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:51:36,867 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:52:10,335 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:52:10,698 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 05:53:29,222 INFO watchfiles.main: 1 change detected
+2026-05-25 05:53:34,316 INFO watchfiles.main: 1 change detected
+2026-05-25 05:56:16,582 INFO watchfiles.main: 1 change detected
+2026-05-25 05:56:17,768 INFO watchfiles.main: 1 change detected
+2026-05-25 05:56:18,147 INFO watchfiles.main: 1 change detected
+2026-05-25 05:56:20,194 INFO watchfiles.main: 1 change detected
+2026-05-25 05:56:23,464 INFO watchfiles.main: 1 change detected
+2026-05-25 05:56:28,766 INFO watchfiles.main: 1 change detected
+2026-05-25 05:56:37,089 INFO watchfiles.main: 1 change detected
+2026-05-25 05:56:40,922 INFO watchfiles.main: 1 change detected
+2026-05-25 05:56:43,063 INFO watchfiles.main: 1 change detected
+2026-05-25 05:57:03,475 INFO watchfiles.main: 1 change detected
+2026-05-25 05:57:09,102 INFO watchfiles.main: 1 change detected
+2026-05-25 05:57:14,458 INFO watchfiles.main: 1 change detected
