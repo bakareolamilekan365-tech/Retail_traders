@@ -32,11 +32,11 @@ const IndicatorCards = ({ indicators }) => {
   return (
     <div className="grid gap-4 md:grid-cols-3">
       {cards.map((card) => (
-        <div key={card.title} className="card p-4 dark:bg-slate-800 dark:ring-slate-700">
+        <div key={card.title} className="card p-4">
           <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
             {card.note}
           </p>
-          <h3 className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">{card.value}</h3>
+          <h3 className="mt-2 text-lg font-semibold text-[var(--app-text)]">{card.value}</h3>
           <p className="text-sm text-slate-600 dark:text-slate-400">{card.title}</p>
         </div>
       ))}

@@ -39,11 +39,30 @@ describe('PriceChart', () => {
       ],
     }
 
-    render(<PriceChart data={data} />)
+    const chartTheme = {
+      background: '#111b2e',
+      text: '#e5e7eb',
+      grid: 'rgba(148,163,184,0.2)',
+      upColor: '#3b82f6',
+      downColor: '#ef4444',
+      sma14: '#3b82f6',
+      sma50: '#f97316',
+    }
+
+    render(<PriceChart data={data} darkMode={false} chartTheme={chartTheme} />)
 
     expect(screen.getByText(/price chart/i)).toBeInTheDocument()
 
     await waitFor(() => expect(createChart).toHaveBeenCalled())
+    expect(createChart).toHaveBeenCalledWith(
+      expect.any(HTMLElement),
+      expect.objectContaining({
+        layout: expect.objectContaining({
+          background: { color: chartTheme.background },
+          textColor: chartTheme.text,
+        }),
+      })
+    )
     expect(addSeries).toHaveBeenNthCalledWith(1, CandlestickSeries, expect.any(Object))
     expect(addSeries).toHaveBeenNthCalledWith(2, LineSeries, expect.any(Object))
     expect(addSeries).toHaveBeenNthCalledWith(3, LineSeries, expect.any(Object))

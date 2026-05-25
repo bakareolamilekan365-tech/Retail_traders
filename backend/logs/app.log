@@ -41,3 +41,18 @@
 2026-05-25 05:57:03,475 INFO watchfiles.main: 1 change detected
 2026-05-25 05:57:09,102 INFO watchfiles.main: 1 change detected
 2026-05-25 05:57:14,458 INFO watchfiles.main: 1 change detected
+2026-05-25 09:25:00,554 INFO src.api.main: Admin user already exists
+2026-05-25 09:25:01,028 INFO src.api.main: Demo user already exists
+2026-05-25 09:25:01,099 INFO watchfiles.main: 1 change detected
+2026-05-25 09:25:01,454 INFO watchfiles.main: 1 change detected
+2026-05-25 09:25:01,723 INFO src.api.main: Database initialized and seeded
+2026-05-25 09:25:01,812 INFO watchfiles.main: 2 changes detected
+2026-05-25 09:25:18,006 INFO watchfiles.main: 1 change detected
+2026-05-25 09:25:20,833 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 09:25:21,152 WARNING api.predict: Failed to log prediction for BTC: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 09:26:52,186 WARNING api.predict: Failed to log prediction for AIRTELAFRI: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 09:31:44,851 INFO watchfiles.main: 1 change detected
+2026-05-25 09:31:45,443 INFO watchfiles.main: 1 change detected
+2026-05-25 09:31:52,832 WARNING api.predict: Failed to log prediction for AIRTELAFRI: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 09:32:41,148 WARNING api.predict: Failed to log prediction for AIRTELAFRI: NOT NULL constraint failed: prediction_log.timestamp
+2026-05-25 09:32:43,492 WARNING api.predict: Failed to log prediction for AIRTELAFRI: NOT NULL constraint failed: prediction_log.timestamp

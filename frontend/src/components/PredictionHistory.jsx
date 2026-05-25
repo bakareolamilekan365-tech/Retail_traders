@@ -14,7 +14,7 @@ const formatConfidence = (value) => {
 const PredictionHistory = ({ history, loading }) => {
   if (loading) {
     return (
-      <div className="card p-4 dark:bg-slate-800 dark:ring-slate-700">
+      <div className="card p-4">
         <p className="text-sm text-slate-600 dark:text-slate-300">Loading history...</p>
       </div>
     )
@@ -22,7 +22,7 @@ const PredictionHistory = ({ history, loading }) => {
 
   if (!history.length) {
     return (
-      <div className="card p-4 dark:bg-slate-800 dark:ring-slate-700">
+      <div className="card p-4">
         <p className="text-sm text-slate-600 dark:text-slate-300">
           No prediction history yet.
         </p>
@@ -31,10 +31,8 @@ const PredictionHistory = ({ history, loading }) => {
   }
 
   return (
-    <div className="card p-4 dark:bg-slate-800 dark:ring-slate-700">
-      <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
-        Prediction History
-      </h3>
+    <div className="card p-4">
+      <h3 className="text-sm font-semibold text-[var(--app-text)]">Prediction History</h3>
       <div className="mt-4 overflow-x-auto">
         <table className="min-w-full text-left text-sm">
           <thead className="text-xs uppercase text-slate-500 dark:text-slate-400">

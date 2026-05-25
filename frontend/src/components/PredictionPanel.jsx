@@ -3,13 +3,13 @@ import PropTypes from 'prop-types'
 const PredictionPanel = ({ prediction }) => {
   const signalColor =
     prediction.signal === 'BUY'
-      ? 'bg-emerald-100 text-emerald-700'
+      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200'
       : prediction.signal === 'SELL'
-        ? 'bg-red-100 text-red-700'
-        : 'bg-yellow-100 text-yellow-700'
+        ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-200'
+        : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-200'
 
   return (
-    <div className="card p-5 dark:bg-slate-800 dark:ring-slate-700">
+    <div className="card p-5">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wide">
@@ -23,7 +23,7 @@ const PredictionPanel = ({ prediction }) => {
         </div>
         <div className="text-right">
           <p className="text-sm text-slate-500 dark:text-slate-400">Expected 7-day return</p>
-          <p className="text-2xl font-semibold text-slate-900 dark:text-white">
+          <p className="text-2xl font-semibold text-[var(--app-text)]">
             {prediction.expected_return_7d.toFixed(2)}%
           </p>
         </div>
@@ -32,7 +32,7 @@ const PredictionPanel = ({ prediction }) => {
         <p className="text-sm text-slate-500 dark:text-slate-400">Confidence</p>
         <div className="mt-2 h-2 w-full rounded-full bg-slate-200 dark:bg-slate-700">
           <div
-            className="h-2 rounded-full bg-primary-600"
+            className="h-2 rounded-full bg-[var(--app-accent)]"
             style={{ width: `${prediction.confidence * 100}%` }}
           />
         </div>

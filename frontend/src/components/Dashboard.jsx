@@ -7,8 +7,9 @@ import PriceChart from './PriceChart.jsx'
 import IndicatorCards from './IndicatorCards.jsx'
 import PredictionPanel from './PredictionPanel.jsx'
 import InsightBar from './InsightBar.jsx'
+import TimeRangeSelector from './TimeRangeSelector.jsx'
 
-const Dashboard = ({ darkMode, onToggleDarkMode }) => {
+const Dashboard = ({ darkMode, chartTheme }) => {
   const [assets, setAssets] = useState([])
   const [selectedAsset, setSelectedAsset] = useState('BTC')
   const [predictionData, setPredictionData] = useState(null)
@@ -16,6 +17,7 @@ const Dashboard = ({ darkMode, onToggleDarkMode }) => {
   const [error, setError] = useState('')
   const [lastRefresh, setLastRefresh] = useState(null)
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
+  const [timeRange, setTimeRange] = useState(180)
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -34,11 +36,11 @@ const Dashboard = ({ darkMode, onToggleDarkMode }) => {
     fetchAssets()
   }, [])
 
-  const fetchPrediction = async (asset = selectedAsset) => {
+  const fetchPrediction = async (asset = selectedAsset, range = timeRange) => {
     setLoading(true)
     setError('')
     try {
-      const response = await apiFetch(`/predict?asset=${asset}&days=180`)
+      const response = await apiFetch(`/predict?asset=${asset}&days=${range}`)
       if (!response.ok) {
         if (response.status === 404) throw new Error('Asset not found')
         throw new Error('Failed to load prediction')
@@ -56,9 +58,9 @@ const Dashboard = ({ darkMode, onToggleDarkMode }) => {
 
   useEffect(() => {
     if (selectedAsset) {
-      fetchPrediction(selectedAsset)
+      fetchPrediction(selectedAsset, timeRange)
     }
-  }, [selectedAsset])
+  }, [selectedAsset, timeRange])
 
   useEffect(() => {
     if (!autoRefreshEnabled) return () => {}
@@ -66,107 +68,91 @@ const Dashboard = ({ darkMode, onToggleDarkMode }) => {
       fetchPrediction()
     }, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [autoRefreshEnabled, selectedAsset])
+  }, [autoRefreshEnabled, selectedAsset, timeRange])
 
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
-        <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800">
-          <div className="mx-auto max-w-7xl px-6 py-4">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                  Asset Analysis Dashboard
-                </h1>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                  Technical indicators and ML predictions for retail traders
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => fetchPrediction()}
-                  disabled={loading}
-                  className="btn-secondary dark:bg-slate-700 dark:text-slate-100"
-                >
-                  {loading ? 'Refreshing...' : 'Refresh Now'}
-                </button>
-                <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                  <input
-                    type="checkbox"
-                    checked={autoRefreshEnabled}
-                    onChange={(e) => setAutoRefreshEnabled(e.target.checked)}
-                    className="rounded"
-                  />
-                  Auto-refresh
-                </label>
-                <button
-                  type="button"
-                  onClick={onToggleDarkMode}
-                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 px-3 py-2 text-sm"
-                >
-                  {darkMode ? '☀️ Light' : '🌙 Dark'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+    <div className="space-y-6">
+      {error && (
+        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-200">
+          {error}
+        </div>
+      )}
 
-        <main className="mx-auto max-w-7xl px-6 py-8">
-          {error && (
-            <div className="mb-6 rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-3 text-sm text-red-700 dark:text-red-200">
-              {error}
-            </div>
-          )}
+      <AssetSelector
+        assets={assets}
+        selectedAsset={selectedAsset}
+        onSelect={setSelectedAsset}
+      />
 
-          <div className="mb-6">
-            <AssetSelector
-              assets={assets}
-              selectedAsset={selectedAsset}
-              onSelect={setSelectedAsset}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+          <button
+            type="button"
+            onClick={() => fetchPrediction()}
+            disabled={loading}
+            className="btn-secondary"
+          >
+            {loading ? 'Refreshing...' : 'Refresh Now'}
+          </button>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={autoRefreshEnabled}
+              onChange={(e) => setAutoRefreshEnabled(e.target.checked)}
+              className="rounded"
             />
-          </div>
+            Auto-refresh
+          </label>
+        </div>
+      </div>
 
-          {loading && !predictionData ? (
-            <div data-testid="dashboard-loading" className="space-y-6">
-              <div className="h-96 rounded-xl bg-slate-200 dark:bg-slate-700 animate-pulse" />
-              <div className="grid gap-6 md:grid-cols-3">
-                {[1, 2, 3].map((item) => (
-                  <div
-                    key={item}
-                    className="h-32 rounded-lg bg-slate-200 dark:bg-slate-700 animate-pulse"
-                  />
-                ))}
-              </div>
-            </div>
-          ) : predictionData ? (
-            <div className="space-y-6">
-              <PriceChart data={predictionData} />
-              <IndicatorCards indicators={predictionData.indicators} />
-              <PredictionPanel prediction={predictionData.prediction} />
-              <InsightBar insight={predictionData.insight} />
-              {lastRefresh && (
-                <div className="text-xs text-slate-500 dark:text-slate-400 text-right">
-                  Last updated: {lastRefresh.toLocaleTimeString()}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-6 py-12 text-center">
-              <p className="text-slate-600 dark:text-slate-400">
-                Select an asset to view analysis.
-              </p>
+      {loading && !predictionData ? (
+        <div data-testid="dashboard-loading" className="space-y-6">
+          <div className="h-96 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse" />
+          <div className="grid gap-6 md:grid-cols-3">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className="h-32 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      ) : predictionData ? (
+        <div className="space-y-6">
+          <PriceChart data={predictionData} darkMode={darkMode} chartTheme={chartTheme} />
+          <IndicatorCards indicators={predictionData.indicators} />
+          <PredictionPanel prediction={predictionData.prediction} />
+          <InsightBar insight={predictionData.insight} />
+          {lastRefresh && (
+            <div className="text-xs text-slate-500 dark:text-slate-400 text-right">
+              Last updated: {lastRefresh.toLocaleTimeString()}
             </div>
           )}
-        </main>
-      </div>
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-card)] px-6 py-12 text-center">
+          <p className="text-slate-600 dark:text-slate-400">
+            Select an asset to view analysis.
+          </p>
+        </div>
+      )}
     </div>
   )
 }
 
 Dashboard.propTypes = {
   darkMode: PropTypes.bool.isRequired,
-  onToggleDarkMode: PropTypes.func.isRequired,
+  chartTheme: PropTypes.shape({
+    background: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
+    grid: PropTypes.string.isRequired,
+    upColor: PropTypes.string.isRequired,
+    downColor: PropTypes.string.isRequired,
+    sma14: PropTypes.string.isRequired,
+    sma50: PropTypes.string.isRequired,
+  }).isRequired,
 }
 
 export default Dashboard

@@ -2,8 +2,8 @@ import PropTypes from 'prop-types'
 
 const InsightBar = ({ insight }) => {
   return (
-    <div className="card p-4 dark:bg-slate-800 dark:ring-slate-700">
-      <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Insight</h3>
+    <div className="card p-4">
+      <h3 className="text-sm font-semibold text-[var(--app-text)]">Insight</h3>
       <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{insight}</p>
     </div>
   )

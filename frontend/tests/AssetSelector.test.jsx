@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import AssetSelector from '../src/components/AssetSelector.jsx'
 
 describe('AssetSelector', () => {
-  it('renders assets and handles selection', async () => {
+  it('filters assets and handles selection', async () => {
     const user = userEvent.setup()
     const handleSelect = vi.fn()
 
@@ -19,10 +19,11 @@ describe('AssetSelector', () => {
       />
     )
 
-    expect(screen.getByRole('combobox')).toBeInTheDocument()
-    expect(screen.getByText(/BTC · Bitcoin/)).toBeInTheDocument()
+    const input = screen.getByRole('combobox')
+    await user.click(input)
+    await user.type(input, 'eth')
 
-    await user.selectOptions(screen.getByRole('combobox'), 'ETH')
+    await user.click(screen.getByRole('button', { name: /eth · ethereum/i }))
     expect(handleSelect).toHaveBeenCalledWith('ETH')
   })
 })

@@ -14,6 +14,15 @@ vi.mock('../src/components/PriceChart.jsx', () => ({
 }))
 
 describe('Dashboard', () => {
+  const chartTheme = {
+    background: '#111b2e',
+    text: '#e5e7eb',
+    grid: 'rgba(148,163,184,0.2)',
+    upColor: '#3b82f6',
+    downColor: '#ef4444',
+    sma14: '#3b82f6',
+    sma50: '#f97316',
+  }
   beforeEach(() => {
     mockApiFetch.mockReset()
   })
@@ -31,7 +40,7 @@ describe('Dashboard', () => {
       })
       .mockReturnValueOnce(predictionPromise)
 
-    render(<Dashboard darkMode={false} onToggleDarkMode={() => {}} />)
+    render(<Dashboard darkMode={false} chartTheme={chartTheme} />)
 
     expect(await screen.findByTestId('dashboard-loading')).toBeInTheDocument()
 
@@ -66,7 +75,7 @@ describe('Dashboard', () => {
         }),
       })
 
-    render(<Dashboard darkMode={false} onToggleDarkMode={() => {}} />)
+    render(<Dashboard darkMode={false} chartTheme={chartTheme} />)
 
     expect(await screen.findByText(/test insight/i)).toBeInTheDocument()
     expect(screen.getByText(/buy/i)).toBeInTheDocument()
@@ -84,7 +93,7 @@ describe('Dashboard', () => {
         json: async () => ({}),
       })
 
-    render(<Dashboard darkMode={false} onToggleDarkMode={() => {}} />)
+    render(<Dashboard darkMode={false} chartTheme={chartTheme} />)
 
     expect(await screen.findByText(/failed to load prediction/i)).toBeInTheDocument()
   })
