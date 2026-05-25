@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { createChart } from 'lightweight-charts'
+import { createChart, CandlestickSeries, LineSeries } from 'lightweight-charts'
 
 const PriceChart = ({ data }) => {
   const chartRef = useRef(null)
@@ -48,7 +48,7 @@ const PriceChart = ({ data }) => {
       timeScale: { borderColor: '#334155' },
     })
 
-    const candleSeries = chartRef.current.addCandlestickSeries({
+    const candleSeries = chartRef.current.addSeries(CandlestickSeries, {
       upColor: '#22c55e',
       downColor: '#ef4444',
       borderVisible: false,
@@ -56,12 +56,12 @@ const PriceChart = ({ data }) => {
       wickDownColor: '#ef4444',
     })
 
-    const sma14Series = chartRef.current.addLineSeries({
+    const sma14Series = chartRef.current.addSeries(LineSeries, {
       color: '#60a5fa',
       lineWidth: 2,
     })
 
-    const sma50Series = chartRef.current.addLineSeries({
+    const sma50Series = chartRef.current.addSeries(LineSeries, {
       color: '#f97316',
       lineWidth: 2,
     })

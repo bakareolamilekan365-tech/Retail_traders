@@ -2,10 +2,12 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
 
 import PriceChart from '../src/components/PriceChart.jsx'
-import { createChart } from 'lightweight-charts'
+import { createChart, CandlestickSeries, LineSeries } from 'lightweight-charts'
 
 vi.mock('lightweight-charts', () => ({
   createChart: vi.fn(),
+  CandlestickSeries: Symbol('CandlestickSeries'),
+  LineSeries: Symbol('LineSeries'),
 }))
 
 describe('PriceChart', () => {
@@ -14,12 +16,14 @@ describe('PriceChart', () => {
     const sma14SetData = vi.fn()
     const sma50SetData = vi.fn()
 
+    const addSeries = vi
+      .fn()
+      .mockImplementationOnce(() => ({ setData: candleSetData }))
+      .mockImplementationOnce(() => ({ setData: sma14SetData }))
+      .mockImplementationOnce(() => ({ setData: sma50SetData }))
+
     createChart.mockReturnValue({
-      addCandlestickSeries: vi.fn(() => ({ setData: candleSetData })),
-      addLineSeries: vi
-        .fn()
-        .mockImplementationOnce(() => ({ setData: sma14SetData }))
-        .mockImplementationOnce(() => ({ setData: sma50SetData })),
+      addSeries,
       applyOptions: vi.fn(),
       remove: vi.fn(),
     })
@@ -40,6 +44,9 @@ describe('PriceChart', () => {
     expect(screen.getByText(/price chart/i)).toBeInTheDocument()
 
     await waitFor(() => expect(createChart).toHaveBeenCalled())
+    expect(addSeries).toHaveBeenNthCalledWith(1, CandlestickSeries, expect.any(Object))
+    expect(addSeries).toHaveBeenNthCalledWith(2, LineSeries, expect.any(Object))
+    expect(addSeries).toHaveBeenNthCalledWith(3, LineSeries, expect.any(Object))
     expect(candleSetData).toHaveBeenCalledWith([
       { time: '2024-01-01', open: 1, high: 2, low: 1, close: 2 },
       { time: '2024-01-02', open: 2, high: 3, low: 2, close: 3 },
