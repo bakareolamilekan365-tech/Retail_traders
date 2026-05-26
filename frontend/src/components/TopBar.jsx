@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types'
+import PropTypes from "prop-types";
 
-import AvatarMenu from './AvatarMenu.jsx'
-import PresetSwitcher from './PresetSwitcher.jsx'
+import AvatarMenu from "./AvatarMenu.jsx";
+import PresetSwitcher from "./PresetSwitcher.jsx";
 
 const TopBar = ({
   presets,
@@ -13,6 +13,8 @@ const TopBar = ({
   showAvatar,
   onLogout,
   onChangePassword,
+  adminChecked,
+  onAdminClick,
 }) => {
   return (
     <header className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
@@ -31,6 +33,15 @@ const TopBar = ({
             activePresetId={activePresetId}
             onChange={onPresetChange}
           />
+          {adminChecked && user.isAdmin && (
+            <button
+              type="button"
+              onClick={onAdminClick}
+              className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 dark:text-slate-200 border border-[var(--app-border)] bg-[var(--app-card)]"
+            >
+              Admin
+            </button>
+          )}
           <button
             type="button"
             aria-label="Toggle dark mode"
@@ -64,8 +75,8 @@ const TopBar = ({
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
 TopBar.propTypes = {
   presets: PropTypes.arrayOf(
@@ -75,7 +86,7 @@ TopBar.propTypes = {
       colors: PropTypes.shape({
         accent: PropTypes.string.isRequired,
       }).isRequired,
-    })
+    }),
   ).isRequired,
   activePresetId: PropTypes.string.isRequired,
   onPresetChange: PropTypes.func.isRequired,
@@ -88,10 +99,14 @@ TopBar.propTypes = {
   showAvatar: PropTypes.bool,
   onLogout: PropTypes.func.isRequired,
   onChangePassword: PropTypes.func.isRequired,
-}
+  adminChecked: PropTypes.bool,
+  onAdminClick: PropTypes.func,
+};
 
 TopBar.defaultProps = {
   showAvatar: false,
-}
+  adminChecked: false,
+  onAdminClick: () => {},
+};
 
-export default TopBar
+export default TopBar;

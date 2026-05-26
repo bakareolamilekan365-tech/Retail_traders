@@ -1,29 +1,29 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import PropTypes from 'prop-types'
-import { createChart, CandlestickSeries, LineSeries } from 'lightweight-charts'
+import { useEffect, useMemo, useRef, useState } from "react";
+import PropTypes from "prop-types";
+import { createChart, CandlestickSeries, LineSeries } from "lightweight-charts";
 
 const PriceChart = ({ data, darkMode, chartTheme, liveDataEnabled }) => {
-  const chartRef = useRef(null)
-  const containerRef = useRef(null)
-  const candleSeriesRef = useRef(null)
-  const sma14SeriesRef = useRef(null)
-  const sma50SeriesRef = useRef(null)
-  const replayTimerRef = useRef(null)
-  const [isReplaying, setIsReplaying] = useState(false)
+  const chartRef = useRef(null);
+  const containerRef = useRef(null);
+  const candleSeriesRef = useRef(null);
+  const sma14SeriesRef = useRef(null);
+  const sma50SeriesRef = useRef(null);
+  const replayTimerRef = useRef(null);
+  const [isReplaying, setIsReplaying] = useState(false);
 
   const chartData = useMemo(() => {
-    if (!data) return []
+    if (!data) return [];
     return data.ohlcv.map((row) => ({
       time: row.date,
       open: row.open,
       high: row.high,
       low: row.low,
       close: row.close,
-    }))
-  }, [data])
+    }));
+  }, [data]);
 
   const indicatorData = useMemo(() => {
-    if (!data) return { sma14: [], sma50: [] }
+    if (!data) return { sma14: [], sma50: [] };
     return {
       sma14: data.indicators.map((row) => ({
         time: row.date,
@@ -33,11 +33,11 @@ const PriceChart = ({ data, darkMode, chartTheme, liveDataEnabled }) => {
         time: row.date,
         value: row.sma_50 ?? null,
       })),
-    }
-  }, [data])
+    };
+  }, [data]);
 
   useEffect(() => {
-    if (!containerRef.current) return
+    if (!containerRef.current) return;
 
     chartRef.current = createChart(containerRef.current, {
       layout: {
@@ -49,9 +49,8 @@ const PriceChart = ({ data, darkMode, chartTheme, liveDataEnabled }) => {
         horzLines: { color: chartTheme.grid },
       },
       width: containerRef.current.clientWidth,
-      height: containerRef.current.clientHeight,
       timeScale: { borderColor: chartTheme.grid },
-    })
+    });
 
     candleSeriesRef.current = chartRef.current.addSeries(CandlestickSeries, {
       upColor: chartTheme.upColor,
@@ -59,83 +58,93 @@ const PriceChart = ({ data, darkMode, chartTheme, liveDataEnabled }) => {
       borderVisible: false,
       wickUpColor: chartTheme.upColor,
       wickDownColor: chartTheme.downColor,
-    })
+    });
 
     sma14SeriesRef.current = chartRef.current.addSeries(LineSeries, {
       color: chartTheme.sma14,
       lineWidth: 2,
-    })
+    });
 
     sma50SeriesRef.current = chartRef.current.addSeries(LineSeries, {
       color: chartTheme.sma50,
       lineWidth: 2,
-    })
+    });
 
-    candleSeriesRef.current.setData(chartData)
-    sma14SeriesRef.current.setData(indicatorData.sma14.filter((row) => row.value !== null))
-    sma50SeriesRef.current.setData(indicatorData.sma50.filter((row) => row.value !== null))
+    candleSeriesRef.current.setData(chartData);
+    sma14SeriesRef.current.setData(
+      indicatorData.sma14.filter((row) => row.value !== null),
+    );
+    sma50SeriesRef.current.setData(
+      indicatorData.sma50.filter((row) => row.value !== null),
+    );
 
     const handleResize = () => {
       if (containerRef.current && chartRef.current) {
         chartRef.current.applyOptions({
           width: containerRef.current.clientWidth,
           height: containerRef.current.clientHeight,
-        })
+        });
       }
-    }
+    };
 
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize)
-      chartRef.current?.remove()
-    }
-  }, [chartData, indicatorData, chartTheme])
+      window.removeEventListener("resize", handleResize);
+      chartRef.current?.remove();
+    };
+  }, [chartData, indicatorData, chartTheme]);
 
   useEffect(() => {
     if (liveDataEnabled && isReplaying) {
-      setIsReplaying(false)
+      setIsReplaying(false);
     }
-  }, [liveDataEnabled, isReplaying])
+  }, [liveDataEnabled, isReplaying]);
 
   useEffect(() => {
-    if (!isReplaying || chartData.length === 0) return () => {}
+    if (!isReplaying || chartData.length === 0) return () => {};
 
-    let index = 1
-    candleSeriesRef.current?.setData([])
-    sma14SeriesRef.current?.setData([])
-    sma50SeriesRef.current?.setData([])
+    let index = 1;
+    candleSeriesRef.current?.setData([]);
+    sma14SeriesRef.current?.setData([]);
+    sma50SeriesRef.current?.setData([]);
 
     replayTimerRef.current = setInterval(() => {
       if (index > chartData.length) {
-        clearInterval(replayTimerRef.current)
-        setIsReplaying(false)
-        return
+        clearInterval(replayTimerRef.current);
+        setIsReplaying(false);
+        return;
       }
-      const slice = chartData.slice(0, index)
-      const cutoff = slice[slice.length - 1]?.time
-      candleSeriesRef.current?.setData(slice)
+      const slice = chartData.slice(0, index);
+      const cutoff = slice[slice.length - 1]?.time;
+      candleSeriesRef.current?.setData(slice);
       sma14SeriesRef.current?.setData(
-        indicatorData.sma14.filter((row) => row.value !== null && row.time <= cutoff)
-      )
+        indicatorData.sma14.filter(
+          (row) => row.value !== null && row.time <= cutoff,
+        ),
+      );
       sma50SeriesRef.current?.setData(
-        indicatorData.sma50.filter((row) => row.value !== null && row.time <= cutoff)
-      )
-      index += 1
-    }, 250)
+        indicatorData.sma50.filter(
+          (row) => row.value !== null && row.time <= cutoff,
+        ),
+      );
+      index += 1;
+    }, 250);
 
     return () => {
-      clearInterval(replayTimerRef.current)
-    }
-  }, [chartData, indicatorData, isReplaying])
+      clearInterval(replayTimerRef.current);
+    };
+  }, [chartData, indicatorData, isReplaying]);
 
-  const canReplay = !liveDataEnabled && chartData.length > 0 && !isReplaying
+  const canReplay = !liveDataEnabled && chartData.length > 0 && !isReplaying;
 
   return (
     <div className="card p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-[var(--app-text)]">Price Chart</h3>
+          <h3 className="text-sm font-semibold text-[var(--app-text)]">
+            Price Chart
+          </h3>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             Candles with SMA overlays
           </p>
@@ -146,16 +155,13 @@ const PriceChart = ({ data, darkMode, chartTheme, liveDataEnabled }) => {
           onClick={() => setIsReplaying(true)}
           disabled={!canReplay}
         >
-          {isReplaying ? 'Replaying...' : 'Replay'}
+          {isReplaying ? "Replaying..." : "Replay"}
         </button>
       </div>
-      <div
-        ref={containerRef}
-        className="w-full h-[280px] sm:h-[360px] md:h-[420px] lg:h-[500px]"
-      />
+      <div ref={containerRef} className="w-full h-[420px] md:h-[500px]" />
     </div>
-  )
-}
+  );
+};
 
 PriceChart.propTypes = {
   data: PropTypes.shape({
@@ -166,14 +172,14 @@ PriceChart.propTypes = {
         high: PropTypes.number.isRequired,
         low: PropTypes.number.isRequired,
         close: PropTypes.number.isRequired,
-      })
+      }),
     ).isRequired,
     indicators: PropTypes.arrayOf(
       PropTypes.shape({
         date: PropTypes.string.isRequired,
         sma_14: PropTypes.number,
         sma_50: PropTypes.number,
-      })
+      }),
     ).isRequired,
   }).isRequired,
   darkMode: PropTypes.bool.isRequired,
@@ -187,10 +193,10 @@ PriceChart.propTypes = {
     sma50: PropTypes.string.isRequired,
   }).isRequired,
   liveDataEnabled: PropTypes.bool,
-}
+};
 
 PriceChart.defaultProps = {
   liveDataEnabled: false,
-}
+};
 
-export default PriceChart
+export default PriceChart;

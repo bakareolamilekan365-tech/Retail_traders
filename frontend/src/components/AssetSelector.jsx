@@ -1,42 +1,66 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 
-const AssetSelector = ({ assets, selectedAsset, onSelect }) => {
-  const [search, setSearch] = useState('')
-  const [open, setOpen] = useState(false)
-  const [category, setCategory] = useState('All')
-  const [risk, setRisk] = useState('All')
+const DEFAULT_ASSETS = [
+  { symbol: 'BTC', name: 'Bitcoin', asset_type: 'crypto' },
+  { symbol: 'ETH', name: 'Ethereum', asset_type: 'crypto' },
+  { symbol: 'BNB', name: 'Binance Coin', asset_type: 'crypto' },
+  { symbol: 'SOL', name: 'Solana', asset_type: 'crypto' },
+  { symbol: 'ADA', name: 'Cardano', asset_type: 'crypto' },
+  { symbol: 'DANGCEM', name: 'Dangote Cement', asset_type: 'ngx' },
+  { symbol: 'MTNN', name: 'MTN Nigeria', asset_type: 'ngx' },
+  { symbol: 'AIRTELAFRI', name: 'Airtel Africa', asset_type: 'ngx' },
+  { symbol: 'BUACEMENT', name: 'BUA Cement', asset_type: 'ngx' },
+  { symbol: 'GTCO', name: 'Guaranty Trust Holding', asset_type: 'ngx' },
+  { symbol: 'ZENITHBANK', name: 'Zenith Bank', asset_type: 'ngx' },
+  { symbol: 'SEPLAT', name: 'Seplat Energy', asset_type: 'ngx' },
+  { symbol: 'NB', name: 'Nigerian Breweries', asset_type: 'ngx' },
+  { symbol: 'FBNH', name: 'FBN Holdings', asset_type: 'ngx' },
+  { symbol: 'ACCESSCORP', name: 'Access Holdings', asset_type: 'ngx' },
+]
+
+const AssetSelector = ({
+  assets: providedAssets,
+  selectedAsset,
+  onSelect,
+  category = 'All',
+  risk = 'All',
+}) => {
+  const assets = providedAssets?.length ? providedAssets : DEFAULT_ASSETS
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+  const containerRef = useRef(null)
 
   const selected = useMemo(
     () => assets.find((asset) => asset.symbol === selectedAsset),
     [assets, selectedAsset]
   )
 
-  useEffect(() => {
-    if (!open && selected) {
-      setSearch(`${selected.symbol} · ${selected.name}`)
-    }
-  }, [open, selected])
-
   const filteredAssets = useMemo(() => {
-    const query = search.trim().toLowerCase()
+    const query = (searchQuery || '').trim().toLowerCase()
     return assets.filter((asset) => {
-      const matchesSearch =
-        !query ||
-        asset.symbol.toLowerCase().includes(query) ||
-        asset.name.toLowerCase().includes(query)
-      const matchesCategory =
-        category === 'All' ||
-        (category === 'Crypto' && asset.asset_type === 'crypto') ||
-        (category === 'NGX' && asset.asset_type !== 'crypto')
-      return matchesSearch && matchesCategory
+      const symbol = (asset.symbol || '').toLowerCase()
+      const name = (asset.name || '').toLowerCase()
+      const matchesQuery = !query || symbol.includes(query) || name.includes(query)
+      const matchesCategory = category === 'All' || asset.category === category || asset.asset_type === category.toLowerCase()
+      return matchesQuery && matchesCategory
     })
-  }, [assets, search, category])
+  }, [assets, searchQuery, category])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const handleSelect = (asset) => {
     onSelect(asset.symbol)
-    setSearch(`${asset.symbol} · ${asset.name}`)
-    setOpen(false)
+    setIsOpen(false)
   }
 
   return (
@@ -49,50 +73,40 @@ const AssetSelector = ({ assets, selectedAsset, onSelect }) => {
       </div>
 
       <div className="grid gap-3 lg:grid-cols-3">
-        <div className="relative">
+        <div className="relative" ref={containerRef}>
           <label className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
             Asset
           </label>
           <input
             type="text"
             role="combobox"
-            aria-expanded={open}
+            aria-expanded={isOpen}
             aria-label="Asset search"
-            value={search}
+            value={searchQuery}
             placeholder="Search assets..."
             onChange={(event) => {
-              setSearch(event.target.value)
-              setOpen(true)
+              setSearchQuery(event.target.value)
+              setIsOpen(true)
             }}
-            onFocus={() => setOpen(true)}
-            onBlur={() => {
-              setTimeout(() => setOpen(false), 100)
+            onFocus={() => {
+              setSearchQuery('')
+              setIsOpen(true)
             }}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
-          {open && (
-            <div
-              className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900"
-              onMouseDown={(event) => event.preventDefault()}
-            >
+          {isOpen && (
+            <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
               {filteredAssets.length === 0 ? (
-                <div className="px-3 py-2 text-sm text-slate-500 dark:text-slate-400">
-                  No matches found.
-                </div>
+                <div className="px-3 py-2 text-sm text-slate-500 dark:text-slate-400">No matches found.</div>
               ) : (
                 filteredAssets.map((asset) => (
                   <button
                     key={asset.symbol}
                     type="button"
+                    className="w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
                     onClick={() => handleSelect(asset)}
-                    className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
                   >
-                    <span>
-                      {asset.symbol} · {asset.name}
-                    </span>
-                    <span className="text-xs uppercase text-slate-400">
-                      {asset.asset_type}
-                    </span>
+                    {asset.symbol} · {asset.name}
                   </button>
                 ))
               )}
@@ -131,6 +145,12 @@ const AssetSelector = ({ assets, selectedAsset, onSelect }) => {
           </select>
         </div>
       </div>
+
+      {selected && (
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          Selected: {selected.symbol} · {selected.name}
+        </p>
+      )}
     </div>
   )
 }
@@ -140,11 +160,21 @@ AssetSelector.propTypes = {
     PropTypes.shape({
       symbol: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      asset_type: PropTypes.string.isRequired,
+      asset_type: PropTypes.string,
+      category: PropTypes.string,
     })
-  ).isRequired,
-  selectedAsset: PropTypes.string.isRequired,
+  ),
+  selectedAsset: PropTypes.string,
   onSelect: PropTypes.func.isRequired,
+  category: PropTypes.string,
+  risk: PropTypes.string,
+}
+
+AssetSelector.defaultProps = {
+  assets: DEFAULT_ASSETS,
+  selectedAsset: '',
+  category: 'All',
+  risk: 'All',
 }
 
 export default AssetSelector

@@ -1,21 +1,21 @@
-import { useMemo, useState } from 'react'
-import PropTypes from 'prop-types'
+import { useMemo, useState } from "react";
+import PropTypes from "prop-types";
 
 const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
-  const [open, setOpen] = useState(false)
-  const roleLabel = isAdmin ? 'Administrator' : 'Trader'
+  const [open, setOpen] = useState(false);
+  const roleLabel = isAdmin ? "Administrator" : "Trader";
   const avatarUrl = useMemo(
     () =>
       `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff`,
-    [username]
-  )
+    [username],
+  );
 
   return (
     <div className="relative">
       <button
         type="button"
         aria-label="Open user menu"
-        className="flex items-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] p-1"
+        className="flex items-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] p-1 dark:border-slate-700 dark:bg-slate-900"
         onClick={() => setOpen((prev) => !prev)}
       >
         <img
@@ -26,7 +26,7 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-[var(--app-border)] bg-[var(--app-card)] shadow-xl">
+        <div className="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-[var(--app-border)] bg-[var(--app-card)] shadow-xl dark:border-slate-700 dark:bg-slate-900">
           <div className="px-4 py-3">
             <p className="text-sm font-semibold text-[var(--app-text)]">
               {username} – {roleLabel}
@@ -56,18 +56,18 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 AvatarMenu.propTypes = {
   username: PropTypes.string.isRequired,
   isAdmin: PropTypes.bool,
   onLogout: PropTypes.func.isRequired,
   onChangePassword: PropTypes.func.isRequired,
-}
+};
 
 AvatarMenu.defaultProps = {
   isAdmin: false,
-}
+};
 
-export default AvatarMenu
+export default AvatarMenu;
