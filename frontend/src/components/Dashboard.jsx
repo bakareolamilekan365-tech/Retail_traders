@@ -9,7 +9,7 @@ import PredictionPanel from './PredictionPanel.jsx'
 import InsightBar from './InsightBar.jsx'
 import TimeRangeSelector from './TimeRangeSelector.jsx'
 
-const Dashboard = ({ darkMode, chartTheme, onPredictionGenerated = () => {} }) => {
+const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
   const [assets, setAssets] = useState([])
   const [selectedAsset, setSelectedAsset] = useState('BTC')
   const [predictionData, setPredictionData] = useState(null)
@@ -122,7 +122,7 @@ const Dashboard = ({ darkMode, chartTheme, onPredictionGenerated = () => {} }) =
         </div>
       ) : predictionData ? (
         <div className="space-y-6">
-          <PriceChart data={predictionData} darkMode={darkMode} chartTheme={chartTheme} />
+          <PriceChart data={predictionData} chartTheme={chartTheme} />
           <IndicatorCards indicators={predictionData.indicators} />
           <PredictionPanel prediction={predictionData.prediction} />
           <InsightBar insight={predictionData.insight} />
@@ -144,7 +144,6 @@ const Dashboard = ({ darkMode, chartTheme, onPredictionGenerated = () => {} }) =
 }
 
 Dashboard.propTypes = {
-  darkMode: PropTypes.bool.isRequired,
   chartTheme: PropTypes.shape({
     background: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,

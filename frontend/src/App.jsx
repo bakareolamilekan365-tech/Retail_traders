@@ -28,17 +28,6 @@ const THEME = {
     danger: "#ef4444",
     secondary: "#38bdf8",
   },
-  light: {
-    bg: "#eef2f6",
-    card: "#ffffff",
-    accent: "#047857",
-    text: "#0f172a",
-    muted: "#334155",
-    border: "rgba(15, 23, 42, 0.24)",
-    success: "#059669",
-    danger: "#b91c1c",
-    secondary: "#075985",
-  },
 };
 
 const toRgba = (hex, alpha) => {
@@ -105,9 +94,6 @@ const App = () => {
     error: "",
     success: "",
   });
-  const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem("theme") !== "light",
-  );
   const [activeTab, setActiveTab] = useState("dashboard");
   const [adminChecked, setAdminChecked] = useState(false);
   const [history, setHistory] = useState([]);
@@ -117,10 +103,10 @@ const App = () => {
   const [showQuickGuide, setShowQuickGuide] = useState(false);
 
   const isAuthenticated = useMemo(() => Boolean(token), [token]);
-  const activeTheme = darkMode ? THEME.dark : THEME.light;
+  const activeTheme = THEME.dark;
 
   const chartTheme = useMemo(() => {
-    const grid = toRgba(activeTheme.text, darkMode ? 0.16 : 0.12);
+    const grid = toRgba(activeTheme.text, 0.16);
     return {
       background: activeTheme.card,
       text: activeTheme.text,
@@ -130,7 +116,7 @@ const App = () => {
       sma14: activeTheme.accent,
       sma50: activeTheme.secondary,
     };
-  }, [activeTheme, darkMode]);
+  }, [activeTheme]);
 
   const tabs = useMemo(() => {
     const visibleTabs = [
@@ -190,8 +176,7 @@ const App = () => {
   }, [activeTab, adminChecked, user.isAdmin]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
+    document.documentElement.classList.add("dark");
 
     const root = document.documentElement;
     root.style.setProperty("--app-bg", activeTheme.bg);
@@ -202,12 +187,9 @@ const App = () => {
     root.style.setProperty("--app-border", activeTheme.border);
     root.style.setProperty("--app-success", activeTheme.success);
     root.style.setProperty("--app-danger", activeTheme.danger);
-    root.style.setProperty(
-      "--app-soft",
-      darkMode ? "rgba(34, 197, 94, 0.08)" : "rgba(4, 120, 87, 0.08)",
-    );
-    root.dataset.theme = darkMode ? "dark-trading-terminal" : "light-trading-terminal";
-  }, [activeTheme, darkMode]);
+    root.style.setProperty("--app-soft", "rgba(34, 197, 94, 0.08)");
+    root.dataset.theme = "dark-trading-terminal";
+  }, [activeTheme]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -291,8 +273,6 @@ const App = () => {
   return (
     <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] transition-colors">
       <TopBar
-        darkMode={darkMode}
-        onToggleDarkMode={() => setDarkMode((prev) => !prev)}
         user={{ username: user.username || "user", isAdmin: user.isAdmin }}
         showAvatar={isAuthenticated && adminChecked}
         onLogout={handleLogout}
@@ -383,7 +363,6 @@ const App = () => {
 
             {activeTab === "dashboard" && (
               <Dashboard
-                darkMode={darkMode}
                 chartTheme={chartTheme}
                 onPredictionGenerated={() => {
                   if (activeTab === "history") loadHistory();

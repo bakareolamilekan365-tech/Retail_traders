@@ -33,6 +33,7 @@ from engine.preprocessing import compute_indicators, load_and_preprocess
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_FRONTEND_ORIGIN = "http://localhost:5173"
+DEFAULT_FRONTEND_ORIGIN_REGEX = r"http://(?:localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+):5173"
 
 
 def _setup_logging(log_dir: Path) -> None:
@@ -212,6 +213,7 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[frontend_origin],
+        allow_origin_regex=DEFAULT_FRONTEND_ORIGIN_REGEX,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
