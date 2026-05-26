@@ -14,6 +14,7 @@ import pandas as pd
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from joblib import load
 from sklearn.ensemble import RandomForestRegressor
 from slowapi.errors import RateLimitExceeded
@@ -227,6 +228,14 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
     app.state.data_cache = {}
     app.state.model = None
     app.state.database_path = _resolve_database_path()
+
+    serve_frontend = os.getenv("SERVE_FRONTEND", "1").strip().lower() not in {"0", "false", "no"}
+    frontend_dist = Path(__file__).resolve().parents[3] / "frontend" / "dist"
+    if serve_frontend and frontend_dist.exists():
+        app.mount("/", StaticFiles(directory=str(frontend_dist), html=True), name="frontend")
+        LOGGER.info("Serving frontend build from %s", frontend_dist)
+    elif serve_frontend:
+        LOGGER.info("Frontend build not found at %s; serving API only.", frontend_dist)
 
     if load_on_startup:
 

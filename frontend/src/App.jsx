@@ -3,6 +3,7 @@ import LoginForm from "./components/LoginForm.jsx";
 import RegisterForm from "./components/RegisterForm.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import PredictionHistory from "./components/PredictionHistory.jsx";
+import SignalSimulator from "./components/SignalSimulator.jsx";
 import TopBar from "./components/TopBar.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
 import {
@@ -113,6 +114,8 @@ const App = () => {
   const [historyError, setHistoryError] = useState("");
   const [showDemoBanner, setShowDemoBanner] = useState(true);
   const [showQuickGuide, setShowQuickGuide] = useState(false);
+  const [connectionBanner, setConnectionBanner] = useState(null);
+  const [latestPrediction, setLatestPrediction] = useState(null);
 
   const isAuthenticated = useMemo(() => Boolean(token), [token]);
   const activeTheme = THEME.dark;
@@ -130,9 +133,12 @@ const App = () => {
     };
   }, [activeTheme]);
 
+  const latestPredictionClose = latestPrediction?.ohlcv?.at(-1)?.close ?? null;
+
   const tabs = useMemo(() => {
     const visibleTabs = [
       { id: "dashboard", label: "Dashboard" },
+      { id: "simulator", label: "Simulator" },
       { id: "history", label: "History" },
       { id: "settings", label: "Settings" },
     ];
@@ -187,6 +193,19 @@ const App = () => {
     }
   }, [activeTab, adminChecked, user.isAdmin]);
 
+  const handleLogout = useCallback(() => {
+    clearToken();
+    setToken(null);
+    setAuthView("login");
+    setPasswordForm({ oldPassword: "", newPassword: "" });
+    setPasswordStatus({ error: "", success: "" });
+    setShowChangePassword(false);
+    setShowQuickGuide(false);
+    setActiveTab("dashboard");
+    setHistory([]);
+    setLatestPrediction(null);
+  }, []);
+
   useEffect(() => {
     document.documentElement.classList.add("dark");
 
@@ -215,6 +234,30 @@ const App = () => {
       loadHistory();
     }
   }, [activeTab, isAuthenticated, loadHistory]);
+
+  useEffect(() => {
+    const handleNetworkError = (event) => {
+      setConnectionBanner({
+        message: event.detail?.message || "Backend not reachable. Please retry.",
+      });
+    };
+
+    const handleAuthExpired = (event) => {
+      setConnectionBanner(null);
+      setAuthError(
+        event.detail?.message || "Your session expired. Please sign in again.",
+      );
+      handleLogout();
+    };
+
+    window.addEventListener("tradesense:network-error", handleNetworkError);
+    window.addEventListener("tradesense:auth-expired", handleAuthExpired);
+
+    return () => {
+      window.removeEventListener("tradesense:network-error", handleNetworkError);
+      window.removeEventListener("tradesense:auth-expired", handleAuthExpired);
+    };
+  }, [handleLogout]);
 
   const handleLogin = async ({ username, password }) => {
     setAuthLoading(true);
@@ -246,16 +289,13 @@ const App = () => {
     }
   };
 
-  const handleLogout = () => {
-    clearToken();
-    setToken(null);
-    setAuthView("login");
-    setPasswordForm({ oldPassword: "", newPassword: "" });
-    setPasswordStatus({ error: "", success: "" });
-    setShowChangePassword(false);
-    setShowQuickGuide(false);
-    setActiveTab("dashboard");
-    setHistory([]);
+  const dismissConnectionBanner = () => {
+    setConnectionBanner(null);
+  };
+
+  const retryConnection = () => {
+    setConnectionBanner(null);
+    window.location.reload();
   };
 
   const dismissQuickGuide = () => {
@@ -348,6 +388,33 @@ const App = () => {
           </div>
         ) : (
           <div className="space-y-6">
+            {connectionBanner && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm font-medium text-red-100">
+                    {connectionBanner.message}
+                  </p>
+                  <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <button
+                      type="button"
+                      className="btn-secondary border-red-400/30 text-red-100"
+                      onClick={retryConnection}
+                    >
+                      Retry
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Dismiss backend banner"
+                      onClick={dismissConnectionBanner}
+                      className="text-sm font-semibold text-red-200"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {showDemoBanner && activeTab === "dashboard" && (
               <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-2.5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -376,9 +443,18 @@ const App = () => {
             {activeTab === "dashboard" && (
               <Dashboard
                 chartTheme={chartTheme}
-                onPredictionGenerated={() => {
+                onPredictionGenerated={(prediction) => {
+                  setLatestPrediction(prediction);
                   if (activeTab === "history") loadHistory();
                 }}
+              />
+            )}
+
+            {activeTab === "simulator" && (
+              <SignalSimulator
+                asset={latestPrediction?.asset || ""}
+                prediction={latestPrediction?.prediction || null}
+                latestClose={latestPredictionClose}
               />
             )}
 

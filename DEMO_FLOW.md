@@ -51,8 +51,8 @@ Follow these steps in order to showcase every feature without fumbling.
 ### 5. Explain the Chart
 
 - **Point to:** Candlestick bars and SMA 14/50 lines.
-- **Action:** Hover to show crosshair and tooltip.
-- **Say:** "We use TradingView Lightweight Charts for professional‑grade financial visualization, with our SMA overlays computed in‑house."
+- **Action:** Use the Replay button to step through the historical candles, then stop to return to the full chart.
+- **Say:** "We use TradingView Lightweight Charts for professional‑grade financial visualization, and the replay control walks through past candles at a fixed pace."
 
 ### 6. Explain the Indicators
 
@@ -64,47 +64,53 @@ Follow these steps in order to showcase every feature without fumbling.
 - **Point to:** The signal badge, expected return, confidence.
 - **Say:** "A Random Forest Regressor predicts the next 7‑day return and maps it to a BUY, SELL, or HOLD signal. Here, it says BUY with a 3.2% expected return and 78% confidence."
 
-### 8. Explain the Insight Sentence
+### 8. Open the Simulator
+
+- **Action:** Click the Simulator tab.
+- **Result:** The what-if panel appears with the latest prediction summary.
+- **Action:** Enter a Naira amount and review the estimated units, expected 7-day value, and gain/loss.
+- **Say:** "This is a simulated estimate based on the AI model's prediction. It is not financial advice."
+
+### 9. Explain the Insight Sentence
 
 - **Read:** The insight text aloud.
 - **Say:** "This is generated entirely by our rule‑based engine — no AI or NLP, just deterministic logic that turns numbers into plain English for the retail trader."
 
-### 9. Manual Refresh
+### 10. Manual Refresh
 
 - **Action:** Click the Refresh button.
 - **Result:** Loading spinner appears briefly, data reloads.
-- **Say:** "Users can manually refresh at any time. An auto‑refresh also runs every 5 minutes."
+- **Say:** "Users can manually refresh at any time. An auto-refresh also runs every 5 minutes."
 
-### 10. Dark / Light Mode Toggle
+### 11. Theme Handling
 
-- **Action:** Click the theme toggle.
-- **Result:** Dashboard switches between dark and light themes instantly.
-- **Say:** "The dashboard supports both dark and light modes, persisted to local storage."
+- **Action:** Point out that the product is locked to the dark trading-terminal look for the defense build.
+- **Say:** "The current demo keeps a consistent dark trading-terminal presentation for readability and brand consistency."
 
-### 11. Prediction History
+### 12. Prediction History
 
 - **Scroll to / point to:** The prediction history table (if implemented).
 - **Say:** "Every prediction is logged to the database, giving users a history of signals for each asset."
 
-### 12. Logout
+### 13. Logout
 
 - **Action:** Click the user area (top right), then Logout.
 - **Result:** Returns to login screen.
 - **Say:** "Logout clears the session securely."
 
-### 13. Register a New Account
+### 14. Register a New Account
 
 - **Action:** Click "Register", fill in a new username/email/password, submit.
 - **Result:** Success message, then log in with new credentials.
 - **Say:** "The system supports full self‑registration with bcrypt‑hashed passwords."
 
-### 14. Change Password
+### 15. Change Password
 
 - **Action:** Log in as the new user, go to user dropdown, select Change Password.
 - **Result:** Change password form, update, logout, log in with new password.
 - **Say:** "Users can change their password at any time."
 
-### 15. Admin Panel
+### 16. Admin Panel
 
 - **Action:** Log out, log in as `admin`.
 - **Result:** Dashboard appears, and an "Admin" link is visible in the user dropdown.
@@ -112,13 +118,13 @@ Follow these steps in order to showcase every feature without fumbling.
 - **Show:** Users tab (list of registered users), Predictions tab (filterable log), Stats tab (aggregate counts).
 - **Say:** "Admin users have a dedicated monitoring panel to view all registered users, all predictions, and system usage stats — demonstrating role‑based access control."
 
-### 16. API Documentation
+### 17. API Documentation
 
 - **Action:** Switch to the browser tab with `http://localhost:8000/docs`.
 - **Show:** The auto‑generated Swagger UI.
 - **Say:** "FastAPI automatically generates interactive API documentation. Every endpoint is listed with its schema, and you can test them right here in the browser."
 
-### 17. Wrap Up
+### 18. Wrap Up
 
 - **Say:** "This system was built in under two weeks for $0, using only free and open‑source tools. It demonstrates a complete full‑stack machine learning pipeline, production‑grade engineering practices, and a real‑world use case for retail traders."
 

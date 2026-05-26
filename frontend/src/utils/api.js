@@ -19,6 +19,14 @@ const clearToken = () => {
   sessionStorage.removeItem("token");
 };
 
+const dispatchApiEvent = (type, detail) => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(new CustomEvent(type, { detail }));
+};
+
 const decodeTokenPayload = (token) => {
   if (!token) return null;
   const parts = token.split(".");
@@ -42,13 +50,23 @@ const apiFetch = async (path, options = {}) => {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers,
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch (error) {
+    const message = "Backend not reachable. Please retry.";
+    dispatchApiEvent("tradesense:network-error", { message, error });
+    throw new Error(message);
+  }
 
   if (response.status === 401) {
     clearToken();
+    dispatchApiEvent("tradesense:auth-expired", {
+      message: "Your session expired. Please sign in again.",
+    });
   }
 
   return response;
@@ -62,7 +80,13 @@ const loginUser = async ({ username, password }) => {
 
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
-    throw new Error(payload.detail || "Login failed");
+    if (
+      response.status === 401 ||
+      /invalid username or password/i.test(payload.detail || "")
+    ) {
+      throw new Error("Invalid username or password. Please try again.");
+    }
+    throw new Error(payload.detail || "Login failed. Please try again.");
   }
 
   const payload = await response.json();
@@ -77,8 +101,7 @@ const registerUser = async ({ username, email, password }) => {
   });
 
   if (!response.ok) {
-    const payload = await response.json().catch(() => ({}));
-    throw new Error(payload.detail || "Registration failed");
+    throw new Error("Registration failed. Please try again.");
   }
 
   const payload = await response.json();

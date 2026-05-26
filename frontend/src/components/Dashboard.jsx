@@ -11,7 +11,7 @@ import TimeRangeSelector from "./TimeRangeSelector.jsx";
 
 const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
   const [assets, setAssets] = useState([]);
-  const [selectedAsset, setSelectedAsset] = useState("BTC");
+  const [selectedAsset, setSelectedAsset] = useState("");
   const [predictionData, setPredictionData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -26,7 +26,7 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
         if (!response.ok) throw new Error("Failed to load assets");
         const data = await response.json();
         setAssets(data);
-        if (data.length > 0) {
+        if (!selectedAsset && data.length > 0) {
           setSelectedAsset(data[0].symbol);
         }
       } catch (err) {
@@ -48,10 +48,11 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
       const data = await response.json();
       setPredictionData(data);
       setLastRefresh(new Date());
-      onPredictionGenerated();
+      onPredictionGenerated(data);
     } catch (err) {
       setError(err.message);
       setPredictionData(null);
+      onPredictionGenerated(null);
     } finally {
       setLoading(false);
     }
@@ -134,6 +135,12 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
               Last updated: {lastRefresh.toLocaleTimeString()}
             </div>
           )}
+        </div>
+      ) : !selectedAsset ? (
+        <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-6 py-12 text-center">
+          <p className="text-[var(--app-muted)]">
+            Select an asset to load historical candles and signal analysis.
+          </p>
         </div>
       ) : (
         <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-6 py-12 text-center">

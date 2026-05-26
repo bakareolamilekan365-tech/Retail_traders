@@ -1,137 +1,115 @@
 # Intelligent Investment Recommendation Assistant
 
-A full‑stack AI investment recommendation system for retail traders.  
-Built with FastAPI, React, and a Random Forest model — for a university final‑year defense.
-
----
+TradeSense NG is the visible product name. This repository contains the formal academic project: Intelligent Investment Recommendation Assistant.
 
 ## Tech Stack
 
-| Layer    | Technology                                                     |
-| -------- | -------------------------------------------------------------- |
-| Backend  | Python 3.10+, FastAPI, Pandas, Scikit‑learn                    |
-| Database | SQLite                                                         |
-| Auth     | JWT (HS256), bcrypt                                            |
-| Frontend | React 18+ (Vite), Tailwind CSS, TradingView Lightweight Charts |
-| Testing  | Pytest (backend), Vitest (frontend)                            |
-
----
+| Layer | Technology |
+| --- | --- |
+| Backend | FastAPI, Pandas, NumPy, scikit-learn, SQLite |
+| Auth | JWT (HS256), bcrypt |
+| Frontend | React 19, Vite, Tailwind CSS, Lightweight Charts |
+| Testing | Pytest, Vitest |
 
 ## Project Structure
 
-├── backend/
-│ ├── data/ # CSVs + app.db
-│ ├── src/
-│ │ ├── engine/ # preprocessing, training, prediction service
-│ │ └── api/ # FastAPI routes (auth, assets, predict, admin)
-│ └── tests/ # Pytest suite
-├── frontend/
-│ ├── src/
-│ │ ├── components/ # React components
-│ │ └── utils/ # API wrapper, formatters
-│ └── tests/ # Vitest suite
-├── architecture.md # System architecture document
-├── VISION.md # Project north star
-├── DATA_SOURCES.md # Data provenance
-├── DEMO_FLOW.md # Defense walkthrough
-└── README.md # This file
+- `backend/` FastAPI service, engine, tests, local SQLite database
+- `frontend/` React dashboard, components, tests
+- `scripts/start.sh` one-command defense-mode launcher
+- `DATA_SOURCES.md` data provenance
+- `DEMO_FLOW.md` presentation walkthrough
+- `architecture.md` system architecture
 
-text
+## Environment Variables
 
----
+- `SECRET_KEY` JWT signing secret
+- `ADMIN_PASSWORD` admin password at startup, default `admin123`
+- `DATABASE_URL` SQLite path, default `sqlite:///./backend/data/app.db`
+- `MODEL_PATH` optional model override, default `backend/model.joblib`
+- `FRONTEND_ORIGIN` frontend origin for CORS in development
+- `SERVE_FRONTEND` set to `0` to disable FastAPI static serving of `frontend/dist`
 
-## Quick Start (Development)
-
-### 1. Clone and navigate to the project
+## Development Setup
 
 ```bash
-cd intelligent-investment-assistant
-2. Backend setup
-bash
 cd backend
-python3 -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
+python -m venv venv
+venv\Scripts\activate
 pip install -r requirements.txt
-3. Set environment variables
-Create a .env file or export manually:
-
-bash
-export SECRET_KEY=your-secret-key
-export ADMIN_PASSWORD=your-admin-password
-export DATABASE_URL=sqlite:///./backend/data/app.db
-4. Prepare data and train the model
-Place your CSV files in backend/data/ (see DATA_SOURCES.md).
-Train the model:
-
-bash
-python src/engine/train.py
-5. Start backend (development)
-bash
 uvicorn src.api.main:app --reload --port 8000
-FastAPI docs available at http://localhost:8000/docs.
+```
 
-6. Frontend setup
-Open a second terminal:
+In a second terminal:
 
-bash
+```bash
 cd frontend
 npm install
 npm run dev
-Dashboard available at http://localhost:5173.
 ```
 
-Quick Start (Single Command — Defense Mode)
+Frontend: http://localhost:5173
+
+Backend docs: http://localhost:8000/docs
+
+## Defense Mode
+
 Build the frontend:
 
 ```bash
-cd frontend && npm run build
+cd frontend
+npm run build
 ```
 
-Start the backend (serves both API and frontend):
+Start the single-server app:
 
 ```bash
-cd backend
-uvicorn src.api.main:app --port 8000
+sh scripts/start.sh
 ```
 
 Open http://localhost:8000.
 
-Demo Accounts
+If `frontend/dist/` exists, FastAPI serves it automatically.
+
+## Demo Accounts
+
 | Role | Username | Password |
-|------|----------|----------|
-| Admin | admin | Set via ADMIN_PASSWORD env var (default: admin123) |
-| User | demo | demo123 |
+| --- | --- | --- |
+| Admin | `admin` | `ADMIN_PASSWORD` or `admin123` |
+| Demo user | `demo` | `demo123` |
 
-The demo user has pre‑seeded prediction history.
+The demo user is seeded with prediction history.
 
-Running Tests
-Backend (Pytest):
+## Testing
+
+Backend:
 
 ```bash
 cd backend
 pytest -v
 ```
 
-Frontend (Vitest):
+Frontend:
 
 ```bash
 cd frontend
-npm test
+npx vitest run
 ```
 
-API Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | /api/v1/auth/register | No | Register a new user |
-| POST | /api/v1/auth/login | No | Login, receive JWT |
-| POST | /api/v1/auth/change-password | Yes | Change password |
-| GET | /api/v1/assets | Yes | List all 15 assets |
-| GET | /api/v1/predict?asset=BTC&days=180 | Yes | Get OHLCV, indicators, prediction, insight |
-| GET | /api/v1/admin/users | Admin | List all registered users |
-| GET | /api/v1/admin/predictions | Admin | View prediction log |
-| GET | /api/v1/admin/stats | Admin | System usage statistics |
+## Key API Routes
 
-Full interactive docs at http://localhost:8000/docs.
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/change-password`
+- `GET /api/v1/assets`
+- `GET /api/v1/predict?asset=BTC&days=180`
+- `GET /api/v1/predictions/history`
+- `GET /api/v1/admin/users`
+- `GET /api/v1/admin/predictions`
+- `GET /api/v1/admin/stats`
 
-License
-This project is built for academic purposes as a university final‑year project.
+## Demo Notes
+
+- The dashboard uses historical offline data only.
+- The Replay control steps through historical candles at about 500ms per candle.
+- The Simulator tab is a what-if estimate, not paper trading or brokerage execution.
+- The application is intended for academic demonstration and decision support only, not financial advice.

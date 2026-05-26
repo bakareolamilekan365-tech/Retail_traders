@@ -47,6 +47,7 @@ describe("App", () => {
     expect(screen.getByText(/reading your signal dashboard/i)).toBeInTheDocument();
     expect(screen.getByText(/this is an educational tool, not financial advice/i)).toBeInTheDocument();
     expect(screen.getByText(/historical dataset: 2022-2024/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /simulator/i })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^admin$/i })).not.toBeInTheDocument();
   });
 });
