@@ -18192,3 +18192,35 @@
 2026-05-26 11:51:03,833 INFO watchfiles.main: 1 change detected
 2026-05-26 11:51:04,258 INFO watchfiles.main: 1 change detected
 2026-05-26 11:51:04,674 INFO watchfiles.main: 1 change detected
+2026-05-26 13:06:49,194 INFO src.api.main: Admin user already exists
+2026-05-26 13:06:49,691 INFO src.api.main: Demo user already exists
+2026-05-26 13:06:49,747 INFO watchfiles.main: 1 change detected
+2026-05-26 13:06:49,997 INFO src.api.main: Database initialized and seeded
+2026-05-26 13:06:50,110 INFO watchfiles.main: 4 changes detected
+2026-05-26 13:07:05,179 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:05,551 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:06,180 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:06,583 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:06,976 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:07,321 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:07,683 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:08,036 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:08,439 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:08,858 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:09,325 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:09,738 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:10,155 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:10,525 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:10,940 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:11,407 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:11,868 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:12,353 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:12,770 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:13,189 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:13,552 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:13,913 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:14,273 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:14,628 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:15,007 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:15,373 INFO watchfiles.main: 1 change detected
+2026-05-26 13:07:15,883 INFO watchfiles.main: 1 change detected

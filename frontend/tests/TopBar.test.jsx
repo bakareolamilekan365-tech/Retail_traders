@@ -13,10 +13,16 @@ describe("TopBar", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { name: /tradesense ng/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /tradesense ng/i }),
+    ).toBeInTheDocument();
     expect(screen.getByText(/ai investment signals/i)).toBeInTheDocument();
-    expect(screen.queryByLabelText(/toggle dark mode/i)).not.toBeInTheDocument();
-    expect(screen.queryByLabelText(/select color preset/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/toggle dark mode/i),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/select color preset/i),
+    ).not.toBeInTheDocument();
   });
 
   it("does not render a duplicate standalone admin button", () => {
@@ -29,6 +35,8 @@ describe("TopBar", () => {
       />,
     );
 
-    expect(screen.queryByRole("button", { name: /^admin$/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^admin$/i }),
+    ).not.toBeInTheDocument();
   });
 });

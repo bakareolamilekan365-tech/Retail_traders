@@ -1,75 +1,78 @@
-import { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
-import { apiFetch } from '../utils/api.js'
-import AssetSelector from './AssetSelector.jsx'
-import PriceChart from './PriceChart.jsx'
-import IndicatorCards from './IndicatorCards.jsx'
-import PredictionPanel from './PredictionPanel.jsx'
-import InsightBar from './InsightBar.jsx'
-import TimeRangeSelector from './TimeRangeSelector.jsx'
+import { apiFetch } from "../utils/api.js";
+import AssetSelector from "./AssetSelector.jsx";
+import PriceChart from "./PriceChart.jsx";
+import IndicatorCards from "./IndicatorCards.jsx";
+import PredictionPanel from "./PredictionPanel.jsx";
+import InsightBar from "./InsightBar.jsx";
+import TimeRangeSelector from "./TimeRangeSelector.jsx";
 
 const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
-  const [assets, setAssets] = useState([])
-  const [selectedAsset, setSelectedAsset] = useState('BTC')
-  const [predictionData, setPredictionData] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [lastRefresh, setLastRefresh] = useState(null)
-  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
-  const [timeRange, setTimeRange] = useState(180)
+  const [assets, setAssets] = useState([]);
+  const [selectedAsset, setSelectedAsset] = useState("BTC");
+  const [predictionData, setPredictionData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [lastRefresh, setLastRefresh] = useState(null);
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true);
+  const [timeRange, setTimeRange] = useState(180);
 
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        const response = await apiFetch('/assets')
-        if (!response.ok) throw new Error('Failed to load assets')
-        const data = await response.json()
-        setAssets(data)
+        const response = await apiFetch("/assets");
+        if (!response.ok) throw new Error("Failed to load assets");
+        const data = await response.json();
+        setAssets(data);
         if (data.length > 0) {
-          setSelectedAsset(data[0].symbol)
+          setSelectedAsset(data[0].symbol);
         }
       } catch (err) {
-        setError(err.message)
+        setError(err.message);
       }
-    }
-    fetchAssets()
-  }, [])
+    };
+    fetchAssets();
+  }, []);
 
   const fetchPrediction = async (asset = selectedAsset, range = timeRange) => {
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError("");
     try {
-      const response = await apiFetch(`/predict?asset=${asset}&days=${range}`)
+      const response = await apiFetch(`/predict?asset=${asset}&days=${range}`);
       if (!response.ok) {
-        if (response.status === 404) throw new Error('Asset not found')
-        throw new Error('Failed to load prediction')
+        if (response.status === 404) throw new Error("Asset not found");
+        throw new Error("Failed to load prediction");
       }
-      const data = await response.json()
-      setPredictionData(data)
-      setLastRefresh(new Date())
-      onPredictionGenerated()
+      const data = await response.json();
+      setPredictionData(data);
+      setLastRefresh(new Date());
+      onPredictionGenerated();
     } catch (err) {
-      setError(err.message)
-      setPredictionData(null)
+      setError(err.message);
+      setPredictionData(null);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (selectedAsset) {
-      fetchPrediction(selectedAsset, timeRange)
+      fetchPrediction(selectedAsset, timeRange);
     }
-  }, [selectedAsset, timeRange])
+  }, [selectedAsset, timeRange]);
 
   useEffect(() => {
-    if (!autoRefreshEnabled) return () => {}
-    const interval = setInterval(() => {
-      fetchPrediction()
-    }, 5 * 60 * 1000)
-    return () => clearInterval(interval)
-  }, [autoRefreshEnabled, selectedAsset, timeRange])
+    if (!autoRefreshEnabled) return () => {};
+    const interval = setInterval(
+      () => {
+        fetchPrediction();
+      },
+      5 * 60 * 1000,
+    );
+    return () => clearInterval(interval);
+  }, [autoRefreshEnabled, selectedAsset, timeRange]);
 
   return (
     <div className="space-y-6">
@@ -94,7 +97,7 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
             disabled={loading}
             className="btn-secondary px-3 py-1.5"
           >
-            {loading ? 'Refreshing...' : 'Refresh Now'}
+            {loading ? "Refreshing..." : "Refresh Now"}
           </button>
           <label className="flex items-center gap-2">
             <input
@@ -140,8 +143,8 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 Dashboard.propTypes = {
   chartTheme: PropTypes.shape({
@@ -154,6 +157,6 @@ Dashboard.propTypes = {
     sma50: PropTypes.string.isRequired,
   }).isRequired,
   onPredictionGenerated: PropTypes.func,
-}
+};
 
-export default Dashboard
+export default Dashboard;

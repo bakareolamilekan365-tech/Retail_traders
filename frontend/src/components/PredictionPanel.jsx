@@ -1,12 +1,12 @@
-import PropTypes from 'prop-types'
+import PropTypes from "prop-types";
 
 const PredictionPanel = ({ prediction }) => {
   const signalColor =
-    prediction.signal === 'BUY'
-      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200'
-      : prediction.signal === 'SELL'
-        ? 'bg-red-50 text-red-800 ring-1 ring-red-200 dark:bg-red-500/20 dark:text-red-200 dark:ring-red-500/30'
-        : 'bg-amber-100 text-amber-800 dark:bg-yellow-500/20 dark:text-yellow-200'
+    prediction.signal === "BUY"
+      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200"
+      : prediction.signal === "SELL"
+        ? "bg-red-50 text-red-800 ring-1 ring-red-200 dark:bg-red-500/20 dark:text-red-200 dark:ring-red-500/30"
+        : "bg-amber-100 text-amber-800 dark:bg-yellow-500/20 dark:text-yellow-200";
 
   return (
     <div className="card p-5">
@@ -31,7 +31,9 @@ const PredictionPanel = ({ prediction }) => {
           </span>
         </div>
         <div className="sm:text-right">
-          <p className="text-sm text-slate-700 dark:text-slate-300">Expected 7-day return</p>
+          <p className="text-sm text-slate-700 dark:text-slate-300">
+            Expected 7-day return
+          </p>
           <p className="text-2xl font-semibold text-[var(--app-text)]">
             {prediction.expected_return_7d.toFixed(2)}%
           </p>
@@ -39,7 +41,9 @@ const PredictionPanel = ({ prediction }) => {
       </div>
       <div className="mt-4">
         <div className="flex items-center gap-2">
-          <p className="text-sm text-slate-700 dark:text-slate-300">Confidence</p>
+          <p className="text-sm text-slate-700 dark:text-slate-300">
+            Confidence
+          </p>
           <span
             title="Confidence estimates how strongly the predicted return clears the trading threshold."
             aria-label="Confidence explanation"
@@ -59,8 +63,8 @@ const PredictionPanel = ({ prediction }) => {
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
 PredictionPanel.propTypes = {
   prediction: PropTypes.shape({
@@ -68,6 +72,6 @@ PredictionPanel.propTypes = {
     expected_return_7d: PropTypes.number.isRequired,
     confidence: PropTypes.number.isRequired,
   }).isRequired,
-}
+};
 
-export default PredictionPanel
+export default PredictionPanel;

@@ -15,11 +15,7 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
     <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] shadow-2xl lg:grid-cols-[1.1fr_0.9fr]">
       <div className="relative min-h-[360px] bg-slate-950 p-6 text-white sm:p-8">
         <div className="absolute inset-0 opacity-40">
-          <img
-            src={heroImage}
-            alt=""
-            className="h-full w-full object-cover"
-          />
+          <img src={heroImage} alt="" className="h-full w-full object-cover" />
         </div>
         <div className="relative flex h-full flex-col justify-between gap-8">
           <div>
@@ -99,7 +95,11 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
             />
           </div>
 
-          <button type="submit" className="btn-primary w-full py-3" disabled={loading}>
+          <button
+            type="submit"
+            className="btn-primary w-full py-3"
+            disabled={loading}
+          >
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>

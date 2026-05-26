@@ -1,124 +1,124 @@
 const getDefaultApiBase = () => {
-  if (typeof window === 'undefined') {
-    return 'http://localhost:8000/api/v1'
+  if (typeof window === "undefined") {
+    return "http://localhost:8000/api/v1";
   }
 
-  const { protocol, hostname } = window.location
-  return `${protocol}//${hostname}:8000/api/v1`
-}
+  const { protocol, hostname } = window.location;
+  return `${protocol}//${hostname}:8000/api/v1`;
+};
 
-const API_BASE = import.meta.env.VITE_API_URL || getDefaultApiBase()
+const API_BASE = import.meta.env.VITE_API_URL || getDefaultApiBase();
 
-const getToken = () => sessionStorage.getItem('token')
+const getToken = () => sessionStorage.getItem("token");
 
 const setToken = (token) => {
-  sessionStorage.setItem('token', token)
-}
+  sessionStorage.setItem("token", token);
+};
 
 const clearToken = () => {
-  sessionStorage.removeItem('token')
-}
+  sessionStorage.removeItem("token");
+};
 
 const decodeTokenPayload = (token) => {
-  if (!token) return null
-  const parts = token.split('.')
-  if (parts.length !== 3) return null
+  if (!token) return null;
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
   try {
-    const payload = JSON.parse(atob(parts[1]))
-    return payload
+    const payload = JSON.parse(atob(parts[1]));
+    return payload;
   } catch (error) {
-    return null
+    return null;
   }
-}
+};
 
 const apiFetch = async (path, options = {}) => {
   const headers = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...(options.headers || {}),
-  }
+  };
 
-  const token = getToken()
+  const token = getToken();
   if (token) {
-    headers.Authorization = `Bearer ${token}`
+    headers.Authorization = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers,
-  })
+  });
 
   if (response.status === 401) {
-    clearToken()
+    clearToken();
   }
 
-  return response
-}
+  return response;
+};
 
 const loginUser = async ({ username, password }) => {
-  const response = await apiFetch('/auth/login', {
-    method: 'POST',
+  const response = await apiFetch("/auth/login", {
+    method: "POST",
     body: JSON.stringify({ username, password }),
-  })
+  });
 
   if (!response.ok) {
-    const payload = await response.json().catch(() => ({}))
-    throw new Error(payload.detail || 'Login failed')
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.detail || "Login failed");
   }
 
-  const payload = await response.json()
-  setToken(payload.access_token)
-  return payload
-}
+  const payload = await response.json();
+  setToken(payload.access_token);
+  return payload;
+};
 
 const registerUser = async ({ username, email, password }) => {
-  const response = await apiFetch('/auth/register', {
-    method: 'POST',
+  const response = await apiFetch("/auth/register", {
+    method: "POST",
     body: JSON.stringify({ username, email, password }),
-  })
+  });
 
   if (!response.ok) {
-    const payload = await response.json().catch(() => ({}))
-    throw new Error(payload.detail || 'Registration failed')
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.detail || "Registration failed");
   }
 
-  const payload = await response.json()
-  setToken(payload.access_token)
-  return payload
-}
+  const payload = await response.json();
+  setToken(payload.access_token);
+  return payload;
+};
 
 const changePassword = async ({ old_password, new_password }) => {
-  const response = await apiFetch('/auth/change-password', {
-    method: 'POST',
+  const response = await apiFetch("/auth/change-password", {
+    method: "POST",
     body: JSON.stringify({ old_password, new_password }),
-  })
+  });
 
   if (!response.ok) {
-    const payload = await response.json().catch(() => ({}))
-    throw new Error(payload.detail || 'Password update failed')
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.detail || "Password update failed");
   }
 
-  return response.json()
-}
+  return response.json();
+};
 
 const checkAdmin = async () => {
-  const response = await apiFetch('/admin/stats', { method: 'GET' })
+  const response = await apiFetch("/admin/stats", { method: "GET" });
   if (response.status === 403) {
-    return false
+    return false;
   }
   if (!response.ok) {
-    throw new Error('Failed to verify admin access')
+    throw new Error("Failed to verify admin access");
   }
-  return true
-}
+  return true;
+};
 
 const fetchPredictionHistory = async () => {
-  const response = await apiFetch('/predictions/history', { method: 'GET' })
+  const response = await apiFetch("/predictions/history", { method: "GET" });
   if (!response.ok) {
-    const payload = await response.json().catch(() => ({}))
-    throw new Error(payload.detail || 'Failed to load prediction history')
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.detail || "Failed to load prediction history");
   }
-  return response.json()
-}
+  return response.json();
+};
 
 export {
   API_BASE,
@@ -132,4 +132,4 @@ export {
   getToken,
   setToken,
   clearToken,
-}
+};

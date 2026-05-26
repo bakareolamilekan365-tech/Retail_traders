@@ -2,12 +2,7 @@ import PropTypes from "prop-types";
 
 import AvatarMenu from "./AvatarMenu.jsx";
 
-const TopBar = ({
-  user,
-  showAvatar,
-  onLogout,
-  onChangePassword,
-}) => {
+const TopBar = ({ user, showAvatar, onLogout, onChangePassword }) => {
   return (
     <header className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">

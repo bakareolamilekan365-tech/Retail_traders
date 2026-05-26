@@ -69,10 +69,22 @@ const QuickGuideModal = ({ onClose }) => (
         </button>
       </div>
       <ol className="mt-5 space-y-3 text-sm text-[var(--app-muted)]">
-        <li>1. Choose an NGX equity or major cryptocurrency from the asset control.</li>
-        <li>2. Read the candlestick chart and SMA overlays for recent price direction.</li>
-        <li>3. Check RSI, volatility, and crossover indicators for momentum and risk.</li>
-        <li>4. Review the model signal, expected return, and confidence explanation.</li>
+        <li>
+          1. Choose an NGX equity or major cryptocurrency from the asset
+          control.
+        </li>
+        <li>
+          2. Read the candlestick chart and SMA overlays for recent price
+          direction.
+        </li>
+        <li>
+          3. Check RSI, volatility, and crossover indicators for momentum and
+          risk.
+        </li>
+        <li>
+          4. Review the model signal, expected return, and confidence
+          explanation.
+        </li>
         <li>5. Open History to audit your recent generated signals.</li>
       </ol>
     </div>
@@ -454,7 +466,8 @@ const App = () => {
                 ) : (
                   <div className="card p-6">
                     <p className="text-sm text-[var(--app-muted)]">
-                      Use the profile menu to update your password and preferences.
+                      Use the profile menu to update your password and
+                      preferences.
                     </p>
                   </div>
                 )}
@@ -467,7 +480,9 @@ const App = () => {
               </div>
             )}
 
-            {activeTab === "admin" && adminChecked && user.isAdmin && <AdminPanel />}
+            {activeTab === "admin" && adminChecked && user.isAdmin && (
+              <AdminPanel />
+            )}
           </div>
         )}
       </main>
