@@ -59,6 +59,17 @@ class PredictionOut(BaseModel):
     confidence: float = Field(..., description="Prediction confidence (0-1)")
 
 
+class PredictionHistoryOut(BaseModel):
+    """Prediction history row for the authenticated user."""
+
+    id: int
+    asset: str
+    signal: str
+    expected_return: float
+    confidence: float
+    timestamp: str
+
+
 class PredictResponse(BaseModel):
     """Full prediction response payload."""
 
@@ -197,14 +208,86 @@ def _log_prediction(
             )
             connection.execute(
                 """
-                INSERT INTO prediction_log (user_id, asset, signal, expected_return, confidence)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO prediction_log (user_id, asset, signal, expected_return, confidence, timestamp)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
-                (user_id, asset, signal, expected_return_pct, confidence),
+                (
+                    user_id,
+                    asset,
+                    signal,
+                    expected_return_pct,
+                    confidence,
+                    datetime.now(timezone.utc).isoformat(),
+                ),
             )
             connection.commit()
     except sqlite3.Error as exc:
         LOGGER.warning("Failed to log prediction for %s: %s", asset, exc)
+
+
+def _get_user_id_from_claims(db_path: Path, current_user: Dict[str, Any]) -> int | None:
+    user_id = current_user.get("user_id")
+    if isinstance(user_id, int):
+        return user_id
+
+    username = current_user.get("sub")
+    if not username:
+        return None
+
+    try:
+        with sqlite3.connect(db_path) as connection:
+            row = connection.execute(
+                "SELECT id FROM users WHERE username = ?",
+                (username,),
+            ).fetchone()
+    except sqlite3.Error as exc:
+        LOGGER.warning("Failed to resolve user id for history: %s", exc)
+        return None
+
+    return int(row[0]) if row else None
+
+
+@router.get("/predictions/history", response_model=List[PredictionHistoryOut])
+@limiter.limit("5/second")
+def prediction_history(
+    request: Request,
+    limit: int = Query(25, ge=1, le=100),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> List[PredictionHistoryOut]:
+    """Return recent prediction rows for the authenticated user."""
+
+    db_path = getattr(request.app.state, "database_path", None)
+    if db_path is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database not configured",
+        )
+
+    resolved_db_path = Path(db_path)
+    user_id = _get_user_id_from_claims(resolved_db_path, current_user)
+    if user_id is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+
+    try:
+        with sqlite3.connect(resolved_db_path) as connection:
+            connection.row_factory = sqlite3.Row
+            rows = connection.execute(
+                """
+                SELECT id, asset, signal, expected_return, confidence, timestamp
+                FROM prediction_log
+                WHERE user_id = ?
+                ORDER BY timestamp DESC, id DESC
+                LIMIT ?
+                """,
+                (user_id, limit),
+            ).fetchall()
+    except sqlite3.Error as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to load prediction history",
+        ) from exc
+
+    return [PredictionHistoryOut(**dict(row)) for row in rows]
 
 
 @router.get("/predict", response_model=PredictResponse)

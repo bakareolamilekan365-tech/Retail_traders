@@ -1,15 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import PropTypes from "prop-types";
 import { createChart, CandlestickSeries, LineSeries } from "lightweight-charts";
 
-const PriceChart = ({ data, darkMode, chartTheme, liveDataEnabled }) => {
+const PriceChart = ({ data, chartTheme }) => {
   const chartRef = useRef(null);
   const containerRef = useRef(null);
   const candleSeriesRef = useRef(null);
   const sma14SeriesRef = useRef(null);
   const sma50SeriesRef = useRef(null);
-  const replayTimerRef = useRef(null);
-  const [isReplaying, setIsReplaying] = useState(false);
 
   const chartData = useMemo(() => {
     if (!data) return [];
@@ -95,49 +93,6 @@ const PriceChart = ({ data, darkMode, chartTheme, liveDataEnabled }) => {
     };
   }, [chartData, indicatorData, chartTheme]);
 
-  useEffect(() => {
-    if (liveDataEnabled && isReplaying) {
-      setIsReplaying(false);
-    }
-  }, [liveDataEnabled, isReplaying]);
-
-  useEffect(() => {
-    if (!isReplaying || chartData.length === 0) return () => {};
-
-    let index = 1;
-    candleSeriesRef.current?.setData([]);
-    sma14SeriesRef.current?.setData([]);
-    sma50SeriesRef.current?.setData([]);
-
-    replayTimerRef.current = setInterval(() => {
-      if (index > chartData.length) {
-        clearInterval(replayTimerRef.current);
-        setIsReplaying(false);
-        return;
-      }
-      const slice = chartData.slice(0, index);
-      const cutoff = slice[slice.length - 1]?.time;
-      candleSeriesRef.current?.setData(slice);
-      sma14SeriesRef.current?.setData(
-        indicatorData.sma14.filter(
-          (row) => row.value !== null && row.time <= cutoff,
-        ),
-      );
-      sma50SeriesRef.current?.setData(
-        indicatorData.sma50.filter(
-          (row) => row.value !== null && row.time <= cutoff,
-        ),
-      );
-      index += 1;
-    }, 250);
-
-    return () => {
-      clearInterval(replayTimerRef.current);
-    };
-  }, [chartData, indicatorData, isReplaying]);
-
-  const canReplay = !liveDataEnabled && chartData.length > 0 && !isReplaying;
-
   return (
     <div className="card p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -149,14 +104,6 @@ const PriceChart = ({ data, darkMode, chartTheme, liveDataEnabled }) => {
             Candles with SMA overlays
           </p>
         </div>
-        <button
-          type="button"
-          className="btn-secondary text-xs"
-          onClick={() => setIsReplaying(true)}
-          disabled={!canReplay}
-        >
-          {isReplaying ? "Replaying..." : "Replay"}
-        </button>
       </div>
       <div ref={containerRef} className="w-full h-[420px] md:h-[500px]" />
     </div>
@@ -182,7 +129,6 @@ PriceChart.propTypes = {
       }),
     ).isRequired,
   }).isRequired,
-  darkMode: PropTypes.bool.isRequired,
   chartTheme: PropTypes.shape({
     background: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
@@ -192,11 +138,6 @@ PriceChart.propTypes = {
     sma14: PropTypes.string.isRequired,
     sma50: PropTypes.string.isRequired,
   }).isRequired,
-  liveDataEnabled: PropTypes.bool,
-};
-
-PriceChart.defaultProps = {
-  liveDataEnabled: false,
 };
 
 export default PriceChart;

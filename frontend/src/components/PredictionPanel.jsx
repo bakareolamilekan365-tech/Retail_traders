@@ -10,26 +10,44 @@ const PredictionPanel = ({ prediction }) => {
 
   return (
     <div className="card p-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-            Model Signal
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm uppercase tracking-wide text-[var(--app-muted)]">
+              Model Signal
+            </h3>
+            <span
+              title="The model signal maps the predicted 7-day return into BUY, HOLD, or SELL."
+              aria-label="Model signal explanation"
+              className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--app-border)] text-xs text-[var(--app-muted)]"
+            >
+              ?
+            </span>
+          </div>
           <span
             className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${signalColor}`}
           >
             {prediction.signal}
           </span>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-slate-500 dark:text-slate-400">Expected 7-day return</p>
+        <div className="sm:text-right">
+          <p className="text-sm text-[var(--app-muted)]">Expected 7-day return</p>
           <p className="text-2xl font-semibold text-[var(--app-text)]">
             {prediction.expected_return_7d.toFixed(2)}%
           </p>
         </div>
       </div>
       <div className="mt-4">
-        <p className="text-sm text-slate-500 dark:text-slate-400">Confidence</p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm text-[var(--app-muted)]">Confidence</p>
+          <span
+            title="Confidence estimates how strongly the predicted return clears the trading threshold."
+            aria-label="Confidence explanation"
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--app-border)] text-xs text-[var(--app-muted)]"
+          >
+            ?
+          </span>
+        </div>
         <div className="mt-2 h-2 w-full rounded-full bg-slate-200 dark:bg-slate-700">
           <div
             className="h-2 rounded-full bg-[var(--app-accent)]"

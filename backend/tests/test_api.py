@@ -82,6 +82,46 @@ def test_predict_valid_asset_returns_shape_and_logs(test_app: TestClient) -> Non
     assert count == 1
 
 
+def test_prediction_history_returns_authenticated_user_rows(test_app: TestClient) -> None:
+    db_path = test_app.app.state.database_path
+    with sqlite3.connect(db_path) as connection:
+        connection.execute(
+            """
+            CREATE TABLE prediction_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                asset TEXT NOT NULL,
+                signal TEXT NOT NULL,
+                expected_return REAL NOT NULL,
+                confidence REAL NOT NULL,
+                timestamp TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            INSERT INTO prediction_log (user_id, asset, signal, expected_return, confidence, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (1, "BTC", "BUY", 2.5, 0.75, "2024-01-02T00:00:00"),
+        )
+        connection.execute(
+            """
+            INSERT INTO prediction_log (user_id, asset, signal, expected_return, confidence, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (2, "ETH", "SELL", -2.5, 0.72, "2024-01-03T00:00:00"),
+        )
+        connection.commit()
+
+    response = test_app.get("/api/v1/predictions/history", headers=_auth_headers())
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload) == 1
+    assert payload[0]["asset"] == "BTC"
+    assert payload[0]["signal"] == "BUY"
+
+
 def test_predict_invalid_asset_returns_404(test_app: TestClient) -> None:
     response = test_app.get("/api/v1/predict?asset=INVALID&days=5", headers=_auth_headers())
     assert response.status_code == 404

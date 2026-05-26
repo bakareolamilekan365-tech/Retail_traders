@@ -1,92 +1,138 @@
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useState } from "react";
+import PropTypes from "prop-types";
+import heroImage from "../assets/hero.png";
 
 const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = (event) => {
-    event.preventDefault()
-    onSubmit({ username: username.trim(), password })
-  }
+    event.preventDefault();
+    onSubmit({ username: username.trim(), password });
+  };
 
   return (
-    <div className="card w-full max-w-md p-6">
-      <h2 className="text-2xl font-semibold text-[var(--app-text)]">Welcome back</h2>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Sign in to continue.</p>
-
-      {error && (
-        <div className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-200">
-          {error}
-        </div>
-      )}
-
-      <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <label
-            className="text-sm font-medium text-slate-700 dark:text-slate-300"
-            htmlFor="login-username"
-          >
-            Username
-          </label>
-          <input
-            id="login-username"
-            type="text"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-            placeholder="e.g. demo"
-            required
+    <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] shadow-2xl lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="relative min-h-[360px] bg-slate-950 p-6 text-white sm:p-8">
+        <div className="absolute inset-0 opacity-40">
+          <img
+            src={heroImage}
+            alt=""
+            className="h-full w-full object-cover"
           />
         </div>
-
-        <div>
-          <label
-            className="text-sm font-medium text-slate-700 dark:text-slate-300"
-            htmlFor="login-password"
-          >
-            Password
-          </label>
-          <input
-            id="login-password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-            placeholder="Your password"
-            required
-          />
+        <div className="relative flex h-full flex-col justify-between gap-8">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-300">
+              TradeSense NG
+            </p>
+            <h2 className="mt-4 max-w-xl text-3xl font-semibold leading-tight sm:text-4xl">
+              AI-Powered Investment Signals for Nigerian Retail Traders.
+            </h2>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-200">
+              Analyze NGX equities and major cryptocurrencies with model-backed
+              signals, explainable indicators, and recent prediction history.
+            </p>
+          </div>
+          <div className="grid gap-3 text-sm sm:grid-cols-3">
+            <div className="rounded-lg border border-white/15 bg-white/10 p-3">
+              NGX equities
+            </div>
+            <div className="rounded-lg border border-white/15 bg-white/10 p-3">
+              Major crypto
+            </div>
+            <div className="rounded-lg border border-white/15 bg-white/10 p-3">
+              Explainable AI
+            </div>
+          </div>
         </div>
+      </div>
 
-        <button type="submit" className="btn-primary w-full" disabled={loading}>
-          {loading ? 'Signing in...' : 'Sign In'}
-        </button>
-      </form>
+      <div className="p-6 sm:p-8">
+        <h3 className="text-2xl font-semibold text-[var(--app-text)]">
+          Sign in
+        </h3>
+        <p className="mt-2 text-sm text-[var(--app-muted)]">
+          Access the Intelligent Investment Recommendation Assistant.
+        </p>
 
-      <div className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
-        New here?{' '}
-        <button
-          type="button"
-          className="font-semibold text-[var(--app-accent)]"
-          onClick={onSwitch}
-        >
-          Create an account
-        </button>
+        {error && (
+          <div className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-200">
+            {error}
+          </div>
+        )}
+
+        <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label
+              className="text-sm font-medium text-[var(--app-muted)]"
+              htmlFor="login-username"
+            >
+              Username
+            </label>
+            <input
+              id="login-username"
+              type="text"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-3 text-sm text-[var(--app-text)]"
+              placeholder="Enter your username"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              className="text-sm font-medium text-[var(--app-muted)]"
+              htmlFor="login-password"
+            >
+              Password
+            </label>
+            <input
+              id="login-password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-3 text-sm text-[var(--app-text)]"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          <p className="text-sm font-medium text-[var(--app-muted)]">
+            Demo account: demo / demo123
+          </p>
+
+          <button type="submit" className="btn-primary w-full py-3" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+
+        <div className="mt-5 text-center text-sm text-[var(--app-muted)]">
+          New here?{" "}
+          <button
+            type="button"
+            className="font-semibold text-[var(--app-accent)]"
+            onClick={onSwitch}
+          >
+            Create an account
+          </button>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 LoginForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   onSwitch: PropTypes.func.isRequired,
   loading: PropTypes.bool,
   error: PropTypes.string,
-}
+};
 
 LoginForm.defaultProps = {
   loading: false,
-  error: '',
-}
+  error: "",
+};
 
-export default LoginForm
+export default LoginForm;

@@ -9,7 +9,7 @@ import PredictionPanel from './PredictionPanel.jsx'
 import InsightBar from './InsightBar.jsx'
 import TimeRangeSelector from './TimeRangeSelector.jsx'
 
-const Dashboard = ({ darkMode, chartTheme }) => {
+const Dashboard = ({ darkMode, chartTheme, onPredictionGenerated = () => {} }) => {
   const [assets, setAssets] = useState([])
   const [selectedAsset, setSelectedAsset] = useState('BTC')
   const [predictionData, setPredictionData] = useState(null)
@@ -48,6 +48,7 @@ const Dashboard = ({ darkMode, chartTheme }) => {
       const data = await response.json()
       setPredictionData(data)
       setLastRefresh(new Date())
+      onPredictionGenerated()
     } catch (err) {
       setError(err.message)
       setPredictionData(null)
@@ -84,9 +85,9 @@ const Dashboard = ({ darkMode, chartTheme }) => {
         onSelect={setSelectedAsset}
       />
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
-        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+        <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--app-muted)]">
           <button
             type="button"
             onClick={() => fetchPrediction()}
@@ -109,12 +110,12 @@ const Dashboard = ({ darkMode, chartTheme }) => {
 
       {loading && !predictionData ? (
         <div data-testid="dashboard-loading" className="space-y-6">
-          <div className="h-96 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse" />
+          <div className="h-96 rounded-lg bg-slate-200 dark:bg-slate-700 animate-pulse" />
           <div className="grid gap-6 md:grid-cols-3">
             {[1, 2, 3].map((item) => (
               <div
                 key={item}
-                className="h-32 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse"
+                className="h-32 rounded-lg bg-slate-200 dark:bg-slate-700 animate-pulse"
               />
             ))}
           </div>
@@ -132,7 +133,7 @@ const Dashboard = ({ darkMode, chartTheme }) => {
           )}
         </div>
       ) : (
-        <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-card)] px-6 py-12 text-center">
+        <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-6 py-12 text-center">
           <p className="text-slate-600 dark:text-slate-400">
             Select an asset to view analysis.
           </p>
@@ -153,6 +154,7 @@ Dashboard.propTypes = {
     sma14: PropTypes.string.isRequired,
     sma50: PropTypes.string.isRequired,
   }).isRequired,
+  onPredictionGenerated: PropTypes.func,
 }
 
 export default Dashboard

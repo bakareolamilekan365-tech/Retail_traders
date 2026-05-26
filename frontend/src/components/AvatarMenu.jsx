@@ -15,7 +15,7 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
       <button
         type="button"
         aria-label="Open user menu"
-        className="flex items-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] p-1 dark:border-slate-700 dark:bg-slate-900"
+        className="flex items-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] p-1"
         onClick={() => setOpen((prev) => !prev)}
       >
         <img
@@ -26,10 +26,10 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl border border-[var(--app-border)] bg-[var(--app-card)] shadow-xl dark:border-slate-700 dark:bg-slate-900">
+        <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] shadow-xl">
           <div className="px-4 py-3">
             <p className="text-sm font-semibold text-[var(--app-text)]">
-              {username} – {roleLabel}
+              {username} - {roleLabel}
             </p>
             <div className="mt-1 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />

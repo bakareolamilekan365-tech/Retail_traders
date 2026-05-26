@@ -6,7 +6,9 @@ describe('PredictionHistory', () => {
   it('renders empty state', () => {
     render(<PredictionHistory history={[]} />)
 
-    expect(screen.getByText(/no prediction history yet/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/no prediction history yet\. select an asset to generate your first signal/i)
+    ).toBeInTheDocument()
   })
 
   it('renders prediction rows', () => {

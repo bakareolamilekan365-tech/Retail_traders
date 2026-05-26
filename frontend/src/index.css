@@ -3,12 +3,15 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
-  --app-bg: #0b1220;
-  --app-card: #111b2e;
-  --app-accent: #3b82f6;
-  --app-text: #e5e7eb;
-  --app-border: rgba(148, 163, 184, 0.2);
+  color-scheme: dark;
+  --app-bg: #050816;
+  --app-card: #0f172a;
+  --app-accent: #22c55e;
+  --app-text: #e2e8f0;
+  --app-muted: #94a3b8;
+  --app-border: rgba(148, 163, 184, 0.22);
+  --app-success: #22c55e;
+  --app-danger: #ef4444;
 }
 
 .dark {
@@ -34,7 +37,7 @@ body {
 }
 
 .card {
-  @apply rounded-2xl shadow-sm ring-1;
+  @apply rounded-lg shadow-sm ring-1;
   background-color: var(--app-card);
   color: var(--app-text);
   --tw-ring-color: var(--app-border);
@@ -61,13 +64,8 @@ body {
   filter: brightness(1.05);
 }
 
-/* Dark variants for buttons when Tailwind classes not present */
-.dark .btn-primary {
-  background-color: theme("colors.slate.700");
-  color: theme("colors.white");
-}
 .dark .btn-secondary {
-  background-color: theme("colors.slate.800");
-  color: theme("colors.slate.100");
-  border-color: theme("colors.slate.700");
+  background-color: var(--app-card);
+  color: var(--app-text);
+  border-color: var(--app-border);
 }

@@ -1,81 +1,45 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import LoginForm from "./components/LoginForm.jsx";
 import RegisterForm from "./components/RegisterForm.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import PredictionHistory from "./components/PredictionHistory.jsx";
 import TopBar from "./components/TopBar.jsx";
+import AdminPanel from "./components/AdminPanel.jsx";
 import {
   changePassword,
   checkAdmin,
   clearToken,
   decodeTokenPayload,
+  fetchPredictionHistory,
   getToken,
   loginUser,
   registerUser,
 } from "./utils/api.js";
 
-const PRESETS = [
-  {
-    id: "premium",
-    name: "Premium Finance",
-    colors: {
-      bg: "#0B1220",
-      card: "#111B2E",
-      accent: "#3B82F6",
-      text: "#E5E7EB",
-      border: "rgba(148, 163, 184, 0.2)",
-      secondary: "#F97316",
-    },
+const THEME = {
+  dark: {
+    bg: "#050816",
+    card: "#0f172a",
+    accent: "#22c55e",
+    text: "#e2e8f0",
+    muted: "#94a3b8",
+    border: "rgba(148, 163, 184, 0.22)",
+    success: "#22c55e",
+    danger: "#ef4444",
+    secondary: "#38bdf8",
   },
-  {
-    id: "terminal",
-    name: "Dark Trading Terminal",
-    colors: {
-      bg: "#050816",
-      card: "#0F172A",
-      accent: "#22C55E",
-      text: "#E2E8F0",
-      border: "rgba(148, 163, 184, 0.18)",
-      secondary: "#38BDF8",
-    },
+  light: {
+    bg: "#f6f8fb",
+    card: "#ffffff",
+    accent: "#047857",
+    text: "#102033",
+    muted: "#64748b",
+    border: "rgba(15, 23, 42, 0.14)",
+    success: "#059669",
+    danger: "#dc2626",
+    secondary: "#0369a1",
   },
-  {
-    id: "institutional",
-    name: "Institutional Analytics",
-    colors: {
-      bg: "#0F172A",
-      card: "#1E293B",
-      accent: "#A855F7",
-      text: "#F8FAFC",
-      border: "rgba(148, 163, 184, 0.2)",
-      secondary: "#F59E0B",
-    },
-  },
-  {
-    id: "saas",
-    name: "Clean SaaS",
-    colors: {
-      bg: "#F8FAFC",
-      card: "#FFFFFF",
-      accent: "#2563EB",
-      text: "#0F172A",
-      border: "rgba(15, 23, 42, 0.12)",
-      secondary: "#14B8A6",
-    },
-  },
-  {
-    id: "market",
-    name: "Modern Market Intelligence",
-    colors: {
-      bg: "#08111F",
-      card: "#121C2E",
-      accent: "#F97316",
-      text: "#E5E7EB",
-      border: "rgba(148, 163, 184, 0.2)",
-      secondary: "#84CC16",
-    },
-  },
-];
+};
 
 const toRgba = (hex, alpha) => {
   const cleanHex = hex.replace("#", "");
@@ -85,6 +49,46 @@ const toRgba = (hex, alpha) => {
   const b = bigint & 255;
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
+
+const QuickGuideModal = ({ onClose }) => (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="quick-guide-title"
+  >
+    <div className="w-full max-w-lg rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] p-6 shadow-2xl">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--app-accent)]">
+            Quick Guide
+          </p>
+          <h2
+            id="quick-guide-title"
+            className="mt-1 text-xl font-semibold text-[var(--app-text)]"
+          >
+            Reading your signal dashboard
+          </h2>
+        </div>
+        <button
+          type="button"
+          aria-label="Close quick guide"
+          onClick={onClose}
+          className="rounded-full border border-[var(--app-border)] px-3 py-1 text-sm text-[var(--app-muted)]"
+        >
+          Close
+        </button>
+      </div>
+      <ol className="mt-5 space-y-3 text-sm text-[var(--app-muted)]">
+        <li>1. Choose an NGX equity or major cryptocurrency from the asset control.</li>
+        <li>2. Read the candlestick chart and SMA overlays for recent price direction.</li>
+        <li>3. Check RSI, volatility, and crossover indicators for momentum and risk.</li>
+        <li>4. Review the model signal, expected return, and confidence explanation.</li>
+        <li>5. Open History to audit your recent generated signals.</li>
+      </ol>
+    </div>
+  </div>
+);
 
 const App = () => {
   const [token, setToken] = useState(getToken());
@@ -102,32 +106,60 @@ const App = () => {
     success: "",
   });
   const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem("theme") === "dark",
-  );
-  const [presetId, setPresetId] = useState(
-    () => localStorage.getItem("preset") || "premium",
+    () => localStorage.getItem("theme") !== "light",
   );
   const [activeTab, setActiveTab] = useState("dashboard");
   const [adminChecked, setAdminChecked] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
+  const [showDemoBanner, setShowDemoBanner] = useState(true);
+  const [showQuickGuide, setShowQuickGuide] = useState(false);
 
   const isAuthenticated = useMemo(() => Boolean(token), [token]);
-  const activePreset = useMemo(
-    () => PRESETS.find((preset) => preset.id === presetId) || PRESETS[0],
-    [presetId],
-  );
+  const activeTheme = darkMode ? THEME.dark : THEME.light;
 
   const chartTheme = useMemo(() => {
-    const grid = toRgba(activePreset.colors.text, darkMode ? 0.16 : 0.12);
+    const grid = toRgba(activeTheme.text, darkMode ? 0.16 : 0.12);
     return {
-      background: activePreset.colors.card,
-      text: activePreset.colors.text,
+      background: activeTheme.card,
+      text: activeTheme.text,
       grid,
-      upColor: activePreset.colors.accent,
-      downColor: "#ef4444",
-      sma14: activePreset.colors.accent,
-      sma50: activePreset.colors.secondary,
+      upColor: activeTheme.success,
+      downColor: activeTheme.danger,
+      sma14: activeTheme.accent,
+      sma50: activeTheme.secondary,
     };
-  }, [activePreset, darkMode]);
+  }, [activeTheme, darkMode]);
+
+  const tabs = useMemo(() => {
+    const visibleTabs = [
+      { id: "dashboard", label: "Dashboard" },
+      { id: "history", label: "History" },
+      { id: "settings", label: "Settings" },
+    ];
+    if (adminChecked && user.isAdmin) {
+      visibleTabs.push({ id: "admin", label: "Admin" });
+    }
+    return visibleTabs;
+  }, [adminChecked, user.isAdmin]);
+
+  const loadHistory = useCallback(async () => {
+    setHistoryLoading(true);
+    setHistoryError("");
+    try {
+      const rows = await fetchPredictionHistory();
+      setHistory(rows);
+    } catch (error) {
+      setHistoryError(error.message);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.title = "TradeSense NG | AI Investment Signals";
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -152,20 +184,39 @@ const App = () => {
   }, [token]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
+    if (adminChecked && !user.isAdmin && activeTab === "admin") {
+      setActiveTab("dashboard");
+    }
+  }, [activeTab, adminChecked, user.isAdmin]);
 
   useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
+
     const root = document.documentElement;
-    root.style.setProperty("--app-bg", activePreset.colors.bg);
-    root.style.setProperty("--app-card", activePreset.colors.card);
-    root.style.setProperty("--app-accent", activePreset.colors.accent);
-    root.style.setProperty("--app-text", activePreset.colors.text);
-    root.style.setProperty("--app-border", activePreset.colors.border);
-    root.dataset.preset = activePreset.id;
-    localStorage.setItem("preset", activePreset.id);
-  }, [activePreset]);
+    root.style.setProperty("--app-bg", activeTheme.bg);
+    root.style.setProperty("--app-card", activeTheme.card);
+    root.style.setProperty("--app-accent", activeTheme.accent);
+    root.style.setProperty("--app-text", activeTheme.text);
+    root.style.setProperty("--app-muted", activeTheme.muted);
+    root.style.setProperty("--app-border", activeTheme.border);
+    root.style.setProperty("--app-success", activeTheme.success);
+    root.style.setProperty("--app-danger", activeTheme.danger);
+    root.dataset.theme = darkMode ? "dark-trading-terminal" : "light-trading-terminal";
+  }, [activeTheme, darkMode]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    if (localStorage.getItem("quickGuideDismissed") !== "true") {
+      setShowQuickGuide(true);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated && activeTab === "history") {
+      loadHistory();
+    }
+  }, [activeTab, isAuthenticated, loadHistory]);
 
   const handleLogin = async ({ username, password }) => {
     setAuthLoading(true);
@@ -173,6 +224,7 @@ const App = () => {
     try {
       await loginUser({ username, password });
       setToken(getToken());
+      setShowDemoBanner(true);
       setActiveTab("dashboard");
     } catch (error) {
       setAuthError(error.message);
@@ -187,6 +239,7 @@ const App = () => {
     try {
       await registerUser({ username, email, password });
       setToken(getToken());
+      setShowDemoBanner(true);
       setActiveTab("dashboard");
     } catch (error) {
       setAuthError(error.message);
@@ -202,7 +255,14 @@ const App = () => {
     setPasswordForm({ oldPassword: "", newPassword: "" });
     setPasswordStatus({ error: "", success: "" });
     setShowChangePassword(false);
+    setShowQuickGuide(false);
     setActiveTab("dashboard");
+    setHistory([]);
+  };
+
+  const dismissQuickGuide = () => {
+    localStorage.setItem("quickGuideDismissed", "true");
+    setShowQuickGuide(false);
   };
 
   const handleChangePassword = async (event) => {
@@ -224,18 +284,9 @@ const App = () => {
     }
   };
 
-  const tabs = [
-    { id: "dashboard", label: "Dashboard" },
-    { id: "history", label: "History" },
-    { id: "settings", label: "Settings" },
-  ];
-
   return (
     <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] transition-colors">
       <TopBar
-        presets={PRESETS}
-        activePresetId={activePreset.id}
-        onPresetChange={setPresetId}
         darkMode={darkMode}
         onToggleDarkMode={() => setDarkMode((prev) => !prev)}
         user={{ username: user.username || "user", isAdmin: user.isAdmin }}
@@ -251,31 +302,40 @@ const App = () => {
 
       {isAuthenticated && (
         <div className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
-          <div className="mx-auto flex max-w-7xl flex-wrap gap-2 px-6 py-3">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                    isActive
-                      ? "bg-[var(--app-accent)] text-white"
-                      : "border border-[var(--app-border)] text-slate-600 dark:text-slate-300"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+            <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                      isActive
+                        ? "bg-[var(--app-accent)] text-white"
+                        : "border border-[var(--app-border)] text-[var(--app-muted)]"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              className="btn-secondary shrink-0"
+              onClick={() => setShowQuickGuide(true)}
+            >
+              Quick Guide
+            </button>
           </div>
         </div>
       )}
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
         {!isAuthenticated ? (
-          <div className="flex justify-center">
+          <div className="flex min-h-[calc(100vh-120px)] items-center justify-center">
             {authView === "login" ? (
               <LoginForm
                 onSubmit={handleLogin}
@@ -294,12 +354,48 @@ const App = () => {
           </div>
         ) : (
           <div className="space-y-6">
+            {showDemoBanner && (
+              <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-4 py-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm font-medium text-[var(--app-text)]">
+                    Welcome back, Demo Trader. Your signal dashboard is ready.
+                  </p>
+                  <button
+                    type="button"
+                    aria-label="Dismiss welcome banner"
+                    onClick={() => setShowDemoBanner(false)}
+                    className="self-start text-sm font-semibold text-[var(--app-accent)] sm:self-auto"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3 rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-4 py-3 text-sm text-[var(--app-muted)] sm:flex-row sm:items-center sm:justify-between">
+              <span>This is an educational tool, not financial advice.</span>
+              <span className="inline-flex w-fit rounded-full border border-[var(--app-border)] px-3 py-1 text-xs font-semibold text-[var(--app-text)]">
+                Historical dataset: 2022-2024
+              </span>
+            </div>
+
             {activeTab === "dashboard" && (
-              <Dashboard darkMode={darkMode} chartTheme={chartTheme} />
+              <Dashboard
+                darkMode={darkMode}
+                chartTheme={chartTheme}
+                onPredictionGenerated={() => {
+                  if (activeTab === "history") loadHistory();
+                }}
+              />
             )}
 
             {activeTab === "history" && (
-              <PredictionHistory history={[]} loading={false} />
+              <PredictionHistory
+                history={history}
+                loading={historyLoading}
+                error={historyError}
+                onRefresh={loadHistory}
+              />
             )}
 
             {activeTab === "settings" && (
@@ -315,7 +411,7 @@ const App = () => {
                     >
                       <div>
                         <label
-                          className="text-sm font-medium text-slate-600 dark:text-slate-300"
+                          className="text-sm font-medium text-[var(--app-muted)]"
                           htmlFor="old-password"
                         >
                           Current password
@@ -330,13 +426,13 @@ const App = () => {
                               oldPassword: event.target.value,
                             }))
                           }
-                          className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                          className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
                           required
                         />
                       </div>
                       <div>
                         <label
-                          className="text-sm font-medium text-slate-600 dark:text-slate-300"
+                          className="text-sm font-medium text-[var(--app-muted)]"
                           htmlFor="new-password"
                         >
                           New password
@@ -351,7 +447,7 @@ const App = () => {
                               newPassword: event.target.value,
                             }))
                           }
-                          className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                          className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
                           required
                         />
                       </div>
@@ -360,7 +456,7 @@ const App = () => {
                           {passwordStatus.error}
                         </div>
                       )}
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3">
                         <button type="submit" className="btn-primary">
                           Update password
                         </button>
@@ -376,9 +472,8 @@ const App = () => {
                   </div>
                 ) : (
                   <div className="card p-6">
-                    <p className="text-sm text-slate-600 dark:text-slate-300">
-                      Use the profile menu to update your password and
-                      preferences.
+                    <p className="text-sm text-[var(--app-muted)]">
+                      Use the profile menu to update your password and preferences.
                     </p>
                   </div>
                 )}
@@ -391,20 +486,12 @@ const App = () => {
               </div>
             )}
 
-            {activeTab === "admin" && (
-              <div className="card p-6">
-                <h3 className="text-lg font-semibold text-[var(--app-text)]">
-                  Admin Center
-                </h3>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-                  Admin analytics and system controls will appear here once
-                  wired to the backend.
-                </p>
-              </div>
-            )}
+            {activeTab === "admin" && adminChecked && user.isAdmin && <AdminPanel />}
           </div>
         )}
       </main>
+
+      {showQuickGuide && <QuickGuideModal onClose={dismissQuickGuide} />}
     </div>
   );
 };

@@ -102,6 +102,15 @@ const checkAdmin = async () => {
   return true
 }
 
+const fetchPredictionHistory = async () => {
+  const response = await apiFetch('/predictions/history', { method: 'GET' })
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}))
+    throw new Error(payload.detail || 'Failed to load prediction history')
+  }
+  return response.json()
+}
+
 export {
   API_BASE,
   apiFetch,
@@ -109,6 +118,7 @@ export {
   registerUser,
   changePassword,
   checkAdmin,
+  fetchPredictionHistory,
   decodeTokenPayload,
   getToken,
   setToken,

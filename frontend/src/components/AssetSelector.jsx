@@ -1,78 +1,89 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import PropTypes from 'prop-types'
+import { useEffect, useMemo, useRef, useState } from "react";
+import PropTypes from "prop-types";
 
 const DEFAULT_ASSETS = [
-  { symbol: 'BTC', name: 'Bitcoin', asset_type: 'crypto' },
-  { symbol: 'ETH', name: 'Ethereum', asset_type: 'crypto' },
-  { symbol: 'BNB', name: 'Binance Coin', asset_type: 'crypto' },
-  { symbol: 'SOL', name: 'Solana', asset_type: 'crypto' },
-  { symbol: 'ADA', name: 'Cardano', asset_type: 'crypto' },
-  { symbol: 'DANGCEM', name: 'Dangote Cement', asset_type: 'ngx' },
-  { symbol: 'MTNN', name: 'MTN Nigeria', asset_type: 'ngx' },
-  { symbol: 'AIRTELAFRI', name: 'Airtel Africa', asset_type: 'ngx' },
-  { symbol: 'BUACEMENT', name: 'BUA Cement', asset_type: 'ngx' },
-  { symbol: 'GTCO', name: 'Guaranty Trust Holding', asset_type: 'ngx' },
-  { symbol: 'ZENITHBANK', name: 'Zenith Bank', asset_type: 'ngx' },
-  { symbol: 'SEPLAT', name: 'Seplat Energy', asset_type: 'ngx' },
-  { symbol: 'NB', name: 'Nigerian Breweries', asset_type: 'ngx' },
-  { symbol: 'FBNH', name: 'FBN Holdings', asset_type: 'ngx' },
-  { symbol: 'ACCESSCORP', name: 'Access Holdings', asset_type: 'ngx' },
-]
+  { symbol: "BTC", name: "Bitcoin", asset_type: "crypto" },
+  { symbol: "ETH", name: "Ethereum", asset_type: "crypto" },
+  { symbol: "BNB", name: "Binance Coin", asset_type: "crypto" },
+  { symbol: "SOL", name: "Solana", asset_type: "crypto" },
+  { symbol: "ADA", name: "Cardano", asset_type: "crypto" },
+  { symbol: "DANGCEM", name: "Dangote Cement", asset_type: "ngx" },
+  { symbol: "MTNN", name: "MTN Nigeria", asset_type: "ngx" },
+  { symbol: "AIRTELAFRI", name: "Airtel Africa", asset_type: "ngx" },
+  { symbol: "BUACEMENT", name: "BUA Cement", asset_type: "ngx" },
+  { symbol: "GTCO", name: "Guaranty Trust Holding", asset_type: "ngx" },
+  { symbol: "ZENITHBANK", name: "Zenith Bank", asset_type: "ngx" },
+  { symbol: "SEPLAT", name: "Seplat Energy", asset_type: "ngx" },
+  { symbol: "NB", name: "Nigerian Breweries", asset_type: "ngx" },
+  { symbol: "FBNH", name: "FBN Holdings", asset_type: "ngx" },
+  { symbol: "ACCESSCORP", name: "Access Holdings", asset_type: "ngx" },
+];
 
 const AssetSelector = ({
   assets: providedAssets,
   selectedAsset,
   onSelect,
-  category = 'All',
-  risk = 'All',
+  category = "All",
+  risk = "All",
 }) => {
-  const assets = providedAssets?.length ? providedAssets : DEFAULT_ASSETS
-  const [searchQuery, setSearchQuery] = useState('')
-  const [isOpen, setIsOpen] = useState(false)
-  const containerRef = useRef(null)
+  const assets = providedAssets?.length ? providedAssets : DEFAULT_ASSETS;
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(category);
+  const [selectedRisk, setSelectedRisk] = useState(risk);
+  const containerRef = useRef(null);
 
   const selected = useMemo(
     () => assets.find((asset) => asset.symbol === selectedAsset),
-    [assets, selectedAsset]
-  )
+    [assets, selectedAsset],
+  );
 
   const filteredAssets = useMemo(() => {
-    const query = (searchQuery || '').trim().toLowerCase()
+    const query = (searchQuery || "").trim().toLowerCase();
     return assets.filter((asset) => {
-      const symbol = (asset.symbol || '').toLowerCase()
-      const name = (asset.name || '').toLowerCase()
-      const matchesQuery = !query || symbol.includes(query) || name.includes(query)
-      const matchesCategory = category === 'All' || asset.category === category || asset.asset_type === category.toLowerCase()
-      return matchesQuery && matchesCategory
-    })
-  }, [assets, searchQuery, category])
+      const symbol = (asset.symbol || "").toLowerCase();
+      const name = (asset.name || "").toLowerCase();
+      const matchesQuery =
+        !query || symbol.includes(query) || name.includes(query);
+      const matchesCategory =
+        selectedCategory === "All" ||
+        asset.category === selectedCategory ||
+        asset.asset_type === selectedCategory.toLowerCase();
+      return matchesQuery && matchesCategory;
+    });
+  }, [assets, searchQuery, selectedCategory]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setIsOpen(false)
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSelect = (asset) => {
-    onSelect(asset.symbol)
-    setIsOpen(false)
-  }
+    onSelect(asset.symbol);
+    setIsOpen(false);
+  };
 
   return (
     <div className="space-y-3">
       <div>
-        <h2 className="text-lg font-semibold text-[var(--app-text)]">Asset Overview</h2>
+        <h2 className="text-lg font-semibold text-[var(--app-text)]">
+          Asset Overview
+        </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400">
           Choose an asset to load its chart and signal.
         </p>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <div className="relative" ref={containerRef}>
           <label className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
             Asset
@@ -85,19 +96,21 @@ const AssetSelector = ({
             value={searchQuery}
             placeholder="Search assets..."
             onChange={(event) => {
-              setSearchQuery(event.target.value)
-              setIsOpen(true)
+              setSearchQuery(event.target.value);
+              setIsOpen(true);
             }}
             onFocus={() => {
-              setSearchQuery('')
-              setIsOpen(true)
+              setSearchQuery("");
+              setIsOpen(true);
             }}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
           {isOpen && (
             <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
               {filteredAssets.length === 0 ? (
-                <div className="px-3 py-2 text-sm text-slate-500 dark:text-slate-400">No matches found.</div>
+                <div className="px-3 py-2 text-sm text-slate-500 dark:text-slate-400">
+                  No matches found.
+                </div>
               ) : (
                 filteredAssets.map((asset) => (
                   <button
@@ -115,12 +128,16 @@ const AssetSelector = ({
         </div>
 
         <div>
-          <label className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+          <label
+            className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400"
+            htmlFor="asset-category"
+          >
             Category
           </label>
           <select
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
+            id="asset-category"
+            value={selectedCategory}
+            onChange={(event) => setSelectedCategory(event.target.value)}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           >
             <option value="All">All</option>
@@ -130,12 +147,16 @@ const AssetSelector = ({
         </div>
 
         <div>
-          <label className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+          <label
+            className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400"
+            htmlFor="asset-risk"
+          >
             Risk
           </label>
           <select
-            value={risk}
-            onChange={(event) => setRisk(event.target.value)}
+            id="asset-risk"
+            value={selectedRisk}
+            onChange={(event) => setSelectedRisk(event.target.value)}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           >
             <option value="All">All</option>
@@ -152,8 +173,8 @@ const AssetSelector = ({
         </p>
       )}
     </div>
-  )
-}
+  );
+};
 
 AssetSelector.propTypes = {
   assets: PropTypes.arrayOf(
@@ -162,19 +183,19 @@ AssetSelector.propTypes = {
       name: PropTypes.string.isRequired,
       asset_type: PropTypes.string,
       category: PropTypes.string,
-    })
+    }),
   ),
   selectedAsset: PropTypes.string,
   onSelect: PropTypes.func.isRequired,
   category: PropTypes.string,
   risk: PropTypes.string,
-}
+};
 
 AssetSelector.defaultProps = {
   assets: DEFAULT_ASSETS,
-  selectedAsset: '',
-  category: 'All',
-  risk: 'All',
-}
+  selectedAsset: "",
+  category: "All",
+  risk: "All",
+};
 
-export default AssetSelector
+export default AssetSelector;

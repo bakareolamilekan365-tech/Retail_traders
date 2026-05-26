@@ -1,12 +1,8 @@
 import PropTypes from "prop-types";
 
 import AvatarMenu from "./AvatarMenu.jsx";
-import PresetSwitcher from "./PresetSwitcher.jsx";
 
 const TopBar = ({
-  presets,
-  activePresetId,
-  onPresetChange,
   darkMode,
   onToggleDarkMode,
   user,
@@ -18,26 +14,21 @@ const TopBar = ({
 }) => {
   return (
     <header className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-            Investment Assistant
-          </p>
-          <h1 className="text-xl font-semibold text-[var(--app-text)]">
-            Investment Assistant
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold text-[var(--app-text)] sm:text-2xl">
+            TradeSense NG
           </h1>
+          <p className="mt-1 text-sm font-medium text-[var(--app-muted)]">
+            AI Investment Signals
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <PresetSwitcher
-            presets={presets}
-            activePresetId={activePresetId}
-            onChange={onPresetChange}
-          />
+        <div className="flex flex-wrap items-center gap-3">
           {adminChecked && user.isAdmin && (
             <button
               type="button"
               onClick={onAdminClick}
-              className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 dark:text-slate-200 border border-[var(--app-border)] bg-[var(--app-card)]"
+              className="rounded-full border border-[var(--app-border)] bg-[var(--app-card)] px-3 py-2 text-sm font-semibold text-[var(--app-text)]"
             >
               Admin
             </button>
@@ -46,7 +37,7 @@ const TopBar = ({
             type="button"
             aria-label="Toggle dark mode"
             onClick={onToggleDarkMode}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] text-slate-600 dark:text-slate-200"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-text)]"
           >
             {darkMode ? (
               <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -79,17 +70,6 @@ const TopBar = ({
 };
 
 TopBar.propTypes = {
-  presets: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      colors: PropTypes.shape({
-        accent: PropTypes.string.isRequired,
-      }).isRequired,
-    }),
-  ).isRequired,
-  activePresetId: PropTypes.string.isRequired,
-  onPresetChange: PropTypes.func.isRequired,
   darkMode: PropTypes.bool.isRequired,
   onToggleDarkMode: PropTypes.func.isRequired,
   user: PropTypes.shape({

@@ -26,4 +26,22 @@ describe("AssetSelector", () => {
     await user.click(screen.getByRole("button", { name: /eth · ethereum/i }));
     expect(handleSelect).toHaveBeenCalledWith("ETH");
   });
+
+  it("keeps category and risk dropdowns interactive", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <AssetSelector
+        assets={[{ symbol: "BTC", name: "Bitcoin", asset_type: "crypto" }]}
+        selectedAsset="BTC"
+        onSelect={() => {}}
+      />,
+    );
+
+    await user.selectOptions(screen.getByLabelText(/category/i), "Crypto");
+    await user.selectOptions(screen.getByLabelText(/risk/i), "Moderate");
+
+    expect(screen.getByLabelText(/category/i)).toHaveValue("Crypto");
+    expect(screen.getByLabelText(/risk/i)).toHaveValue("Moderate");
+  });
 });

@@ -19,6 +19,20 @@ describe('LoginForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith({ username: 'demo', password: 'demo123' })
   })
 
+  it('shows trading-focused copy and demo credentials outside inputs', () => {
+    render(
+      <LoginForm onSubmit={() => {}} onSwitch={() => {}} loading={false} error="" />
+    )
+
+    expect(
+      screen.getByText(/ai-powered investment signals for nigerian retail traders/i)
+    ).toBeInTheDocument()
+    expect(screen.getByText(/ngx equities and major cryptocurrencies/i)).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(/enter your username/i)).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(/enter your password/i)).toBeInTheDocument()
+    expect(screen.getByText(/demo account: demo \/ demo123/i)).toBeInTheDocument()
+  })
+
   it('shows an error message when provided', () => {
     render(
       <LoginForm

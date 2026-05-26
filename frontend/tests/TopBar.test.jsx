@@ -1,25 +1,40 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen } from "@testing-library/react";
 
-import TopBar from '../src/components/TopBar.jsx'
+import TopBar from "../src/components/TopBar.jsx";
 
-describe('TopBar', () => {
-  it('renders branding and controls', () => {
+describe("TopBar", () => {
+  it("renders branding and dark mode control", () => {
     render(
       <TopBar
-        presets={[{ id: 'premium', name: 'Premium Finance', colors: { accent: '#3b82f6' } }]}
-        activePresetId="premium"
-        onPresetChange={() => {}}
         darkMode={false}
         onToggleDarkMode={() => {}}
-        user={{ username: 'demo', isAdmin: false }}
+        user={{ username: "demo", isAdmin: false }}
         showAvatar={false}
         onLogout={() => {}}
         onChangePassword={() => {}}
-      />
-    )
+      />,
+    );
 
-    expect(screen.getByRole('heading', { name: /investment assistant/i })).toBeInTheDocument()
-    expect(screen.getByLabelText(/toggle dark mode/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/select color preset/i)).toBeInTheDocument()
-  })
-})
+    expect(screen.getByRole("heading", { name: /tradesense ng/i })).toBeInTheDocument();
+    expect(screen.getByText(/ai investment signals/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/toggle dark mode/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/select color preset/i)).not.toBeInTheDocument();
+  });
+
+  it("shows admin control only for confirmed admins", () => {
+    render(
+      <TopBar
+        darkMode
+        onToggleDarkMode={() => {}}
+        user={{ username: "admin", isAdmin: true }}
+        showAvatar={false}
+        adminChecked
+        onAdminClick={() => {}}
+        onLogout={() => {}}
+        onChangePassword={() => {}}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: /admin/i })).toBeInTheDocument();
+  });
+});
