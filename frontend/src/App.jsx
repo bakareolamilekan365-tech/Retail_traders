@@ -356,7 +356,7 @@ const App = () => {
           </div>
         ) : (
           <div className="space-y-6">
-            {showDemoBanner && (
+            {showDemoBanner && activeTab === "dashboard" && (
               <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-2.5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm font-medium text-[var(--app-text)]">

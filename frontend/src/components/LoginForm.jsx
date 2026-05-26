@@ -99,10 +99,6 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
             />
           </div>
 
-          <p className="text-sm font-medium text-[var(--app-muted)]">
-            Demo account: demo / demo123
-          </p>
-
           <button type="submit" className="btn-primary w-full py-3" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
           </button>

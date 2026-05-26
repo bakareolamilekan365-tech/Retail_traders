@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 
 const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
   const roleLabel = isAdmin ? "Administrator" : "Trader";
   const avatarUrl = useMemo(
     () =>
@@ -10,12 +11,23 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
     [username],
   );
 
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
       <button
         type="button"
         aria-label="Open user menu"
-        className="flex items-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] p-1"
+        className="flex items-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] p-1 text-[var(--app-text)]"
         onClick={() => setOpen((prev) => !prev)}
       >
         <img
@@ -26,12 +38,12 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] shadow-xl">
+        <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] shadow-xl dark:border-slate-700 dark:bg-slate-900">
           <div className="px-4 py-3">
             <p className="text-sm font-semibold text-[var(--app-text)]">
               {username} - {roleLabel}
             </p>
-            <div className="mt-1 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <div className="mt-1 flex items-center gap-2 text-xs text-[var(--app-muted)]">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               Online
             </div>
@@ -41,7 +53,7 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
             <button
               type="button"
               onClick={onChangePassword}
-              className="w-full rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="w-full rounded-lg px-3 py-2 text-left text-sm text-[var(--app-text)] transition hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               Change Password
             </button>
