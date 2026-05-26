@@ -92,7 +92,7 @@ const Dashboard = ({ darkMode, chartTheme, onPredictionGenerated = () => {} }) =
             type="button"
             onClick={() => fetchPrediction()}
             disabled={loading}
-            className="btn-secondary"
+            className="btn-secondary px-3 py-1.5"
           >
             {loading ? 'Refreshing...' : 'Refresh Now'}
           </button>
@@ -127,14 +127,14 @@ const Dashboard = ({ darkMode, chartTheme, onPredictionGenerated = () => {} }) =
           <PredictionPanel prediction={predictionData.prediction} />
           <InsightBar insight={predictionData.insight} />
           {lastRefresh && (
-            <div className="text-xs text-slate-500 dark:text-slate-400 text-right">
+            <div className="text-right text-xs font-medium text-[var(--app-muted)]">
               Last updated: {lastRefresh.toLocaleTimeString()}
             </div>
           )}
         </div>
       ) : (
         <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-6 py-12 text-center">
-          <p className="text-slate-600 dark:text-slate-400">
+          <p className="text-[var(--app-muted)]">
             Select an asset to view analysis.
           </p>
         </div>

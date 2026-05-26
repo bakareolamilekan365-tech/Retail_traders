@@ -21,20 +21,18 @@ describe("TopBar", () => {
     expect(screen.queryByLabelText(/select color preset/i)).not.toBeInTheDocument();
   });
 
-  it("shows admin control only for confirmed admins", () => {
+  it("does not render a duplicate standalone admin button", () => {
     render(
       <TopBar
         darkMode
         onToggleDarkMode={() => {}}
         user={{ username: "admin", isAdmin: true }}
         showAvatar={false}
-        adminChecked
-        onAdminClick={() => {}}
         onLogout={() => {}}
         onChangePassword={() => {}}
       />,
     );
 
-    expect(screen.getByRole("button", { name: /admin/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^admin$/i })).not.toBeInTheDocument();
   });
 });

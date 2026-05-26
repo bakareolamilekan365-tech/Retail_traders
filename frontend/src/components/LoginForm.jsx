@@ -27,22 +27,22 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
               TradeSense NG
             </p>
             <h2 className="mt-4 max-w-xl text-3xl font-semibold leading-tight sm:text-4xl">
-              AI-Powered Investment Signals for Nigerian Retail Traders.
+              AI-Powered Signals for NGX Stocks and Crypto
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-200">
-              Analyze NGX equities and major cryptocurrencies with model-backed
-              signals, explainable indicators, and recent prediction history.
+              Analyze historical price action, technical indicators, and
+              model-backed 7-day signals in one focused dashboard.
             </p>
           </div>
-          <div className="grid gap-3 text-sm sm:grid-cols-3">
-            <div className="rounded-lg border border-white/15 bg-white/10 p-3">
+          <div className="flex flex-wrap gap-2 text-sm">
+            <div className="rounded-full border border-white/15 bg-slate-950/35 px-3 py-1.5 text-slate-100 backdrop-blur">
               NGX equities
             </div>
-            <div className="rounded-lg border border-white/15 bg-white/10 p-3">
+            <div className="rounded-full border border-white/15 bg-slate-950/35 px-3 py-1.5 text-slate-100 backdrop-blur">
               Major crypto
             </div>
-            <div className="rounded-lg border border-white/15 bg-white/10 p-3">
-              Explainable AI
+            <div className="rounded-full border border-white/15 bg-slate-950/35 px-3 py-1.5 text-slate-100 backdrop-blur">
+              Model-backed signals
             </div>
           </div>
         </div>

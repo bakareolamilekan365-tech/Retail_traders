@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 const PredictionPanel = ({ prediction }) => {
   const signalColor =
     prediction.signal === 'BUY'
-      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200'
+      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200'
       : prediction.signal === 'SELL'
-        ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-200'
-        : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-200'
+        ? 'bg-red-50 text-red-800 ring-1 ring-red-200 dark:bg-red-500/20 dark:text-red-200 dark:ring-red-500/30'
+        : 'bg-amber-100 text-amber-800 dark:bg-yellow-500/20 dark:text-yellow-200'
 
   return (
     <div className="card p-5">
@@ -48,13 +48,13 @@ const PredictionPanel = ({ prediction }) => {
             ?
           </span>
         </div>
-        <div className="mt-2 h-2 w-full rounded-full bg-slate-200 dark:bg-slate-700">
+        <div className="mt-2 h-2 w-full rounded-full bg-slate-300 dark:bg-slate-700">
           <div
             className="h-2 rounded-full bg-[var(--app-accent)]"
             style={{ width: `${prediction.confidence * 100}%` }}
           />
         </div>
-        <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+        <p className="mt-1 text-xs font-medium text-[var(--app-muted)]">
           {(prediction.confidence * 100).toFixed(0)}% confidence
         </p>
       </div>

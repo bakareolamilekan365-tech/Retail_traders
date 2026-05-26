@@ -4,7 +4,7 @@ const InsightBar = ({ insight }) => {
   return (
     <div className="card p-4">
       <h3 className="text-sm font-semibold text-[var(--app-text)]">Insight</h3>
-      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{insight}</p>
+      <p className="mt-2 text-sm leading-6 text-[var(--app-muted)]">{insight}</p>
     </div>
   )
 }

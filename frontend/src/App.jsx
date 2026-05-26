@@ -29,15 +29,15 @@ const THEME = {
     secondary: "#38bdf8",
   },
   light: {
-    bg: "#f6f8fb",
+    bg: "#eef2f6",
     card: "#ffffff",
     accent: "#047857",
-    text: "#102033",
-    muted: "#64748b",
-    border: "rgba(15, 23, 42, 0.14)",
+    text: "#0f172a",
+    muted: "#334155",
+    border: "rgba(15, 23, 42, 0.24)",
     success: "#059669",
-    danger: "#dc2626",
-    secondary: "#0369a1",
+    danger: "#b91c1c",
+    secondary: "#075985",
   },
 };
 
@@ -202,6 +202,10 @@ const App = () => {
     root.style.setProperty("--app-border", activeTheme.border);
     root.style.setProperty("--app-success", activeTheme.success);
     root.style.setProperty("--app-danger", activeTheme.danger);
+    root.style.setProperty(
+      "--app-soft",
+      darkMode ? "rgba(34, 197, 94, 0.08)" : "rgba(4, 120, 87, 0.08)",
+    );
     root.dataset.theme = darkMode ? "dark-trading-terminal" : "light-trading-terminal";
   }, [activeTheme, darkMode]);
 
@@ -291,8 +295,6 @@ const App = () => {
         onToggleDarkMode={() => setDarkMode((prev) => !prev)}
         user={{ username: user.username || "user", isAdmin: user.isAdmin }}
         showAvatar={isAuthenticated && adminChecked}
-        adminChecked={adminChecked}
-        onAdminClick={() => setActiveTab("admin")}
         onLogout={handleLogout}
         onChangePassword={() => {
           setShowChangePassword(true);
@@ -314,7 +316,7 @@ const App = () => {
                     className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
                       isActive
                         ? "bg-[var(--app-accent)] text-white"
-                        : "border border-[var(--app-border)] text-[var(--app-muted)]"
+                        : "border border-[var(--app-border)] text-[var(--app-text)]"
                     }`}
                   >
                     {tab.label}
@@ -324,7 +326,7 @@ const App = () => {
             </div>
             <button
               type="button"
-              className="btn-secondary shrink-0"
+              className="btn-secondary shrink-0 px-3 py-1.5 text-xs"
               onClick={() => setShowQuickGuide(true)}
             >
               Quick Guide
@@ -355,7 +357,7 @@ const App = () => {
         ) : (
           <div className="space-y-6">
             {showDemoBanner && (
-              <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-4 py-3">
+              <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-2.5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm font-medium text-[var(--app-text)]">
                     Welcome back, Demo Trader. Your signal dashboard is ready.
@@ -372,7 +374,7 @@ const App = () => {
               </div>
             )}
 
-            <div className="flex flex-col gap-3 rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-4 py-3 text-sm text-[var(--app-muted)] sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 px-1 text-xs text-[var(--app-muted)] sm:flex-row sm:items-center sm:justify-between">
               <span>This is an educational tool, not financial advice.</span>
               <span className="inline-flex w-fit rounded-full border border-[var(--app-border)] px-3 py-1 text-xs font-semibold text-[var(--app-text)]">
                 Historical dataset: 2022-2024
