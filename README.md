@@ -4,12 +4,12 @@ TradeSense NG is the visible product name. This repository contains the formal a
 
 ## Tech Stack
 
-| Layer | Technology |
-| --- | --- |
-| Backend | FastAPI, Pandas, NumPy, scikit-learn, SQLite |
-| Auth | JWT (HS256), bcrypt |
+| Layer    | Technology                                       |
+| -------- | ------------------------------------------------ |
+| Backend  | FastAPI, Pandas, NumPy, scikit-learn, SQLite     |
+| Auth     | JWT (HS256), bcrypt                              |
 | Frontend | React 19, Vite, Tailwind CSS, Lightweight Charts |
-| Testing | Pytest, Vitest |
+| Testing  | Pytest, Vitest                                   |
 
 ## Project Structure
 
@@ -72,10 +72,10 @@ If `frontend/dist/` exists, FastAPI serves it automatically.
 
 ## Demo Accounts
 
-| Role | Username | Password |
-| --- | --- | --- |
-| Admin | `admin` | `ADMIN_PASSWORD` or `admin123` |
-| Demo user | `demo` | `demo123` |
+| Role      | Username | Password                       |
+| --------- | -------- | ------------------------------ |
+| Admin     | `admin`  | `ADMIN_PASSWORD` or `admin123` |
+| Demo user | `demo`   | `demo123`                      |
 
 The demo user is seeded with prediction history.
 

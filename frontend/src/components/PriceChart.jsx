@@ -113,6 +113,17 @@ const PriceChart = ({ data, chartTheme }) => {
       lineWidth: 2,
     });
 
+    if (chartData.length) {
+      candleSeriesRef.current.setData(chartData);
+      sma14SeriesRef.current.setData(
+        indicatorData.sma14.filter((row) => row.value !== null),
+      );
+      sma50SeriesRef.current.setData(
+        indicatorData.sma50.filter((row) => row.value !== null),
+      );
+      chartRef.current.timeScale().fitContent();
+    }
+
     const handleResize = () => {
       if (containerRef.current && chartRef.current) {
         chartRef.current.applyOptions({

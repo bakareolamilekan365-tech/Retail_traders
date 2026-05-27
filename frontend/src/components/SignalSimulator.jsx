@@ -98,7 +98,9 @@ const SignalSimulator = ({ asset, prediction, latestClose }) => {
                   </span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-[var(--app-muted)]">Expected 7-day return</span>
+                  <span className="text-[var(--app-muted)]">
+                    Expected 7-day return
+                  </span>
                   <span className="font-semibold text-[var(--app-text)]">
                     {Number(prediction.expected_return_7d || 0).toFixed(2)}%
                   </span>

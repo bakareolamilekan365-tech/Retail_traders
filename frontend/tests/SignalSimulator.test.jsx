@@ -21,18 +21,22 @@ describe("SignalSimulator", () => {
     expect(screen.getByText(/asset: btc/i)).toBeInTheDocument();
     expect(screen.getByText("78%")).toBeInTheDocument();
 
-    expect(screen.getByText(/expected 7-day return/i).closest("div")).toHaveTextContent(
-      "5.50%",
-    );
-    expect(screen.getByText(/estimated units/i).closest("div")).toHaveTextContent("5");
-    expect(screen.getByText(/expected 7-day value/i).closest("div")).toHaveTextContent(
-      "₦10,550",
-    );
-    expect(screen.getByText(/possible gain \/ loss/i).closest("div")).toHaveTextContent(
-      "₦550",
-    );
     expect(
-      screen.getByText(/this is a simulated estimate based on the ai model's prediction/i),
+      screen.getByText(/expected 7-day return/i).closest("div"),
+    ).toHaveTextContent("5.50%");
+    expect(
+      screen.getByText(/estimated units/i).closest("div"),
+    ).toHaveTextContent("5");
+    expect(
+      screen.getByText(/expected 7-day value/i).closest("div"),
+    ).toHaveTextContent("₦10,550");
+    expect(
+      screen.getByText(/possible gain \/ loss/i).closest("div"),
+    ).toHaveTextContent("₦550");
+    expect(
+      screen.getByText(
+        /this is a simulated estimate based on the ai model's prediction/i,
+      ),
     ).toBeInTheDocument();
   });
 
@@ -40,7 +44,9 @@ describe("SignalSimulator", () => {
     render(<SignalSimulator />);
 
     expect(
-      screen.getByText(/run a prediction on the dashboard to unlock the simulator/i),
+      screen.getByText(
+        /run a prediction on the dashboard to unlock the simulator/i,
+      ),
     ).toBeInTheDocument();
   });
 });

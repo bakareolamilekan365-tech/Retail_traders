@@ -238,7 +238,8 @@ const App = () => {
   useEffect(() => {
     const handleNetworkError = (event) => {
       setConnectionBanner({
-        message: event.detail?.message || "Backend not reachable. Please retry.",
+        message:
+          event.detail?.message || "Backend not reachable. Please retry.",
       });
     };
 
@@ -254,7 +255,10 @@ const App = () => {
     window.addEventListener("tradesense:auth-expired", handleAuthExpired);
 
     return () => {
-      window.removeEventListener("tradesense:network-error", handleNetworkError);
+      window.removeEventListener(
+        "tradesense:network-error",
+        handleNetworkError,
+      );
       window.removeEventListener("tradesense:auth-expired", handleAuthExpired);
     };
   }, [handleLogout]);
