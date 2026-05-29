@@ -2,7 +2,40 @@ import PropTypes from "prop-types";
 
 import AvatarMenu from "./AvatarMenu.jsx";
 
-const TopBar = ({ user, showAvatar, onLogout, onChangePassword }) => {
+const SunIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 3v2.25M12 18.75V21M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M3 12h2.25M18.75 12H21M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59M12 8.5A3.5 3.5 0 1 1 8.5 12 3.5 3.5 0 0 1 12 8.5Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const MoonIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M21 13.2A8.25 8.25 0 1 1 10.8 3a6.8 6.8 0 1 0 10.2 10.2Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const TopBar = ({
+  user,
+  showAvatar,
+  theme,
+  onToggleTheme,
+  onLogout,
+  onChangePassword,
+}) => {
+  const isDarkMode = theme === "dark";
+
   return (
     <header className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">
@@ -15,6 +48,18 @@ const TopBar = ({ user, showAvatar, onLogout, onChangePassword }) => {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            aria-label={
+              isDarkMode ? "Switch to light mode" : "Switch to dark mode"
+            }
+            title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+            aria-pressed={isDarkMode}
+            onClick={onToggleTheme}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-text)] transition hover:bg-[var(--app-soft)]"
+          >
+            {isDarkMode ? <SunIcon /> : <MoonIcon />}
+          </button>
           {showAvatar && (
             <AvatarMenu
               username={user.username}
@@ -35,12 +80,15 @@ TopBar.propTypes = {
     isAdmin: PropTypes.bool.isRequired,
   }).isRequired,
   showAvatar: PropTypes.bool,
+  theme: PropTypes.oneOf(["dark", "light"]),
+  onToggleTheme: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
   onChangePassword: PropTypes.func.isRequired,
 };
 
 TopBar.defaultProps = {
   showAvatar: false,
+  theme: "dark",
 };
 
 export default TopBar;

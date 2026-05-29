@@ -5,6 +5,7 @@ import heroImage from "../assets/hero.png";
 const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showForgotMessage, setShowForgotMessage] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -94,6 +95,20 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
               required
             />
           </div>
+
+          <button
+            type="button"
+            className="text-sm font-semibold text-[var(--app-accent)]"
+            onClick={() => setShowForgotMessage(true)}
+          >
+            Forgot Password?
+          </button>
+
+          {showForgotMessage && (
+            <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-3 py-2 text-sm text-[var(--app-text)]">
+              Please contact the administrator to reset your password.
+            </div>
+          )}
 
           <button
             type="submit"

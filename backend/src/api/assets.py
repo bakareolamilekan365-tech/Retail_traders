@@ -16,25 +16,26 @@ class AssetOut(BaseModel):
 
     symbol: str = Field(..., description="Asset ticker symbol")
     name: str = Field(..., description="Human-readable asset name")
-    asset_type: str = Field(..., description="Asset type (crypto or stock)")
+    type: str = Field(..., description="Normalized asset type (crypto or ngx)")
+    asset_type: str = Field(..., description="Backward-compatible asset type (crypto or ngx)")
 
 
 ASSET_METADATA: List[AssetOut] = [
-    AssetOut(symbol="BTC", name="Bitcoin", asset_type="crypto"),
-    AssetOut(symbol="ETH", name="Ethereum", asset_type="crypto"),
-    AssetOut(symbol="BNB", name="BNB", asset_type="crypto"),
-    AssetOut(symbol="SOL", name="Solana", asset_type="crypto"),
-    AssetOut(symbol="ADA", name="Cardano", asset_type="crypto"),
-    AssetOut(symbol="DANGCEM", name="Dangote Cement", asset_type="stock"),
-    AssetOut(symbol="MTNN", name="MTN Nigeria", asset_type="stock"),
-    AssetOut(symbol="AIRTELAFRI", name="Airtel Africa", asset_type="stock"),
-    AssetOut(symbol="BUACEMENT", name="BUA Cement", asset_type="stock"),
-    AssetOut(symbol="GTCO", name="GTCO", asset_type="stock"),
-    AssetOut(symbol="ZENITHBANK", name="Zenith Bank", asset_type="stock"),
-    AssetOut(symbol="SEPLAT", name="Seplat Energy", asset_type="stock"),
-    AssetOut(symbol="FBNH", name="FBN Holdings", asset_type="stock"),
-    AssetOut(symbol="NB", name="Nigerian Breweries", asset_type="stock"),
-    AssetOut(symbol="ACCESSCORP", name="Access Holdings", asset_type="stock"),
+    AssetOut(symbol="BTC", name="Bitcoin", type="crypto", asset_type="crypto"),
+    AssetOut(symbol="ETH", name="Ethereum", type="crypto", asset_type="crypto"),
+    AssetOut(symbol="BNB", name="BNB", type="crypto", asset_type="crypto"),
+    AssetOut(symbol="SOL", name="Solana", type="crypto", asset_type="crypto"),
+    AssetOut(symbol="ADA", name="Cardano", type="crypto", asset_type="crypto"),
+    AssetOut(symbol="DANGCEM", name="Dangote Cement", type="ngx", asset_type="ngx"),
+    AssetOut(symbol="MTNN", name="MTN Nigeria", type="ngx", asset_type="ngx"),
+    AssetOut(symbol="AIRTELAFRI", name="Airtel Africa", type="ngx", asset_type="ngx"),
+    AssetOut(symbol="BUACEMENT", name="BUA Cement", type="ngx", asset_type="ngx"),
+    AssetOut(symbol="GTCO", name="GTCO", type="ngx", asset_type="ngx"),
+    AssetOut(symbol="ZENITHBANK", name="Zenith Bank", type="ngx", asset_type="ngx"),
+    AssetOut(symbol="SEPLAT", name="Seplat Energy", type="ngx", asset_type="ngx"),
+    AssetOut(symbol="FBNH", name="FBN Holdings", type="ngx", asset_type="ngx"),
+    AssetOut(symbol="NB", name="Nigerian Breweries", type="ngx", asset_type="ngx"),
+    AssetOut(symbol="ACCESSCORP", name="Access Holdings", type="ngx", asset_type="ngx"),
 ]
 
 router = APIRouter(prefix="/api/v1", tags=["assets"])

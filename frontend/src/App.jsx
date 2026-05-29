@@ -17,7 +17,7 @@ import {
   registerUser,
 } from "./utils/api.js";
 
-const THEME = {
+const THEMES = {
   dark: {
     bg: "#050816",
     card: "#0f172a",
@@ -28,6 +28,17 @@ const THEME = {
     success: "#22c55e",
     danger: "#ef4444",
     secondary: "#38bdf8",
+  },
+  light: {
+    bg: "#f3f6fb",
+    card: "#ffffff",
+    accent: "#0f7a3b",
+    text: "#0f172a",
+    muted: "#516074",
+    border: "rgba(15, 23, 42, 0.12)",
+    success: "#0f7a3b",
+    danger: "#dc2626",
+    secondary: "#0ea5e9",
   },
 };
 
@@ -92,8 +103,155 @@ const QuickGuideModal = ({ onClose }) => (
   </div>
 );
 
+const SettingsPanel = ({
+  showChangePassword,
+  onOpenChangePassword,
+  onCloseChangePassword,
+  onOpenQuickGuide,
+  onChangePassword,
+  passwordForm,
+  setPasswordForm,
+  passwordStatus,
+}) => (
+  <div className="space-y-4">
+    <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="card p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--app-text)]">
+              Change Password
+            </h3>
+            <p className="mt-1 text-sm text-[var(--app-muted)]">
+              Update your login password at any time.
+            </p>
+          </div>
+          {!showChangePassword && (
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={onOpenChangePassword}
+            >
+              Open form
+            </button>
+          )}
+        </div>
+
+        {showChangePassword && (
+          <form className="mt-4 space-y-4" onSubmit={onChangePassword}>
+            <div>
+              <label
+                className="text-sm font-medium text-[var(--app-muted)]"
+                htmlFor="old-password"
+              >
+                Current password
+              </label>
+              <input
+                id="old-password"
+                type="password"
+                value={passwordForm.oldPassword}
+                onChange={(event) =>
+                  setPasswordForm((prev) => ({
+                    ...prev,
+                    oldPassword: event.target.value,
+                  }))
+                }
+                className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
+                required
+              />
+            </div>
+            <div>
+              <label
+                className="text-sm font-medium text-[var(--app-muted)]"
+                htmlFor="new-password"
+              >
+                New password
+              </label>
+              <input
+                id="new-password"
+                type="password"
+                value={passwordForm.newPassword}
+                onChange={(event) =>
+                  setPasswordForm((prev) => ({
+                    ...prev,
+                    newPassword: event.target.value,
+                  }))
+                }
+                className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
+                required
+              />
+            </div>
+            {passwordStatus.error && (
+              <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-200">
+                {passwordStatus.error}
+              </div>
+            )}
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="submit" className="btn-primary">
+                Update password
+              </button>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={onCloseChangePassword}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {passwordStatus.success && (
+          <div className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">
+            {passwordStatus.success}
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-4">
+        <div className="card p-6">
+          <h3 className="text-lg font-semibold text-[var(--app-text)]">
+            Quick Guide
+          </h3>
+          <p className="mt-1 text-sm text-[var(--app-muted)]">
+            Reopen the tutorial whenever you need a refresher.
+          </p>
+          <button
+            type="button"
+            className="btn-secondary mt-4"
+            onClick={onOpenQuickGuide}
+          >
+            Open Quick Guide
+          </button>
+        </div>
+
+        <div className="card p-6">
+          <h3 className="text-lg font-semibold text-[var(--app-text)]">
+            Preferences
+          </h3>
+          <p className="mt-1 text-sm text-[var(--app-muted)]">
+            Default asset and time range coming soon.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-3 text-sm text-[var(--app-text)]">
+      Use the profile menu for logout and password access from anywhere in the
+      app.
+    </div>
+  </div>
+);
+
 const App = () => {
   const [token, setToken] = useState(getToken());
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") {
+      return "dark";
+    }
+
+    const savedTheme = window.localStorage.getItem("tradesense-theme");
+    return savedTheme === "light" ? "light" : "dark";
+  });
   const [authView, setAuthView] = useState("login");
   const [user, setUser] = useState({ username: "", isAdmin: false });
   const [authError, setAuthError] = useState("");
@@ -118,7 +276,7 @@ const App = () => {
   const [latestPrediction, setLatestPrediction] = useState(null);
 
   const isAuthenticated = useMemo(() => Boolean(token), [token]);
-  const activeTheme = THEME.dark;
+  const activeTheme = THEMES[theme];
 
   const chartTheme = useMemo(() => {
     const grid = toRgba(activeTheme.text, 0.16);
@@ -162,8 +320,18 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    document.title = "TradeSense NG | AI Investment Signals";
+    document.title = "TradeSense NG – AI Investment Signals";
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const isDarkMode = theme === "dark";
+    root.classList.toggle("dark", isDarkMode);
+    root.dataset.theme = isDarkMode
+      ? "dark-trading-terminal"
+      : "light-trading-terminal";
+    window.localStorage.setItem("tradesense-theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     if (!token) {
@@ -207,27 +375,11 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    document.documentElement.classList.add("dark");
-
-    const root = document.documentElement;
-    root.style.setProperty("--app-bg", activeTheme.bg);
-    root.style.setProperty("--app-card", activeTheme.card);
-    root.style.setProperty("--app-accent", activeTheme.accent);
-    root.style.setProperty("--app-text", activeTheme.text);
-    root.style.setProperty("--app-muted", activeTheme.muted);
-    root.style.setProperty("--app-border", activeTheme.border);
-    root.style.setProperty("--app-success", activeTheme.success);
-    root.style.setProperty("--app-danger", activeTheme.danger);
-    root.style.setProperty("--app-soft", "rgba(34, 197, 94, 0.08)");
-    root.dataset.theme = "dark-trading-terminal";
-  }, [activeTheme]);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || user.isAdmin) return;
     if (localStorage.getItem("quickGuideDismissed") !== "true") {
       setShowQuickGuide(true);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user.isAdmin]);
 
   useEffect(() => {
     if (isAuthenticated && activeTab === "history") {
@@ -302,6 +454,14 @@ const App = () => {
     window.location.reload();
   };
 
+  const toggleTheme = () => {
+    setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
+  };
+
+  const openQuickGuide = () => {
+    setShowQuickGuide(true);
+  };
+
   const dismissQuickGuide = () => {
     localStorage.setItem("quickGuideDismissed", "true");
     setShowQuickGuide(false);
@@ -331,6 +491,8 @@ const App = () => {
       <TopBar
         user={{ username: user.username || "user", isAdmin: user.isAdmin }}
         showAvatar={isAuthenticated && adminChecked}
+        theme={theme}
+        onToggleTheme={toggleTheme}
         onLogout={handleLogout}
         onChangePassword={() => {
           setShowChangePassword(true);
@@ -423,7 +585,11 @@ const App = () => {
               <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-2.5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm font-medium text-[var(--app-text)]">
-                    Welcome back, Demo Trader. Your signal dashboard is ready.
+                    {user.isAdmin
+                      ? "Welcome back, Administrator. Your admin panel is ready."
+                      : user.username === "demo"
+                        ? "Welcome back, Demo Trader. Your signal dashboard is ready."
+                        : "Welcome back, Trader. Your signal dashboard is ready."}
                   </p>
                   <button
                     type="button"
@@ -439,9 +605,6 @@ const App = () => {
 
             <div className="flex flex-col gap-2 px-1 text-xs text-[var(--app-muted)] sm:flex-row sm:items-center sm:justify-between">
               <span>This is an educational tool, not financial advice.</span>
-              <span className="inline-flex w-fit rounded-full border border-[var(--app-border)] px-3 py-1 text-xs font-semibold text-[var(--app-text)]">
-                Historical dataset: 2022-2024
-              </span>
             </div>
 
             {activeTab === "dashboard" && (
@@ -472,92 +635,16 @@ const App = () => {
             )}
 
             {activeTab === "settings" && (
-              <div className="space-y-4">
-                {showChangePassword ? (
-                  <div className="card p-6">
-                    <h3 className="text-lg font-semibold text-[var(--app-text)]">
-                      Change password
-                    </h3>
-                    <form
-                      className="mt-4 space-y-4"
-                      onSubmit={handleChangePassword}
-                    >
-                      <div>
-                        <label
-                          className="text-sm font-medium text-[var(--app-muted)]"
-                          htmlFor="old-password"
-                        >
-                          Current password
-                        </label>
-                        <input
-                          id="old-password"
-                          type="password"
-                          value={passwordForm.oldPassword}
-                          onChange={(event) =>
-                            setPasswordForm((prev) => ({
-                              ...prev,
-                              oldPassword: event.target.value,
-                            }))
-                          }
-                          className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label
-                          className="text-sm font-medium text-[var(--app-muted)]"
-                          htmlFor="new-password"
-                        >
-                          New password
-                        </label>
-                        <input
-                          id="new-password"
-                          type="password"
-                          value={passwordForm.newPassword}
-                          onChange={(event) =>
-                            setPasswordForm((prev) => ({
-                              ...prev,
-                              newPassword: event.target.value,
-                            }))
-                          }
-                          className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
-                          required
-                        />
-                      </div>
-                      {passwordStatus.error && (
-                        <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-200">
-                          {passwordStatus.error}
-                        </div>
-                      )}
-                      <div className="flex flex-wrap items-center gap-3">
-                        <button type="submit" className="btn-primary">
-                          Update password
-                        </button>
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          onClick={() => setShowChangePassword(false)}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                ) : (
-                  <div className="card p-6">
-                    <p className="text-sm text-[var(--app-muted)]">
-                      Use the profile menu to update your password and
-                      preferences.
-                    </p>
-                  </div>
-                )}
-
-                {passwordStatus.success && (
-                  <div className="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">
-                    {passwordStatus.success}
-                  </div>
-                )}
-              </div>
+              <SettingsPanel
+                showChangePassword={showChangePassword}
+                onOpenChangePassword={() => setShowChangePassword(true)}
+                onCloseChangePassword={() => setShowChangePassword(false)}
+                onOpenQuickGuide={openQuickGuide}
+                onChangePassword={handleChangePassword}
+                passwordForm={passwordForm}
+                setPasswordForm={setPasswordForm}
+                passwordStatus={passwordStatus}
+              />
             )}
 
             {activeTab === "admin" && adminChecked && user.isAdmin && (

@@ -21,21 +21,23 @@ const AdminPanel = () => {
       setLoading(true);
       setError("");
       try {
-        const [usersResponse, predictionsResponse, statsResponse] = await Promise.all([
-          apiFetch("/admin/users"),
-          apiFetch("/admin/predictions"),
-          apiFetch("/admin/stats"),
-        ]);
+        const [usersResponse, predictionsResponse, statsResponse] =
+          await Promise.all([
+            apiFetch("/admin/users"),
+            apiFetch("/admin/predictions"),
+            apiFetch("/admin/stats"),
+          ]);
 
         if (!usersResponse.ok || !predictionsResponse.ok || !statsResponse.ok) {
           throw new Error("Failed to load admin data");
         }
 
-        const [usersPayload, predictionsPayload, statsPayload] = await Promise.all([
-          usersResponse.json(),
-          predictionsResponse.json(),
-          statsResponse.json(),
-        ]);
+        const [usersPayload, predictionsPayload, statsPayload] =
+          await Promise.all([
+            usersResponse.json(),
+            predictionsResponse.json(),
+            statsResponse.json(),
+          ]);
 
         setUsers(usersPayload);
         setPredictions(predictionsPayload);
@@ -53,7 +55,9 @@ const AdminPanel = () => {
   if (loading) {
     return (
       <div className="card p-6">
-        <p className="text-sm text-[var(--app-muted)]">Loading admin panel...</p>
+        <p className="text-sm text-[var(--app-muted)]">
+          Loading admin panel...
+        </p>
       </div>
     );
   }
@@ -108,19 +112,25 @@ const AdminPanel = () => {
             </p>
           </div>
           <div className="rounded-lg border border-[var(--app-border)] p-4">
-            <p className="text-xs uppercase text-[var(--app-muted)]">Predictions</p>
+            <p className="text-xs uppercase text-[var(--app-muted)]">
+              Predictions
+            </p>
             <p className="mt-2 text-2xl font-semibold text-[var(--app-text)]">
               {stats.total_predictions}
             </p>
           </div>
           <div className="rounded-lg border border-[var(--app-border)] p-4">
-            <p className="text-xs uppercase text-[var(--app-muted)]">Top Asset</p>
+            <p className="text-xs uppercase text-[var(--app-muted)]">
+              Top Asset
+            </p>
             <p className="mt-2 text-lg font-semibold text-[var(--app-text)]">
               {stats.top_asset || "N/A"}
             </p>
           </div>
           <div className="rounded-lg border border-[var(--app-border)] p-4">
-            <p className="text-xs uppercase text-[var(--app-muted)]">Most Active User</p>
+            <p className="text-xs uppercase text-[var(--app-muted)]">
+              Most Active User
+            </p>
             <p className="mt-2 text-lg font-semibold text-[var(--app-text)]">
               {stats.most_active_user || "N/A"}
             </p>
@@ -142,16 +152,25 @@ const AdminPanel = () => {
             </thead>
             <tbody>
               {users.map((row) => (
-                <tr key={row.id} className="border-t border-[var(--app-border)]">
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">{row.id}</td>
+                <tr
+                  key={row.id}
+                  className="border-t border-[var(--app-border)]"
+                >
+                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                    {row.id}
+                  </td>
                   <td className="py-2 pr-4 font-medium text-[var(--app-text)]">
                     {row.username}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">{row.email}</td>
+                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                    {row.email}
+                  </td>
                   <td className="py-2 pr-4 text-[var(--app-muted)]">
                     {row.is_admin ? "Admin" : "Trader"}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">{row.created_at}</td>
+                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                    {row.created_at}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -174,15 +193,22 @@ const AdminPanel = () => {
             </thead>
             <tbody>
               {predictions.map((row) => (
-                <tr key={row.id} className="border-t border-[var(--app-border)]">
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">{row.timestamp}</td>
+                <tr
+                  key={row.id}
+                  className="border-t border-[var(--app-border)]"
+                >
+                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                    {row.timestamp}
+                  </td>
                   <td className="py-2 pr-4 text-[var(--app-muted)]">
                     {row.user_id || "N/A"}
                   </td>
                   <td className="py-2 pr-4 font-medium text-[var(--app-text)]">
                     {row.asset}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">{row.signal}</td>
+                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                    {row.signal}
+                  </td>
                   <td className="py-2 pr-4 text-[var(--app-muted)]">
                     {formatPercent(row.expected_return)}
                   </td>

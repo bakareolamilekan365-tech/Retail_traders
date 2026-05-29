@@ -1,33 +1,64 @@
-import PropTypes from 'prop-types'
+import PropTypes from "prop-types";
+
+const explanations = {
+  rsi: "Measures momentum. Above 70 = overbought, below 30 = oversold.",
+  volatility: "Measures how much the price moves. Higher = more risk.",
+  crossover:
+    "When the 14-day average crosses above the 50-day average, it may be a bullish signal. The opposite is bearish.",
+};
+
+const InfoTip = ({ label, explanation }) => (
+  <span className="relative inline-flex group align-middle">
+    <button
+      type="button"
+      aria-label={`${label} explanation`}
+      title={explanation}
+      className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--app-border)] text-[10px] font-semibold text-[var(--app-muted)] transition hover:bg-[var(--app-soft)] hover:text-[var(--app-text)]"
+    >
+      ?
+    </button>
+    <span className="pointer-events-none absolute left-1/2 top-full z-20 hidden w-56 -translate-x-1/2 pt-2 group-hover:block group-focus-within:block">
+      <span className="block rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-3 py-2 text-xs leading-5 text-[var(--app-text)] shadow-xl">
+        {explanation}
+      </span>
+    </span>
+  </span>
+);
 
 const IndicatorCards = ({ indicators }) => {
-  const latest = indicators?.[indicators.length - 1] || {}
+  const latest = indicators?.[indicators.length - 1] || {};
 
   const cards = [
     {
-      title: 'RSI (14)',
-      value: latest.rsi_14 !== null && latest.rsi_14 !== undefined ? latest.rsi_14.toFixed(1) : 'N/A',
-      note: 'Momentum',
+      title: "RSI (14)",
+      tipKey: "rsi",
+      value:
+        latest.rsi_14 !== null && latest.rsi_14 !== undefined
+          ? latest.rsi_14.toFixed(1)
+          : "N/A",
+      note: "Momentum",
     },
     {
-      title: 'Volatility (14)',
+      title: "Volatility (14)",
+      tipKey: "volatility",
       value:
         latest.volatility_14 !== null && latest.volatility_14 !== undefined
           ? latest.volatility_14.toFixed(2)
-          : 'N/A',
-      note: 'Risk',
+          : "N/A",
+      note: "Risk",
     },
     {
-      title: 'SMA Crossover',
+      title: "SMA Crossover",
+      tipKey: "crossover",
       value:
         latest.sma_crossover === 1
-          ? 'Bullish'
+          ? "Bullish"
           : latest.sma_crossover === 0
-            ? 'Bearish'
-            : 'N/A',
-      note: 'Trend',
+            ? "Bearish"
+            : "N/A",
+      note: "Trend",
     },
-  ]
+  ];
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -36,13 +67,23 @@ const IndicatorCards = ({ indicators }) => {
           <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
             {card.note}
           </p>
-          <h3 className="mt-2 text-lg font-semibold text-[var(--app-text)]">{card.value}</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">{card.title}</p>
+          <div className="mt-2 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-[var(--app-text)]">
+              {card.value}
+            </h3>
+            <InfoTip
+              label={card.title}
+              explanation={explanations[card.tipKey]}
+            />
+          </div>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            {card.title}
+          </p>
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 IndicatorCards.propTypes = {
   indicators: PropTypes.arrayOf(
@@ -50,8 +91,8 @@ IndicatorCards.propTypes = {
       rsi_14: PropTypes.number,
       volatility_14: PropTypes.number,
       sma_crossover: PropTypes.number,
-    })
+    }),
   ).isRequired,
-}
+};
 
-export default IndicatorCards
+export default IndicatorCards;

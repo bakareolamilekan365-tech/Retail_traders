@@ -2,22 +2,48 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 
 const DEFAULT_ASSETS = [
-  { symbol: "BTC", name: "Bitcoin", asset_type: "crypto" },
-  { symbol: "ETH", name: "Ethereum", asset_type: "crypto" },
-  { symbol: "BNB", name: "Binance Coin", asset_type: "crypto" },
-  { symbol: "SOL", name: "Solana", asset_type: "crypto" },
-  { symbol: "ADA", name: "Cardano", asset_type: "crypto" },
-  { symbol: "DANGCEM", name: "Dangote Cement", asset_type: "ngx" },
-  { symbol: "MTNN", name: "MTN Nigeria", asset_type: "ngx" },
-  { symbol: "AIRTELAFRI", name: "Airtel Africa", asset_type: "ngx" },
-  { symbol: "BUACEMENT", name: "BUA Cement", asset_type: "ngx" },
-  { symbol: "GTCO", name: "Guaranty Trust Holding", asset_type: "ngx" },
-  { symbol: "ZENITHBANK", name: "Zenith Bank", asset_type: "ngx" },
-  { symbol: "SEPLAT", name: "Seplat Energy", asset_type: "ngx" },
-  { symbol: "NB", name: "Nigerian Breweries", asset_type: "ngx" },
-  { symbol: "FBNH", name: "FBN Holdings", asset_type: "ngx" },
-  { symbol: "ACCESSCORP", name: "Access Holdings", asset_type: "ngx" },
+  { symbol: "BTC", name: "Bitcoin", type: "crypto", asset_type: "crypto" },
+  { symbol: "ETH", name: "Ethereum", type: "crypto", asset_type: "crypto" },
+  { symbol: "BNB", name: "Binance Coin", type: "crypto", asset_type: "crypto" },
+  { symbol: "SOL", name: "Solana", type: "crypto", asset_type: "crypto" },
+  { symbol: "ADA", name: "Cardano", type: "crypto", asset_type: "crypto" },
+  { symbol: "DANGCEM", name: "Dangote Cement", type: "ngx", asset_type: "ngx" },
+  { symbol: "MTNN", name: "MTN Nigeria", type: "ngx", asset_type: "ngx" },
+  {
+    symbol: "AIRTELAFRI",
+    name: "Airtel Africa",
+    type: "ngx",
+    asset_type: "ngx",
+  },
+  { symbol: "BUACEMENT", name: "BUA Cement", type: "ngx", asset_type: "ngx" },
+  {
+    symbol: "GTCO",
+    name: "Guaranty Trust Holding",
+    type: "ngx",
+    asset_type: "ngx",
+  },
+  { symbol: "ZENITHBANK", name: "Zenith Bank", type: "ngx", asset_type: "ngx" },
+  { symbol: "SEPLAT", name: "Seplat Energy", type: "ngx", asset_type: "ngx" },
+  { symbol: "NB", name: "Nigerian Breweries", type: "ngx", asset_type: "ngx" },
+  { symbol: "FBNH", name: "FBN Holdings", type: "ngx", asset_type: "ngx" },
+  {
+    symbol: "ACCESSCORP",
+    name: "Access Holdings",
+    type: "ngx",
+    asset_type: "ngx",
+  },
 ];
+
+const normalizeAssetType = (asset) => {
+  const rawType = (asset.type || asset.asset_type || "").toLowerCase();
+  if (rawType === "stock") {
+    return "ngx";
+  }
+  if (rawType === "crypto" || rawType === "ngx") {
+    return rawType;
+  }
+  return rawType;
+};
 
 const AssetSelector = ({
   assets: providedAssets,
@@ -48,7 +74,7 @@ const AssetSelector = ({
       const matchesCategory =
         selectedCategory === "All" ||
         asset.category === selectedCategory ||
-        asset.asset_type === selectedCategory.toLowerCase();
+        normalizeAssetType(asset) === selectedCategory.toLowerCase();
       return matchesQuery && matchesCategory;
     });
   }, [assets, searchQuery, selectedCategory]);
@@ -138,7 +164,7 @@ const AssetSelector = ({
             id="asset-category"
             value={selectedCategory}
             onChange={(event) => setSelectedCategory(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--text)] shadow-sm"
           >
             <option value="All">All</option>
             <option value="Crypto">Crypto</option>
@@ -157,7 +183,7 @@ const AssetSelector = ({
             id="asset-risk"
             value={selectedRisk}
             onChange={(event) => setSelectedRisk(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--text)] shadow-sm"
           >
             <option value="All">All</option>
             <option value="Conservative">Conservative</option>

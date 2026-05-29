@@ -38,9 +38,9 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] shadow-xl dark:border-slate-700 dark:bg-slate-900">
+        <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--card)] text-[var(--text)] shadow-xl">
           <div className="px-4 py-3">
-            <p className="text-sm font-semibold text-[var(--app-text)]">
+            <p className="text-sm font-semibold text-[var(--text)]">
               {username} - {roleLabel}
             </p>
             <div className="mt-1 flex items-center gap-2 text-xs text-[var(--app-muted)]">
@@ -53,7 +53,7 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
             <button
               type="button"
               onClick={onChangePassword}
-              className="w-full rounded-lg px-3 py-2 text-left text-sm text-[var(--app-text)] transition hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="w-full rounded-lg px-3 py-2 text-left text-sm text-[var(--text)] transition hover:bg-[var(--app-soft)]"
             >
               Change Password
             </button>

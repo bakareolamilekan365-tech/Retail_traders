@@ -8,6 +8,8 @@ describe("TopBar", () => {
       <TopBar
         user={{ username: "demo", isAdmin: false }}
         showAvatar={false}
+        theme="dark"
+        onToggleTheme={() => {}}
         onLogout={() => {}}
         onChangePassword={() => {}}
       />,
@@ -18,11 +20,8 @@ describe("TopBar", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/ai investment signals/i)).toBeInTheDocument();
     expect(
-      screen.queryByLabelText(/toggle dark mode/i),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByLabelText(/select color preset/i),
-    ).not.toBeInTheDocument();
+      screen.getByRole("button", { name: /switch to light mode/i }),
+    ).toBeInTheDocument();
   });
 
   it("does not render a duplicate standalone admin button", () => {
@@ -30,6 +29,8 @@ describe("TopBar", () => {
       <TopBar
         user={{ username: "admin", isAdmin: true }}
         showAvatar={false}
+        theme="dark"
+        onToggleTheme={() => {}}
         onLogout={() => {}}
         onChangePassword={() => {}}
       />,

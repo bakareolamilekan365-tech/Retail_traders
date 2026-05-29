@@ -45,7 +45,8 @@ const PredictionHistory = ({ history, loading, error, onRefresh }) => {
       {!history.length ? (
         <div className="mt-4 rounded-lg border border-[var(--app-border)] px-4 py-8 text-center">
           <p className="text-sm text-[var(--app-muted)]">
-            No prediction history yet. Select an asset to generate your first signal.
+            No prediction history yet. Select an asset to generate your first
+            signal.
           </p>
         </div>
       ) : (
@@ -62,14 +63,19 @@ const PredictionHistory = ({ history, loading, error, onRefresh }) => {
             </thead>
             <tbody>
               {history.map((row) => (
-                <tr key={row.id} className="border-t border-[var(--app-border)]">
+                <tr
+                  key={row.id}
+                  className="border-t border-[var(--app-border)]"
+                >
                   <td className="py-2 pr-4 text-[var(--app-muted)]">
                     {row.timestamp || "-"}
                   </td>
                   <td className="py-2 pr-4 font-medium text-[var(--app-text)]">
                     {row.asset}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">{row.signal}</td>
+                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                    {row.signal}
+                  </td>
                   <td className="py-2 pr-4 text-[var(--app-muted)]">
                     {formatReturn(row.expected_return)}
                   </td>

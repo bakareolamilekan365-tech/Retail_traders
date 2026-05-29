@@ -53,6 +53,29 @@ describe("LoginForm", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows forgot-password guidance when requested", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <LoginForm
+        onSubmit={() => {}}
+        onSwitch={() => {}}
+        loading={false}
+        error=""
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: /forgot password\?/i }),
+    );
+
+    expect(
+      screen.getByText(
+        /please contact the administrator to reset your password/i,
+      ),
+    ).toBeInTheDocument();
+  });
+
   it("shows an error message when provided", () => {
     render(
       <LoginForm
