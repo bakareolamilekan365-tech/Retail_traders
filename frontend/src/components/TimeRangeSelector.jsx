@@ -5,7 +5,7 @@ const ranges = [7, 30, 90, 180, 365]
 const TimeRangeSelector = ({ value, onChange }) => {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs font-semibold uppercase tracking-wide text-[var(--app-muted)]">
+      <span className="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
         Range
       </span>
       <div className="flex flex-wrap gap-2">

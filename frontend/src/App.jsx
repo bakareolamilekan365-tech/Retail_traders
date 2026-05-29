@@ -51,6 +51,15 @@ const toRgba = (hex, alpha) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
+const deriveUserFromToken = (authToken) => {
+  if (!authToken) {
+    return { username: "", isAdmin: false };
+  }
+
+  const payload = decodeTokenPayload(authToken);
+  return { username: payload?.sub || "user", isAdmin: false };
+};
+
 const QuickGuideModal = ({ onClose }) => (
   <div
     className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4"
@@ -75,12 +84,12 @@ const QuickGuideModal = ({ onClose }) => (
           type="button"
           aria-label="Close quick guide"
           onClick={onClose}
-          className="rounded-full border border-[var(--app-border)] px-3 py-1 text-sm text-[var(--app-muted)]"
+          className="rounded-full border border-[var(--app-border)] px-3 py-1 text-sm text-slate-700 dark:text-slate-300"
         >
           Close
         </button>
       </div>
-      <ol className="mt-5 space-y-3 text-sm text-[var(--app-muted)]">
+      <ol className="mt-5 space-y-3 text-sm text-slate-700 dark:text-slate-300">
         <li>
           1. Choose an NGX equity or major cryptocurrency from the asset
           control.
@@ -121,7 +130,7 @@ const SettingsPanel = ({
             <h3 className="text-lg font-semibold text-[var(--app-text)]">
               Change Password
             </h3>
-            <p className="mt-1 text-sm text-[var(--app-muted)]">
+            <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
               Update your login password at any time.
             </p>
           </div>
@@ -140,7 +149,7 @@ const SettingsPanel = ({
           <form className="mt-4 space-y-4" onSubmit={onChangePassword}>
             <div>
               <label
-                className="text-sm font-medium text-[var(--app-muted)]"
+                className="text-sm font-medium text-slate-700 dark:text-slate-300"
                 htmlFor="old-password"
               >
                 Current password
@@ -161,7 +170,7 @@ const SettingsPanel = ({
             </div>
             <div>
               <label
-                className="text-sm font-medium text-[var(--app-muted)]"
+                className="text-sm font-medium text-slate-700 dark:text-slate-300"
                 htmlFor="new-password"
               >
                 New password
@@ -212,7 +221,7 @@ const SettingsPanel = ({
           <h3 className="text-lg font-semibold text-[var(--app-text)]">
             Quick Guide
           </h3>
-          <p className="mt-1 text-sm text-[var(--app-muted)]">
+          <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
             Reopen the tutorial whenever you need a refresher.
           </p>
           <button
@@ -228,7 +237,7 @@ const SettingsPanel = ({
           <h3 className="text-lg font-semibold text-[var(--app-text)]">
             Preferences
           </h3>
-          <p className="mt-1 text-sm text-[var(--app-muted)]">
+          <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
             Default asset and time range coming soon.
           </p>
         </div>
@@ -243,7 +252,8 @@ const SettingsPanel = ({
 );
 
 const App = () => {
-  const [token, setToken] = useState(getToken());
+  const initialToken = getToken();
+  const [token, setToken] = useState(initialToken);
   const [theme, setTheme] = useState(() => {
     if (typeof window === "undefined") {
       return "dark";
@@ -253,7 +263,7 @@ const App = () => {
     return savedTheme === "light" ? "light" : "dark";
   });
   const [authView, setAuthView] = useState("login");
-  const [user, setUser] = useState({ username: "", isAdmin: false });
+  const [user, setUser] = useState(() => deriveUserFromToken(initialToken));
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -266,12 +276,16 @@ const App = () => {
     success: "",
   });
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [adminChecked, setAdminChecked] = useState(false);
+  const [adminChecked, setAdminChecked] = useState(() => !initialToken);
   const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState("");
   const [showDemoBanner, setShowDemoBanner] = useState(true);
-  const [showQuickGuide, setShowQuickGuide] = useState(false);
+  const [quickGuideDismissed, setQuickGuideDismissed] = useState(() =>
+    typeof window === "undefined"
+      ? false
+      : window.localStorage.getItem("quickGuideDismissed") === "true",
+  );
   const [connectionBanner, setConnectionBanner] = useState(null);
   const [latestPrediction, setLatestPrediction] = useState(null);
 
@@ -292,6 +306,12 @@ const App = () => {
   }, [activeTheme]);
 
   const latestPredictionClose = latestPrediction?.ohlcv?.at(-1)?.close ?? null;
+  const effectiveTab =
+    adminChecked && !user.isAdmin && activeTab === "admin"
+      ? "dashboard"
+      : activeTab;
+  const shouldShowQuickGuide =
+    isAuthenticated && !user.isAdmin && !quickGuideDismissed;
 
   const tabs = useMemo(() => {
     const visibleTabs = [
@@ -335,57 +355,82 @@ const App = () => {
 
   useEffect(() => {
     if (!token) {
-      setUser({ username: "", isAdmin: false });
-      setAdminChecked(true);
       return;
     }
-    setAdminChecked(false);
-    const payload = decodeTokenPayload(token);
-    const username = payload?.sub || "user";
-    setUser({ username, isAdmin: false });
 
+    let cancelled = false;
     checkAdmin()
       .then((isAdmin) => {
-        setUser({ username, isAdmin });
+        if (cancelled) return;
+        const sessionUser = deriveUserFromToken(token);
+        setUser({ ...sessionUser, isAdmin });
         setAdminChecked(true);
       })
       .catch(() => {
-        setUser({ username, isAdmin: false });
+        if (cancelled) return;
+        const sessionUser = deriveUserFromToken(token);
+        setUser({ ...sessionUser, isAdmin: false });
         setAdminChecked(true);
       });
-  }, [token]);
 
-  useEffect(() => {
-    if (adminChecked && !user.isAdmin && activeTab === "admin") {
-      setActiveTab("dashboard");
-    }
-  }, [activeTab, adminChecked, user.isAdmin]);
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
 
   const handleLogout = useCallback(() => {
     clearToken();
     setToken(null);
+    setUser({ username: "", isAdmin: false });
+    setAdminChecked(true);
     setAuthView("login");
     setPasswordForm({ oldPassword: "", newPassword: "" });
     setPasswordStatus({ error: "", success: "" });
     setShowChangePassword(false);
-    setShowQuickGuide(false);
+    setQuickGuideDismissed(true);
     setActiveTab("dashboard");
     setHistory([]);
     setLatestPrediction(null);
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated || user.isAdmin) return;
-    if (localStorage.getItem("quickGuideDismissed") !== "true") {
-      setShowQuickGuide(true);
+    if (typeof window === "undefined") return;
+    if (!quickGuideDismissed) {
+      window.localStorage.setItem("quickGuideDismissed", "false");
     }
-  }, [isAuthenticated, user.isAdmin]);
+  }, [quickGuideDismissed]);
 
   useEffect(() => {
-    if (isAuthenticated && activeTab === "history") {
-      loadHistory();
+    if (!isAuthenticated || effectiveTab !== "history") {
+      return;
     }
-  }, [activeTab, isAuthenticated, loadHistory]);
+
+    let cancelled = false;
+    const fetchHistoryOnTabOpen = async () => {
+      setHistoryLoading(true);
+      setHistoryError("");
+      try {
+        const rows = await fetchPredictionHistory();
+        if (!cancelled) {
+          setHistory(rows);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setHistoryError(error.message);
+        }
+      } finally {
+        if (!cancelled) {
+          setHistoryLoading(false);
+        }
+      }
+    };
+
+    void fetchHistoryOnTabOpen();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [effectiveTab, isAuthenticated]);
 
   useEffect(() => {
     const handleNetworkError = (event) => {
@@ -420,7 +465,11 @@ const App = () => {
     setAuthError("");
     try {
       await loginUser({ username, password });
-      setToken(getToken());
+      const nextToken = getToken();
+      setToken(nextToken);
+      setUser(deriveUserFromToken(nextToken));
+      setAdminChecked(false);
+      setQuickGuideDismissed(false);
       setShowDemoBanner(true);
       setActiveTab("dashboard");
     } catch (error) {
@@ -435,7 +484,11 @@ const App = () => {
     setAuthError("");
     try {
       await registerUser({ username, email, password });
-      setToken(getToken());
+      const nextToken = getToken();
+      setToken(nextToken);
+      setUser(deriveUserFromToken(nextToken));
+      setAdminChecked(false);
+      setQuickGuideDismissed(false);
       setShowDemoBanner(true);
       setActiveTab("dashboard");
     } catch (error) {
@@ -459,12 +512,15 @@ const App = () => {
   };
 
   const openQuickGuide = () => {
-    setShowQuickGuide(true);
+    setQuickGuideDismissed(false);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("quickGuideDismissed", "false");
+    }
   };
 
   const dismissQuickGuide = () => {
     localStorage.setItem("quickGuideDismissed", "true");
-    setShowQuickGuide(false);
+    setQuickGuideDismissed(true);
   };
 
   const handleChangePassword = async (event) => {
@@ -524,7 +580,7 @@ const App = () => {
               <button
                 type="button"
                 className="shrink-0 rounded-full border border-[var(--app-border)] px-4 py-2 text-sm font-semibold text-[var(--app-text)] transition hover:bg-[var(--app-soft)]"
-                onClick={() => setShowQuickGuide(true)}
+                onClick={openQuickGuide}
               >
                 Quick Guide
               </button>
@@ -582,8 +638,8 @@ const App = () => {
             )}
 
             {showDemoBanner &&
-              ((user.isAdmin && activeTab === "admin") ||
-                (!user.isAdmin && activeTab === "dashboard")) && (
+              ((user.isAdmin && effectiveTab === "admin") ||
+                (!user.isAdmin && effectiveTab === "dashboard")) && (
                 <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-2.5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm font-medium text-[var(--app-text)]">
@@ -605,21 +661,23 @@ const App = () => {
                 </div>
               )}
 
-            <div className="flex flex-col gap-2 px-1 text-xs text-[var(--app-muted)] sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 px-1 text-xs text-slate-700 dark:text-slate-300 sm:flex-row sm:items-center sm:justify-between">
               <span>This is an educational tool, not financial advice.</span>
             </div>
 
-            {activeTab === "dashboard" && (
+            {effectiveTab === "dashboard" && (
               <Dashboard
                 chartTheme={chartTheme}
                 onPredictionGenerated={(prediction) => {
                   setLatestPrediction(prediction);
-                  if (activeTab === "history") loadHistory();
+                  if (effectiveTab === "history") {
+                    void loadHistory();
+                  }
                 }}
               />
             )}
 
-            {activeTab === "simulator" && (
+            {effectiveTab === "simulator" && (
               <SignalSimulator
                 asset={latestPrediction?.asset || ""}
                 prediction={latestPrediction?.prediction || null}
@@ -627,7 +685,7 @@ const App = () => {
               />
             )}
 
-            {activeTab === "history" && (
+            {effectiveTab === "history" && (
               <PredictionHistory
                 history={history}
                 loading={historyLoading}
@@ -636,7 +694,7 @@ const App = () => {
               />
             )}
 
-            {activeTab === "settings" && (
+            {effectiveTab === "settings" && (
               <SettingsPanel
                 showChangePassword={showChangePassword}
                 onOpenChangePassword={() => setShowChangePassword(true)}
@@ -649,14 +707,14 @@ const App = () => {
               />
             )}
 
-            {activeTab === "admin" && adminChecked && user.isAdmin && (
+            {effectiveTab === "admin" && adminChecked && user.isAdmin && (
               <AdminPanel />
             )}
           </div>
         )}
       </main>
 
-      {showQuickGuide && <QuickGuideModal onClose={dismissQuickGuide} />}
+      {shouldShowQuickGuide && <QuickGuideModal onClose={dismissQuickGuide} />}
     </div>
   );
 };

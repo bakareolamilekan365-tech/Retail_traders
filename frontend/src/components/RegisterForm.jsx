@@ -1,28 +1,26 @@
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useState } from "react";
+import PropTypes from "prop-types";
 
 const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = (event) => {
-    event.preventDefault()
-    onSubmit({ username: username.trim(), email: email.trim(), password })
-  }
+    event.preventDefault();
+    onSubmit({ username: username.trim(), email: email.trim(), password });
+  };
 
   return (
     <div className="card w-full max-w-md p-6">
-      <h2 className="text-2xl font-semibold text-[var(--app-text)]">Create account</h2>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+      <h2 className="text-2xl font-semibold text-[var(--app-text)]">
+        Create account
+      </h2>
+      <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
         Start tracking signals in minutes.
       </p>
 
-      {error && (
-        <div className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-200">
-          {error}
-        </div>
-      )}
+      {error && <div className="auth-error-banner">{error}</div>}
 
       <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
         <div>
@@ -80,12 +78,12 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
         </div>
 
         <button type="submit" className="btn-primary w-full" disabled={loading}>
-          {loading ? 'Creating account...' : 'Create Account'}
+          {loading ? "Creating account..." : "Create Account"}
         </button>
       </form>
 
-      <div className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
-        Already have an account?{' '}
+      <div className="mt-4 text-center text-sm text-slate-700 dark:text-slate-300">
+        Already have an account?{" "}
         <button
           type="button"
           className="font-semibold text-[var(--app-accent)]"
@@ -95,19 +93,19 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 RegisterForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   onSwitch: PropTypes.func.isRequired,
   loading: PropTypes.bool,
   error: PropTypes.string,
-}
+};
 
 RegisterForm.defaultProps = {
   loading: false,
-  error: '',
-}
+  error: "",
+};
 
-export default RegisterForm
+export default RegisterForm;

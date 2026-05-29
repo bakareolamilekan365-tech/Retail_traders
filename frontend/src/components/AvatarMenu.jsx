@@ -43,7 +43,7 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
             <p className="text-sm font-semibold text-[var(--text)]">
               {username} - {roleLabel}
             </p>
-            <div className="mt-1 flex items-center gap-2 text-xs text-[var(--app-muted)]">
+            <div className="mt-1 flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               Online
             </div>

@@ -91,7 +91,7 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
-        <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--app-muted)]">
+        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
           <button
             type="button"
             onClick={() => fetchPrediction()}
@@ -131,20 +131,20 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
           <PredictionPanel prediction={predictionData.prediction} />
           <InsightBar insight={predictionData.insight} />
           {lastRefresh && (
-            <div className="text-right text-xs font-medium text-[var(--app-muted)]">
+            <div className="text-right text-xs font-medium text-slate-700 dark:text-slate-300">
               Last updated: {lastRefresh.toLocaleTimeString()}
             </div>
           )}
         </div>
       ) : !selectedAsset ? (
         <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-6 py-12 text-center">
-          <p className="text-[var(--app-muted)]">
+          <p className="text-slate-700 dark:text-slate-300">
             Select an asset to load historical candles and signal analysis.
           </p>
         </div>
       ) : (
         <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-6 py-12 text-center">
-          <p className="text-[var(--app-muted)]">
+          <p className="text-slate-700 dark:text-slate-300">
             Select an asset to view analysis.
           </p>
         </div>

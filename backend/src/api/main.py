@@ -34,7 +34,7 @@ from engine.preprocessing import compute_indicators, load_and_preprocess
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_FRONTEND_ORIGIN = "http://localhost:5173"
-DEFAULT_FRONTEND_ORIGIN_REGEX = r"http://(?:localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+):5173"
+DEFAULT_FRONTEND_ORIGIN_REGEX = r"^http://(?:localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+):(?:5173|5174)$"
 
 
 def _setup_logging(log_dir: Path) -> None:

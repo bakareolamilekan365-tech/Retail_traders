@@ -43,7 +43,7 @@ const TopBar = ({
           <h1 className="text-xl font-semibold text-[var(--app-text)] sm:text-2xl">
             TradeSense NG
           </h1>
-          <p className="mt-1 text-sm font-medium text-[var(--app-muted)]">
+          <p className="mt-1 text-sm font-medium text-slate-700 dark:text-slate-300">
             AI Investment Signals
           </p>
         </div>

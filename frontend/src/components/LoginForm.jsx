@@ -53,11 +53,7 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
           Access the Intelligent Investment Recommendation Assistant.
         </p>
 
-        {error && (
-          <div className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-200">
-            {error}
-          </div>
-        )}
+        {error && <div className="auth-error-banner">{error}</div>}
 
         <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
           <div>
