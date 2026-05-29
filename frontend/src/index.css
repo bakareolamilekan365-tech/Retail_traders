@@ -28,8 +28,8 @@
   --app-bg: #050816;
   --app-card: #0f172a;
   --app-accent: #22c55e;
-  --app-text: #e2e8f0;
-  --app-muted: #94a3b8;
+  --app-text: #ffffff;
+  --app-muted: #ffffff;
   --app-border: rgba(148, 163, 184, 0.22);
   --app-success: #22c55e;
   --app-danger: #ef4444;
@@ -63,6 +63,15 @@ body {
 .dark body {
   background-color: var(--bg);
   color: var(--text);
+}
+
+.dark :is(h1, h2, h3, h4, h5, h6, p, span, li, label, td, th, button, a, small, strong, em, legend, option, textarea, input, select) {
+  color: #ffffff;
+}
+
+.dark :is(input, textarea, select)::placeholder {
+  color: #ffffff;
+  opacity: 1;
 }
 
 #root {
@@ -127,8 +136,8 @@ body {
 }
 
 .theme-toggle svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .pill-control {

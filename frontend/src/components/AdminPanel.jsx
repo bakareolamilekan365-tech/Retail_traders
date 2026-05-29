@@ -55,7 +55,7 @@ const AdminPanel = () => {
   if (loading) {
     return (
       <div className="card p-6">
-        <p className="text-sm text-[var(--app-muted)]">
+        <p className="text-sm text-slate-700 dark:text-white">
           Loading admin panel...
         </p>
       </div>
@@ -77,7 +77,7 @@ const AdminPanel = () => {
           <p className="text-xs font-semibold uppercase tracking-wide text-[var(--app-accent)]">
             Admin
           </p>
-          <h2 className="text-xl font-semibold text-[var(--app-text)]">
+          <h2 className="text-xl font-semibold text-[var(--app-text)] dark:text-white">
             System Oversight
           </h2>
         </div>
@@ -94,7 +94,7 @@ const AdminPanel = () => {
               className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold ${
                 activeView === view.id
                   ? "bg-[var(--app-accent)] text-white"
-                  : "border border-[var(--app-border)] text-[var(--app-muted)]"
+                  : "border border-[var(--app-border)] text-slate-700 dark:text-white"
               }`}
             >
               {view.label}
@@ -106,32 +106,34 @@ const AdminPanel = () => {
       {activeView === "stats" && stats && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-lg border border-[var(--app-border)] p-4">
-            <p className="text-xs uppercase text-[var(--app-muted)]">Users</p>
-            <p className="mt-2 text-2xl font-semibold text-[var(--app-text)]">
+            <p className="text-xs uppercase text-slate-700 dark:text-white">
+              Users
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-[var(--app-text)] dark:text-white">
               {stats.total_users}
             </p>
           </div>
           <div className="rounded-lg border border-[var(--app-border)] p-4">
-            <p className="text-xs uppercase text-[var(--app-muted)]">
+            <p className="text-xs uppercase text-slate-700 dark:text-white">
               Predictions
             </p>
-            <p className="mt-2 text-2xl font-semibold text-[var(--app-text)]">
+            <p className="mt-2 text-2xl font-semibold text-[var(--app-text)] dark:text-white">
               {stats.total_predictions}
             </p>
           </div>
           <div className="rounded-lg border border-[var(--app-border)] p-4">
-            <p className="text-xs uppercase text-[var(--app-muted)]">
+            <p className="text-xs uppercase text-slate-700 dark:text-white">
               Top Asset
             </p>
-            <p className="mt-2 text-lg font-semibold text-[var(--app-text)]">
+            <p className="mt-2 text-lg font-semibold text-[var(--app-text)] dark:text-white">
               {stats.top_asset || "N/A"}
             </p>
           </div>
           <div className="rounded-lg border border-[var(--app-border)] p-4">
-            <p className="text-xs uppercase text-[var(--app-muted)]">
+            <p className="text-xs uppercase text-slate-700 dark:text-white">
               Most Active User
             </p>
-            <p className="mt-2 text-lg font-semibold text-[var(--app-text)]">
+            <p className="mt-2 text-lg font-semibold text-[var(--app-text)] dark:text-white">
               {stats.most_active_user || "N/A"}
             </p>
           </div>
@@ -141,7 +143,7 @@ const AdminPanel = () => {
       {activeView === "users" && (
         <div className="mt-6 overflow-x-auto">
           <table className="min-w-[720px] w-full text-left text-sm">
-            <thead className="text-xs uppercase text-[var(--app-muted)]">
+            <thead className="text-xs uppercase text-slate-700 dark:text-white">
               <tr>
                 <th className="py-2 pr-4">ID</th>
                 <th className="py-2 pr-4">Username</th>
@@ -156,19 +158,19 @@ const AdminPanel = () => {
                   key={row.id}
                   className="border-t border-[var(--app-border)]"
                 >
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {row.id}
                   </td>
-                  <td className="py-2 pr-4 font-medium text-[var(--app-text)]">
+                  <td className="py-2 pr-4 font-medium text-[var(--app-text)] dark:text-white">
                     {row.username}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {row.email}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {row.is_admin ? "Admin" : "Trader"}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {row.created_at}
                   </td>
                 </tr>
@@ -181,7 +183,7 @@ const AdminPanel = () => {
       {activeView === "predictions" && (
         <div className="mt-6 overflow-x-auto">
           <table className="min-w-[760px] w-full text-left text-sm">
-            <thead className="text-xs uppercase text-[var(--app-muted)]">
+            <thead className="text-xs uppercase text-slate-700 dark:text-white">
               <tr>
                 <th className="py-2 pr-4">Date</th>
                 <th className="py-2 pr-4">User ID</th>
@@ -197,22 +199,22 @@ const AdminPanel = () => {
                   key={row.id}
                   className="border-t border-[var(--app-border)]"
                 >
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {row.timestamp}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {row.user_id || "N/A"}
                   </td>
-                  <td className="py-2 pr-4 font-medium text-[var(--app-text)]">
+                  <td className="py-2 pr-4 font-medium text-[var(--app-text)] dark:text-white">
                     {row.asset}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {row.signal}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {formatPercent(row.expected_return)}
                   </td>
-                  <td className="py-2 pr-4 text-[var(--app-muted)]">
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {Math.round(row.confidence * 100)}%
                   </td>
                 </tr>

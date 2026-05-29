@@ -60,7 +60,7 @@ const deriveUserFromToken = (authToken) => {
   return { username: payload?.sub || "user", isAdmin: false };
 };
 
-const QuickGuideModal = ({ onClose }) => (
+const QuickGuideModal = ({ onClose, isAdmin }) => (
   <div
     className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4"
     role="dialog"
@@ -75,7 +75,7 @@ const QuickGuideModal = ({ onClose }) => (
           </p>
           <h2
             id="quick-guide-title"
-            className="mt-1 text-xl font-semibold text-[var(--app-text)]"
+            className="mt-1 text-xl font-semibold text-[var(--app-text)] dark:text-white"
           >
             Reading your signal dashboard
           </h2>
@@ -84,30 +84,40 @@ const QuickGuideModal = ({ onClose }) => (
           type="button"
           aria-label="Close quick guide"
           onClick={onClose}
-          className="rounded-full border border-[var(--app-border)] px-3 py-1 text-sm text-slate-700 dark:text-slate-300"
+          className="rounded-full border border-[var(--app-border)] px-3 py-1 text-sm text-slate-700 dark:text-white"
         >
           Close
         </button>
       </div>
-      <ol className="mt-5 space-y-3 text-sm text-slate-700 dark:text-slate-300">
-        <li>
-          1. Choose an NGX equity or major cryptocurrency from the asset
-          control.
-        </li>
-        <li>
-          2. Read the candlestick chart and SMA overlays for recent price
-          direction.
-        </li>
-        <li>
-          3. Check RSI, volatility, and crossover indicators for momentum and
-          risk.
-        </li>
-        <li>
-          4. Review the model signal, expected return, and confidence
-          explanation.
-        </li>
-        <li>5. Open History to audit your recent generated signals.</li>
-      </ol>
+      {isAdmin ? (
+        <ol className="mt-5 space-y-3 text-sm text-slate-700 dark:text-white">
+          <li>1. Use Admin to review users, predictions, and system stats.</li>
+          <li>2. Compare activity across traders before making changes.</li>
+          <li>3. Check the history tables to audit recent signal output.</li>
+          <li>4. Use Settings to update your password when needed.</li>
+          <li>5. Switch back to Dashboard to inspect live model behavior.</li>
+        </ol>
+      ) : (
+        <ol className="mt-5 space-y-3 text-sm text-slate-700 dark:text-white">
+          <li>
+            1. Choose an NGX equity or major cryptocurrency from the asset
+            control.
+          </li>
+          <li>
+            2. Read the candlestick chart and SMA overlays for recent price
+            direction.
+          </li>
+          <li>
+            3. Check RSI, volatility, and crossover indicators for momentum
+            and risk.
+          </li>
+          <li>
+            4. Review the model signal, expected return, and confidence
+            explanation.
+          </li>
+          <li>5. Open History to audit your recent generated signals.</li>
+        </ol>
+      )}
     </div>
   </div>
 );
@@ -127,10 +137,10 @@ const SettingsPanel = ({
       <div className="card p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-[var(--app-text)]">
+            <h3 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
               Change Password
             </h3>
-            <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+            <p className="mt-1 text-sm text-slate-700 dark:text-white">
               Update your login password at any time.
             </p>
           </div>
@@ -149,7 +159,7 @@ const SettingsPanel = ({
           <form className="mt-4 space-y-4" onSubmit={onChangePassword}>
             <div>
               <label
-                className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                className="text-sm font-medium text-slate-700 dark:text-white"
                 htmlFor="old-password"
               >
                 Current password
@@ -164,13 +174,13 @@ const SettingsPanel = ({
                     oldPassword: event.target.value,
                   }))
                 }
-                className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
+                className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)] dark:text-white"
                 required
               />
             </div>
             <div>
               <label
-                className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                className="text-sm font-medium text-slate-700 dark:text-white"
                 htmlFor="new-password"
               >
                 New password
@@ -185,7 +195,7 @@ const SettingsPanel = ({
                     newPassword: event.target.value,
                   }))
                 }
-                className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
+                className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)] dark:text-white"
                 required
               />
             </div>
@@ -218,10 +228,10 @@ const SettingsPanel = ({
 
       <div className="space-y-4">
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-[var(--app-text)]">
+          <h3 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
             Quick Guide
           </h3>
-          <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+          <p className="mt-1 text-sm text-slate-700 dark:text-white">
             Reopen the tutorial whenever you need a refresher.
           </p>
           <button
@@ -234,17 +244,17 @@ const SettingsPanel = ({
         </div>
 
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-[var(--app-text)]">
+          <h3 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
             Preferences
           </h3>
-          <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+          <p className="mt-1 text-sm text-slate-700 dark:text-white">
             Default asset and time range coming soon.
           </p>
         </div>
       </div>
     </div>
 
-    <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-3 text-sm text-[var(--app-text)]">
+    <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-3 text-sm text-[var(--app-text)] dark:text-white">
       Use the profile menu for logout and password access from anywhere in the
       app.
     </div>
@@ -310,8 +320,7 @@ const App = () => {
     adminChecked && !user.isAdmin && activeTab === "admin"
       ? "dashboard"
       : activeTab;
-  const shouldShowQuickGuide =
-    isAuthenticated && !user.isAdmin && !quickGuideDismissed;
+  const shouldShowQuickGuide = isAuthenticated && !quickGuideDismissed;
 
   const tabs = useMemo(() => {
     const visibleTabs = [
@@ -543,7 +552,7 @@ const App = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[var(--app-bg)] text-[var(--app-text)] transition-colors">
+    <div className="flex h-screen flex-col overflow-hidden bg-[var(--app-bg)] text-[var(--app-text)] dark:text-white transition-colors">
       <TopBar
         user={{ username: user.username || "user", isAdmin: user.isAdmin }}
         showAvatar={isAuthenticated && adminChecked}
@@ -570,7 +579,7 @@ const App = () => {
                     className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
                       isActive
                         ? "bg-[var(--app-accent)] text-white"
-                        : "border border-[var(--app-border)] text-[var(--app-text)]"
+                        : "border border-[var(--app-border)] text-[var(--app-text)] dark:text-white"
                     }`}
                   >
                     {tab.label}
@@ -579,7 +588,7 @@ const App = () => {
               })}
               <button
                 type="button"
-                className="shrink-0 rounded-full border border-[var(--app-border)] px-4 py-2 text-sm font-semibold text-[var(--app-text)] transition hover:bg-[var(--app-soft)]"
+                className="shrink-0 rounded-full border border-[var(--app-border)] px-4 py-2 text-sm font-semibold text-[var(--app-text)] dark:text-white transition hover:bg-[var(--app-soft)]"
                 onClick={openQuickGuide}
               >
                 Quick Guide
@@ -661,7 +670,7 @@ const App = () => {
                 </div>
               )}
 
-            <div className="flex flex-col gap-2 px-1 text-xs text-slate-700 dark:text-slate-300 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 px-1 text-xs text-slate-700 dark:text-white sm:flex-row sm:items-center sm:justify-between">
               <span>This is an educational tool, not financial advice.</span>
             </div>
 
@@ -714,7 +723,9 @@ const App = () => {
         )}
       </main>
 
-      {shouldShowQuickGuide && <QuickGuideModal onClose={dismissQuickGuide} />}
+      {shouldShowQuickGuide && (
+        <QuickGuideModal onClose={dismissQuickGuide} isAdmin={user.isAdmin} />
+      )}
     </div>
   );
 };

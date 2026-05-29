@@ -27,7 +27,7 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
       <button
         type="button"
         aria-label="Open user menu"
-        className="flex items-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] p-1 text-[var(--app-text)]"
+        className="flex items-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] p-1 text-[var(--app-text)] dark:text-white"
         onClick={() => setOpen((prev) => !prev)}
       >
         <img
@@ -38,12 +38,12 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-text)] shadow-xl">
+        <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-text)] dark:text-white shadow-xl">
           <div className="px-4 py-3">
-            <p className="text-sm font-semibold text-[var(--text)]">
+            <p className="text-sm font-semibold text-[var(--app-text)] dark:text-white">
               {username} - {roleLabel}
             </p>
-            <div className="mt-1 flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
+            <div className="mt-1 flex items-center gap-2 text-xs text-slate-700 dark:text-white">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               Online
             </div>
@@ -53,7 +53,7 @@ const AvatarMenu = ({ username, isAdmin, onLogout, onChangePassword }) => {
             <button
               type="button"
               onClick={onChangePassword}
-              className="w-full rounded-lg px-3 py-2 text-left text-sm text-[var(--text)] transition hover:bg-[var(--app-soft)]"
+              className="w-full rounded-lg px-3 py-2 text-left text-sm text-[var(--app-text)] dark:text-white transition hover:bg-[var(--app-soft)]"
             >
               Change Password
             </button>

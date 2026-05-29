@@ -232,10 +232,10 @@ const PriceChart = ({ data, chartTheme }) => {
     <div className="card p-4">
       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-[var(--app-text)]">
+          <h3 className="text-sm font-semibold text-[var(--app-text)] dark:text-white">
             Price Chart
           </h3>
-          <p className="text-xs text-slate-700 dark:text-slate-300">
+          <p className="text-xs text-slate-700 dark:text-white">
             Historical candles with SMA overlays. Replay runs at 500ms per
             candle and is not live data.
           </p>

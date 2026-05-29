@@ -40,10 +40,10 @@ const TopBar = ({
     <header className="border-b border-gray-200 bg-[var(--app-bg)] dark:border-gray-800">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold text-[var(--app-text)] sm:text-2xl">
+          <h1 className="text-xl font-semibold text-[var(--app-text)] dark:text-white sm:text-2xl">
             TradeSense NG
           </h1>
-          <p className="mt-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+          <p className="mt-1 text-sm font-medium text-slate-700 dark:text-white">
             AI Investment Signals
           </p>
         </div>
@@ -56,7 +56,7 @@ const TopBar = ({
             title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
             aria-pressed={isDarkMode}
             onClick={onToggleTheme}
-            className="inline-flex h-8 w-8 p-2 items-center justify-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-text)] transition hover:bg-[var(--app-soft)]"
+            className="theme-toggle"
           >
             {isDarkMode ? <SunIcon /> : <MoonIcon />}
           </button>

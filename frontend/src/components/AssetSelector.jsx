@@ -101,17 +101,17 @@ const AssetSelector = ({
   return (
     <div className="space-y-3">
       <div>
-        <h2 className="text-lg font-semibold text-[var(--app-text)]">
+        <h2 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
           Asset Overview
         </h2>
-        <p className="text-sm text-slate-700 dark:text-slate-300">
+        <p className="text-sm text-slate-700 dark:text-white">
           Choose an asset to load its chart and signal.
         </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.9fr)_minmax(0,0.9fr)]">
         <div className="relative" ref={containerRef}>
-          <label className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300">
+          <label className="text-xs font-semibold uppercase text-slate-700 dark:text-white">
             Asset
           </label>
           <input
@@ -129,12 +129,12 @@ const AssetSelector = ({
               setSearchQuery("");
               setIsOpen(true);
             }}
-            className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--card)] px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 dark:text-slate-100 dark:placeholder:text-slate-400"
+            className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--card)] px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 dark:text-white dark:placeholder:text-white"
           />
           {isOpen && (
             <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-[var(--app-border)] bg-[var(--card)] shadow-lg">
               {filteredAssets.length === 0 ? (
-                <div className="px-3 py-2 text-sm text-slate-700 dark:text-slate-300">
+                <div className="px-3 py-2 text-sm text-slate-700 dark:text-white">
                   No matches found.
                 </div>
               ) : (
@@ -142,7 +142,7 @@ const AssetSelector = ({
                   <button
                     key={asset.symbol}
                     type="button"
-                    className="w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-[var(--app-soft)] dark:text-slate-100"
+                    className="w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-[var(--app-soft)] dark:text-white"
                     onClick={() => handleSelect(asset)}
                   >
                     {asset.symbol} · {asset.name}
@@ -155,7 +155,7 @@ const AssetSelector = ({
 
         <div>
           <label
-            className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300"
+            className="text-xs font-semibold uppercase text-slate-700 dark:text-white"
             htmlFor="asset-category"
           >
             Category
@@ -164,7 +164,7 @@ const AssetSelector = ({
             id="asset-category"
             value={selectedCategory}
             onChange={(event) => setSelectedCategory(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--text)] shadow-sm"
+            className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--app-text)] dark:text-white shadow-sm"
           >
             <option value="All">All</option>
             <option value="Crypto">Crypto</option>
@@ -174,7 +174,7 @@ const AssetSelector = ({
 
         <div>
           <label
-            className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300"
+            className="text-xs font-semibold uppercase text-slate-700 dark:text-white"
             htmlFor="asset-risk"
           >
             Risk
@@ -183,7 +183,7 @@ const AssetSelector = ({
             id="asset-risk"
             value={selectedRisk}
             onChange={(event) => setSelectedRisk(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--text)] shadow-sm"
+            className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--app-text)] dark:text-white shadow-sm"
           >
             <option value="All">All</option>
             <option value="Conservative">Conservative</option>
@@ -194,7 +194,7 @@ const AssetSelector = ({
       </div>
 
       {selected && (
-        <p className="text-xs text-slate-700 dark:text-slate-300">
+        <p className="text-xs text-slate-700 dark:text-white">
           Selected: {selected.symbol} · {selected.name}
         </p>
       )}

@@ -46,10 +46,10 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
       </div>
 
       <div className="p-6 sm:p-8">
-        <h3 className="text-2xl font-semibold text-[var(--app-text)]">
+        <h3 className="text-2xl font-semibold text-[var(--app-text)] dark:text-white">
           Sign in
         </h3>
-        <p className="mt-2 text-sm text-[var(--app-muted)]">
+        <p className="mt-2 text-sm text-slate-700 dark:text-white">
           Access the Intelligent Investment Recommendation Assistant.
         </p>
 
@@ -58,7 +58,7 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
         <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
           <div>
             <label
-              className="text-sm font-medium text-[var(--app-muted)]"
+              className="text-sm font-medium text-slate-700 dark:text-white"
               htmlFor="login-username"
             >
               Username
@@ -68,7 +68,7 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
               type="text"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-3 text-sm text-[var(--app-text)]"
+              className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-3 text-sm text-[var(--app-text)] dark:text-white"
               placeholder="Enter your username"
               required
             />
@@ -76,7 +76,7 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
 
           <div>
             <label
-              className="text-sm font-medium text-[var(--app-muted)]"
+              className="text-sm font-medium text-slate-700 dark:text-white"
               htmlFor="login-password"
             >
               Password
@@ -86,7 +86,7 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-3 text-sm text-[var(--app-text)]"
+              className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-3 text-sm text-[var(--app-text)] dark:text-white"
               placeholder="Enter your password"
               required
             />
@@ -101,7 +101,7 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
           </button>
 
           {showForgotMessage && (
-            <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-3 py-2 text-sm text-[var(--app-text)]">
+            <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-3 py-2 text-sm text-[var(--app-text)] dark:text-white">
               Please contact the administrator to reset your password.
             </div>
           )}
@@ -115,7 +115,7 @@ const LoginForm = ({ onSubmit, onSwitch, loading, error }) => {
           </button>
         </form>
 
-        <div className="mt-5 text-center text-sm text-[var(--app-muted)]">
+        <div className="mt-5 text-center text-sm text-slate-700 dark:text-white">
           New here?{" "}
           <button
             type="button"

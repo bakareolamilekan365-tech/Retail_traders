@@ -13,10 +13,10 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
 
   return (
     <div className="card w-full max-w-md p-6">
-      <h2 className="text-2xl font-semibold text-[var(--app-text)]">
+      <h2 className="text-2xl font-semibold text-[var(--app-text)] dark:text-white">
         Create account
       </h2>
-      <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+      <p className="mt-1 text-sm text-slate-700 dark:text-white">
         Start tracking signals in minutes.
       </p>
 
@@ -25,7 +25,7 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
       <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
         <div>
           <label
-            className="text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="text-sm font-medium text-slate-700 dark:text-white"
             htmlFor="register-username"
           >
             Username
@@ -35,7 +35,7 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
             type="text"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             placeholder="e.g. trader01"
             required
           />
@@ -43,7 +43,7 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
 
         <div>
           <label
-            className="text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="text-sm font-medium text-slate-700 dark:text-white"
             htmlFor="register-email"
           >
             Email
@@ -53,7 +53,7 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             placeholder="you@example.com"
             required
           />
@@ -61,7 +61,7 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
 
         <div>
           <label
-            className="text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="text-sm font-medium text-slate-700 dark:text-white"
             htmlFor="register-password"
           >
             Password
@@ -71,7 +71,7 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             placeholder="Create a password"
             required
           />
@@ -82,7 +82,7 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error }) => {
         </button>
       </form>
 
-      <div className="mt-4 text-center text-sm text-slate-700 dark:text-slate-300">
+      <div className="mt-4 text-center text-sm text-slate-700 dark:text-white">
         Already have an account?{" "}
         <button
           type="button"

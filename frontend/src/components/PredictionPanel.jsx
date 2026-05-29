@@ -13,13 +13,13 @@ const PredictionPanel = ({ prediction }) => {
       <div className="grid gap-4 md:grid-cols-2 md:items-start">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm uppercase tracking-wide text-slate-800 dark:text-slate-200">
+            <h3 className="text-sm uppercase tracking-wide text-slate-800 dark:text-white">
               Model Signal
             </h3>
             <span
               title="The model signal maps the predicted 7-day return into BUY, HOLD, or SELL."
               aria-label="Model signal explanation"
-              className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--app-border)] text-xs text-slate-700 dark:text-slate-300"
+              className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--app-border)] text-xs text-slate-700 dark:text-white"
             >
               ?
             </span>
@@ -31,23 +31,23 @@ const PredictionPanel = ({ prediction }) => {
           </span>
         </div>
         <div className="space-y-1 md:text-right">
-          <p className="text-sm text-slate-800 dark:text-slate-200">
+          <p className="text-sm text-slate-800 dark:text-white">
             Expected 7-day return
           </p>
-          <p className="text-2xl font-semibold text-[var(--app-text)]">
+          <p className="text-2xl font-semibold text-[var(--app-text)] dark:text-white">
             {prediction.expected_return_7d.toFixed(2)}%
           </p>
         </div>
       </div>
       <div className="mt-5 border-t border-[var(--app-border)] pt-4 pb-1">
         <div className="flex items-center gap-2">
-          <p className="text-sm text-slate-800 dark:text-slate-200">
+          <p className="text-sm text-slate-800 dark:text-white">
             Confidence
           </p>
           <span
             title="Confidence estimates how strongly the predicted return clears the trading threshold."
             aria-label="Confidence explanation"
-            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--app-border)] text-xs text-slate-700 dark:text-slate-300"
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--app-border)] text-xs text-slate-700 dark:text-white"
           >
             ?
           </span>
@@ -58,7 +58,7 @@ const PredictionPanel = ({ prediction }) => {
             style={{ width: `${prediction.confidence * 100}%` }}
           />
         </div>
-        <p className="mt-2 text-sm font-medium text-slate-800 dark:text-slate-200">
+        <p className="mt-2 text-sm font-medium text-slate-800 dark:text-white">
           {(prediction.confidence * 100).toFixed(0)}% confidence
         </p>
       </div>

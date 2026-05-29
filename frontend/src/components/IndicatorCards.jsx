@@ -13,12 +13,12 @@ const InfoTip = ({ label, explanation }) => (
       type="button"
       aria-label={`${label} explanation`}
       title={explanation}
-      className="ml-1 inline-flex h-6 w-6 items-center justify-center rounded-full border border-[var(--app-border)] text-[10px] font-semibold text-slate-700 transition hover:bg-[var(--app-soft)] hover:text-[var(--app-text)] dark:text-slate-300"
+      className="ml-1 inline-flex h-6 w-6 items-center justify-center rounded-full border border-[var(--app-border)] text-[10px] font-semibold text-slate-700 transition hover:bg-[var(--app-soft)] hover:text-slate-900 dark:text-white dark:hover:text-white"
     >
       ?
     </button>
     <span className="pointer-events-none absolute left-1/2 top-full z-20 hidden w-56 -translate-x-1/2 pt-2 group-hover:block group-focus-within:block">
-      <span className="block rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-3 py-2 text-xs leading-5 text-[var(--app-text)] shadow-xl">
+      <span className="block rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] px-3 py-2 text-xs leading-5 text-[var(--app-text)] dark:text-white shadow-xl">
         {explanation}
       </span>
     </span>
@@ -64,15 +64,15 @@ const IndicatorCards = ({ indicators }) => {
     <div className="grid gap-4 md:grid-cols-3">
       {cards.map((card) => (
         <div key={card.title} className="card p-4">
-          <p className="text-xs uppercase tracking-wide text-slate-700 dark:text-slate-300">
+          <p className="text-xs uppercase tracking-wide text-slate-700 dark:text-white">
             {card.note}
           </p>
           <div className="mt-2 flex items-center gap-1.5">
-            <h3 className="text-lg font-semibold text-[var(--app-text)]">
+            <h3 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
               {card.value}
             </h3>
           </div>
-          <div className="flex items-center text-sm text-slate-700 dark:text-slate-300">
+          <div className="flex items-center text-sm text-slate-700 dark:text-white">
             <p>{card.title}</p>
             <InfoTip
               label={card.title}

@@ -50,7 +50,7 @@ const SignalSimulator = ({ asset, prediction, latestClose }) => {
           <h2 className="mt-1 text-2xl font-semibold text-[var(--app-text)]">
             Simulate a Naira position from the latest signal
           </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-700 dark:text-slate-300">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-700 dark:text-white">
             Enter an amount and estimate how the current model output could
             change the value of a short-term position.
           </p>
@@ -64,7 +64,7 @@ const SignalSimulator = ({ asset, prediction, latestClose }) => {
 
       {!isReady ? (
         <div className="mt-6 rounded-lg border border-dashed border-[var(--app-border)] px-4 py-10 text-center">
-          <p className="text-sm text-slate-700 dark:text-slate-300">
+          <p className="text-sm text-slate-700 dark:text-white">
             Run a prediction on the Dashboard to unlock the simulator.
           </p>
         </div>
@@ -74,7 +74,7 @@ const SignalSimulator = ({ asset, prediction, latestClose }) => {
             <div className="rounded-xl border border-[var(--app-border)] bg-[var(--app-bg)] p-4">
               <label
                 htmlFor="simulator-amount"
-                className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                className="text-sm font-medium text-slate-700 dark:text-white"
               >
                 Amount in Naira
               </label>
