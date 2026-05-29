@@ -1,10 +1,9 @@
 const getDefaultApiBase = () => {
   if (typeof window === "undefined") {
-    return "http://localhost:8000/api/v1";
+    return "/api/v1";
   }
 
-  const { protocol, hostname } = window.location;
-  return `${protocol}//${hostname}:8000/api/v1`;
+  return "/api/v1";
 };
 
 const API_BASE = import.meta.env.VITE_API_URL || getDefaultApiBase();
