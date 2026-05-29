@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import AdminPanel from "../src/components/AdminPanel.jsx";
 
@@ -52,6 +52,21 @@ describe("AdminPanel", () => {
           top_asset: "BTC",
           most_active_user: "admin",
         }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            symbol: "BTC",
+            name: "Bitcoin",
+            status: "active",
+            enabled: true,
+          },
+        ],
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ content: "log line 1\nlog line 2" }),
       });
 
     render(<AdminPanel />);
@@ -64,5 +79,11 @@ describe("AdminPanel", () => {
 
     await user.click(screen.getByRole("button", { name: /predictions/i }));
     await waitFor(() => expect(screen.getByText("+2.50%")).toBeInTheDocument());
+
+    await user.click(screen.getByRole("button", { name: /assets/i }));
+    expect(screen.getByText("Bitcoin")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /logs/i }));
+    expect(screen.getByDisplayValue(/log line 1/)).toBeInTheDocument();
   });
 });

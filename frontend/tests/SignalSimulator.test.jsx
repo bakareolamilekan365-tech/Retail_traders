@@ -1,11 +1,37 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { apiFetch } from "../src/utils/api.js";
 import SignalSimulator from "../src/components/SignalSimulator.jsx";
 
+vi.mock("../src/utils/api.js", () => ({
+  apiFetch: vi.fn(),
+}));
+
 describe("SignalSimulator", () => {
+  beforeEach(() => {
+    vi.mocked(apiFetch).mockReset();
+  });
+
   it("shows estimates from the latest prediction", async () => {
     const user = userEvent.setup();
+
+    vi.mocked(apiFetch)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          { symbol: "BTC", name: "Bitcoin" },
+          { symbol: "ETH", name: "Ethereum" },
+        ],
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          prediction: { expected_return_7d: 5.5, confidence: 0.78 },
+          ohlcv: [{ close: 2000 }],
+        }),
+      });
 
     render(
       <SignalSimulator
@@ -40,13 +66,20 @@ describe("SignalSimulator", () => {
     ).toBeInTheDocument();
   });
 
-  it("prompts for a prediction when no data is available", () => {
+  it("prompts for a prediction when no data is available", async () => {
+    vi.mocked(apiFetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => [{ symbol: "BTC", name: "Bitcoin" }],
+    });
+
     render(<SignalSimulator />);
 
-    expect(
-      screen.getByText(
-        /run a prediction on the dashboard to unlock the simulator/i,
-      ),
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /run a prediction on the dashboard to unlock the simulator/i,
+        ),
+      ).toBeInTheDocument();
+    });
   });
 });

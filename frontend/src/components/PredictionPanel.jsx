@@ -41,9 +41,7 @@ const PredictionPanel = ({ prediction }) => {
       </div>
       <div className="mt-5 border-t border-[var(--app-border)] pt-4 pb-1">
         <div className="flex items-center gap-2">
-          <p className="text-sm text-slate-800 dark:text-white">
-            Confidence
-          </p>
+          <p className="text-sm text-slate-800 dark:text-white">Confidence</p>
           <span
             title="Confidence estimates how strongly the predicted return clears the trading threshold."
             aria-label="Confidence explanation"

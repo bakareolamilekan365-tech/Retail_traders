@@ -108,8 +108,8 @@ const QuickGuideModal = ({ onClose, isAdmin }) => (
             direction.
           </li>
           <li>
-            3. Check RSI, volatility, and crossover indicators for momentum
-            and risk.
+            3. Check RSI, volatility, and crossover indicators for momentum and
+            risk.
           </li>
           <li>
             4. Review the model signal, expected return, and confidence

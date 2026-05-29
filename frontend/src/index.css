@@ -65,7 +65,31 @@ body {
   color: var(--text);
 }
 
-.dark :is(h1, h2, h3, h4, h5, h6, p, span, li, label, td, th, button, a, small, strong, em, legend, option, textarea, input, select) {
+.dark
+  :is(
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span,
+    li,
+    label,
+    td,
+    th,
+    button,
+    a,
+    small,
+    strong,
+    em,
+    legend,
+    option,
+    textarea,
+    input,
+    select
+  ) {
   color: #ffffff;
 }
 
