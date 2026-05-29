@@ -104,14 +104,14 @@ const AssetSelector = ({
         <h2 className="text-lg font-semibold text-[var(--app-text)]">
           Asset Overview
         </h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
+        <p className="text-sm text-slate-700 dark:text-slate-300">
           Choose an asset to load its chart and signal.
         </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.9fr)_minmax(0,0.9fr)]">
         <div className="relative" ref={containerRef}>
-          <label className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+          <label className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300">
             Asset
           </label>
           <input
@@ -129,12 +129,12 @@ const AssetSelector = ({
               setSearchQuery("");
               setIsOpen(true);
             }}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400"
+            className="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--card)] px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 dark:text-slate-100 dark:placeholder:text-slate-400"
           />
           {isOpen && (
-            <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
+            <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-[var(--app-border)] bg-[var(--card)] shadow-lg">
               {filteredAssets.length === 0 ? (
-                <div className="px-3 py-2 text-sm text-slate-500 dark:text-slate-400">
+                <div className="px-3 py-2 text-sm text-slate-700 dark:text-slate-300">
                   No matches found.
                 </div>
               ) : (
@@ -142,7 +142,7 @@ const AssetSelector = ({
                   <button
                     key={asset.symbol}
                     type="button"
-                    className="w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
+                    className="w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-[var(--app-soft)] dark:text-slate-100"
                     onClick={() => handleSelect(asset)}
                   >
                     {asset.symbol} · {asset.name}
@@ -155,7 +155,7 @@ const AssetSelector = ({
 
         <div>
           <label
-            className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400"
+            className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300"
             htmlFor="asset-category"
           >
             Category
@@ -174,7 +174,7 @@ const AssetSelector = ({
 
         <div>
           <label
-            className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400"
+            className="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300"
             htmlFor="asset-risk"
           >
             Risk
@@ -194,7 +194,7 @@ const AssetSelector = ({
       </div>
 
       {selected && (
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-slate-700 dark:text-slate-300">
           Selected: {selected.symbol} · {selected.name}
         </p>
       )}

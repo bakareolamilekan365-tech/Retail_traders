@@ -13,7 +13,7 @@ const InfoTip = ({ label, explanation }) => (
       type="button"
       aria-label={`${label} explanation`}
       title={explanation}
-      className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--app-border)] text-[10px] font-semibold text-[var(--app-muted)] transition hover:bg-[var(--app-soft)] hover:text-[var(--app-text)]"
+      className="ml-1 inline-flex h-6 w-6 items-center justify-center rounded-full border border-[var(--app-border)] text-[10px] font-semibold text-slate-700 transition hover:bg-[var(--app-soft)] hover:text-[var(--app-text)] dark:text-slate-300"
     >
       ?
     </button>
@@ -43,7 +43,7 @@ const IndicatorCards = ({ indicators }) => {
       tipKey: "volatility",
       value:
         latest.volatility_14 !== null && latest.volatility_14 !== undefined
-          ? latest.volatility_14.toFixed(2)
+          ? `${latest.volatility_14.toFixed(2)}%`
           : "N/A",
       note: "Risk",
     },
@@ -64,21 +64,21 @@ const IndicatorCards = ({ indicators }) => {
     <div className="grid gap-4 md:grid-cols-3">
       {cards.map((card) => (
         <div key={card.title} className="card p-4">
-          <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <p className="text-xs uppercase tracking-wide text-slate-700 dark:text-slate-300">
             {card.note}
           </p>
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-2 flex items-center gap-1.5">
             <h3 className="text-lg font-semibold text-[var(--app-text)]">
               {card.value}
             </h3>
+          </div>
+          <div className="flex items-center text-sm text-slate-700 dark:text-slate-300">
+            <p>{card.title}</p>
             <InfoTip
               label={card.title}
               explanation={explanations[card.tipKey]}
             />
           </div>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            {card.title}
-          </p>
         </div>
       ))}
     </div>

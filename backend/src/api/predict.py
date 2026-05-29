@@ -106,6 +106,13 @@ def _serialize_ohlcv(df: pd.DataFrame) -> List[OHLCVRow]:
 def _serialize_indicators(df: pd.DataFrame) -> List[IndicatorRow]:
     rows: List[IndicatorRow] = []
     for _, row in df.iterrows():
+        volatility = row.get("Volatility_14")
+        close = row.get("Close")
+        if pd.isna(volatility) or pd.isna(close) or close == 0:
+            volatility_pct = None
+        else:
+            volatility_pct = float((volatility / close) * 100)
+
         rows.append(
             IndicatorRow(
                 date=pd.to_datetime(row["Date"]).strftime("%Y-%m-%d"),
@@ -113,7 +120,7 @@ def _serialize_indicators(df: pd.DataFrame) -> List[IndicatorRow]:
                 sma_50=_to_optional_float(row["SMA_50"]),
                 sma_crossover=int(row["SMA_Crossover"]),
                 rsi_14=_to_optional_float(row["RSI_14"]),
-                volatility_14=_to_optional_float(row["Volatility_14"]),
+                volatility_14=volatility_pct,
             )
         )
     return rows
@@ -146,17 +153,21 @@ def _build_insight(
     close = latest_row.get("Close")
 
     if pd.isna(sma_14) or pd.isna(sma_50):
+        trend_state = "unknown"
         trend_clause = "Trend data is insufficient to confirm direction."
     elif sma_14 > sma_50:
+        trend_state = "bullish"
         trend_clause = "Short-term uptrend confirmed by SMA 14 crossing above SMA 50."
     elif sma_14 < sma_50:
+        trend_state = "bearish"
         trend_clause = "Short-term downtrend indicated by SMA 14 staying below SMA 50."
     else:
+        trend_state = "neutral"
         trend_clause = "Trend is neutral with SMA 14 aligned to SMA 50."
 
     if pd.isna(rsi):
         momentum_clause = "RSI data is insufficient to assess momentum."
-    elif rsi < 30:
+    elif rsi <= 30:
         momentum_clause = f"RSI at {rsi:.1f} indicates oversold momentum."
     elif rsi > 70:
         momentum_clause = f"RSI at {rsi:.1f} indicates overbought momentum."
@@ -174,12 +185,28 @@ def _build_insight(
         else:
             risk_clause = f"Volatility is elevated ({volatility_pct:.1f}%)."
 
+    if signal == "SELL" and trend_state == "bullish":
+        reconciliation_clause = (
+            "Signal conflict detected: the model leans defensive (SELL) while "
+            "SMA trend remains bullish."
+        )
+    elif signal == "BUY" and trend_state == "bearish":
+        reconciliation_clause = (
+            "Signal conflict detected: the model turns constructive (BUY) while "
+            "SMA trend remains bearish."
+        )
+    else:
+        reconciliation_clause = ""
+
     model_clause = (
         f"Our model recommends a {signal} with an expected 7-day return of "
         f"{expected_return_pct:+.1f}% (confidence {confidence:.0%})."
     )
 
-    return " ".join([trend_clause, momentum_clause, risk_clause, model_clause])
+    clauses = [trend_clause, momentum_clause, risk_clause, model_clause]
+    if reconciliation_clause:
+        clauses.append(reconciliation_clause)
+    return " ".join(clauses)
 
 
 def _log_prediction(

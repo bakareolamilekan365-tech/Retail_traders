@@ -37,8 +37,8 @@ const TopBar = ({
   const isDarkMode = theme === "dark";
 
   return (
-    <header className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">
+    <header className="border-b border-gray-200 bg-[var(--app-bg)] dark:border-gray-800">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <div className="min-w-0">
           <h1 className="text-xl font-semibold text-[var(--app-text)] sm:text-2xl">
             TradeSense NG
@@ -47,7 +47,7 @@ const TopBar = ({
             AI Investment Signals
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="ml-auto flex items-center gap-3">
           <button
             type="button"
             aria-label={
@@ -56,7 +56,7 @@ const TopBar = ({
             title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
             aria-pressed={isDarkMode}
             onClick={onToggleTheme}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-text)] transition hover:bg-[var(--app-soft)]"
+            className="inline-flex h-8 w-8 p-2 items-center justify-center rounded-full border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-text)] transition hover:bg-[var(--app-soft)]"
           >
             {isDarkMode ? <SunIcon /> : <MoonIcon />}
           </button>

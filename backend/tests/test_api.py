@@ -14,6 +14,7 @@ if str(BACKEND_SRC) not in sys.path:
     sys.path.append(str(BACKEND_SRC))
 
 from api.main import create_app
+from api.predict import _build_insight, _serialize_indicators
 from api.security import create_access_token
 from engine.preprocessing import compute_indicators
 
@@ -135,3 +136,65 @@ def test_predict_without_auth_returns_401(test_app: TestClient) -> None:
 def test_predict_smoke_token_flow(test_app: TestClient) -> None:
     response = test_app.get("/api/v1/predict?asset=BTC&days=3", headers=_auth_headers())
     assert response.status_code == 200
+
+
+def test_insight_uses_oversold_threshold_at_rsi_30() -> None:
+    latest_row = pd.Series(
+        {
+            "SMA_14": 101.0,
+            "SMA_50": 100.0,
+            "RSI_14": 30.0,
+            "Volatility_14": 2.8,
+            "Close": 100.0,
+        }
+    )
+
+    insight = _build_insight(
+        latest_row=latest_row,
+        signal="HOLD",
+        expected_return_pct=0.4,
+        confidence=0.6,
+    )
+
+    assert "oversold momentum" in insight.lower()
+
+
+def test_insight_mentions_signal_trend_conflict() -> None:
+    latest_row = pd.Series(
+        {
+            "SMA_14": 120.0,
+            "SMA_50": 100.0,
+            "RSI_14": 55.0,
+            "Volatility_14": 3.0,
+            "Close": 100.0,
+        }
+    )
+
+    insight = _build_insight(
+        latest_row=latest_row,
+        signal="SELL",
+        expected_return_pct=-2.4,
+        confidence=0.78,
+    )
+
+    assert "signal conflict" in insight.lower()
+    assert "sell" in insight.lower()
+    assert "bullish" in insight.lower()
+
+
+def test_serialize_indicators_outputs_relative_volatility_percent() -> None:
+    frame = pd.DataFrame(
+        {
+            "Date": pd.date_range("2025-01-01", periods=1, freq="D"),
+            "SMA_14": [100.0],
+            "SMA_50": [95.0],
+            "SMA_Crossover": [1],
+            "RSI_14": [50.0],
+            "Volatility_14": [2.5],
+            "Close": [100.0],
+        }
+    )
+
+    serialized = _serialize_indicators(frame)
+    assert len(serialized) == 1
+    assert serialized[0].volatility_14 == pytest.approx(2.5)

@@ -14,7 +14,7 @@ describe("IndicatorCards", () => {
     );
 
     expect(screen.getByText("55.2")).toBeInTheDocument();
-    expect(screen.getByText("1.80")).toBeInTheDocument();
+    expect(screen.getByText("1.80%")).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: /bullish/i }),
     ).toBeInTheDocument();

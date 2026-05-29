@@ -487,7 +487,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] transition-colors">
+    <div className="flex h-screen flex-col overflow-hidden bg-[var(--app-bg)] text-[var(--app-text)] transition-colors">
       <TopBar
         user={{ username: user.username || "user", isAdmin: user.isAdmin }}
         showAvatar={isAuthenticated && adminChecked}
@@ -502,8 +502,8 @@ const App = () => {
 
       {isAuthenticated && (
         <div className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-            <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
+            <div className="flex max-w-full flex-wrap items-center gap-2 overflow-x-auto pb-1">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
@@ -521,21 +521,21 @@ const App = () => {
                   </button>
                 );
               })}
+              <button
+                type="button"
+                className="shrink-0 rounded-full border border-[var(--app-border)] px-4 py-2 text-sm font-semibold text-[var(--app-text)] transition hover:bg-[var(--app-soft)]"
+                onClick={() => setShowQuickGuide(true)}
+              >
+                Quick Guide
+              </button>
             </div>
-            <button
-              type="button"
-              className="btn-secondary shrink-0 px-3 py-1.5 text-xs"
-              onClick={() => setShowQuickGuide(true)}
-            >
-              Quick Guide
-            </button>
           </div>
         </div>
       )}
 
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+      <main className="mx-auto w-full max-w-7xl flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:py-8">
         {!isAuthenticated ? (
-          <div className="flex min-h-[calc(100vh-120px)] items-center justify-center">
+          <div className="flex min-h-full items-center justify-center">
             {authView === "login" ? (
               <LoginForm
                 onSubmit={handleLogin}
@@ -581,27 +581,29 @@ const App = () => {
               </div>
             )}
 
-            {showDemoBanner && activeTab === "dashboard" && (
-              <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-2.5">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-sm font-medium text-[var(--app-text)]">
-                    {user.isAdmin
-                      ? "Welcome back, Administrator. Your admin panel is ready."
-                      : user.username === "demo"
-                        ? "Welcome back, Demo Trader. Your signal dashboard is ready."
-                        : "Welcome back, Trader. Your signal dashboard is ready."}
-                  </p>
-                  <button
-                    type="button"
-                    aria-label="Dismiss welcome banner"
-                    onClick={() => setShowDemoBanner(false)}
-                    className="self-start text-sm font-semibold text-[var(--app-accent)] sm:self-auto"
-                  >
-                    Dismiss
-                  </button>
+            {showDemoBanner &&
+              ((user.isAdmin && activeTab === "admin") ||
+                (!user.isAdmin && activeTab === "dashboard")) && (
+                <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-2.5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm font-medium text-[var(--app-text)]">
+                      {user.isAdmin
+                        ? "Welcome back, Administrator. Your admin panel is ready."
+                        : user.username === "demo"
+                          ? "Welcome back, Demo Trader. Your signal dashboard is ready."
+                          : "Welcome back, Trader. Your signal dashboard is ready."}
+                    </p>
+                    <button
+                      type="button"
+                      aria-label="Dismiss welcome banner"
+                      onClick={() => setShowDemoBanner(false)}
+                      className="self-start text-sm font-semibold text-[var(--app-accent)] sm:self-auto"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <div className="flex flex-col gap-2 px-1 text-xs text-[var(--app-muted)] sm:flex-row sm:items-center sm:justify-between">
               <span>This is an educational tool, not financial advice.</span>
