@@ -214,7 +214,13 @@ const App = () => {
     const savedTheme = window.localStorage.getItem("tradesense-theme");
     return savedTheme === "light" ? "light" : "dark";
   });
-  const [authView, setAuthView] = useState("login");
+  const [authView, setAuthView] = useState(() => {
+    if (typeof window === "undefined") return "login";
+    const params = new URLSearchParams(window.location.search || "");
+    const q = params.get("auth");
+    if (q === "register" || q === "signup") return "register";
+    return "login";
+  });
   const [user, setUser] = useState(() => deriveUserFromToken(initialToken));
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
@@ -261,7 +267,8 @@ const App = () => {
   const showLandingPage =
     !isAuthenticated &&
     typeof window !== "undefined" &&
-    window.location.pathname === "/";
+    window.location.pathname === "/" &&
+    !new URLSearchParams(window.location.search || "").has("auth");
   const effectiveTab =
     adminChecked && !user.isAdmin && activeTab === "admin"
       ? "dashboard"

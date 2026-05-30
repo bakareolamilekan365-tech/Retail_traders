@@ -57,11 +57,6 @@ TICKER_CONFIGS: List[TickerConfig] = [
     TickerConfig("PRESCO", "PRESCO.LG"),
     TickerConfig("WAPCO", "WAPCO.LG"),
     TickerConfig("NESTLE", "NESTLE.LG"),
-    TickerConfig("FLOURMILL", "FLOURMILL.LG"),
-    TickerConfig("GUINNESS", "GUINNESS.LG"),
-    TickerConfig("TOTAL", "TOTAL.LG"),
-    TickerConfig("INTBREW", "INTBREW.LG"),
-    TickerConfig("JBERGER", "JBERGER.LG"),
 ]
 
 

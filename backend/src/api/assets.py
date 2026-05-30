@@ -51,11 +51,6 @@ ASSET_METADATA: List[AssetOut] = [
     AssetOut(symbol="PRESCO", name="Presco", type="ngx", asset_type="ngx"),
     AssetOut(symbol="WAPCO", name="Lafarge Africa", type="ngx", asset_type="ngx"),
     AssetOut(symbol="NESTLE", name="Nestle Nigeria", type="ngx", asset_type="ngx"),
-    AssetOut(symbol="FLOURMILL", name="Flour Mills", type="ngx", asset_type="ngx"),
-    AssetOut(symbol="GUINNESS", name="Guinness Nigeria", type="ngx", asset_type="ngx"),
-    AssetOut(symbol="TOTAL", name="TotalEnergies Marketing", type="ngx", asset_type="ngx"),
-    AssetOut(symbol="INTBREW", name="International Breweries", type="ngx", asset_type="ngx"),
-    AssetOut(symbol="JBERGER", name="Julius Berger", type="ngx", asset_type="ngx"),
 ]
 
 router = APIRouter(prefix="/api/v1", tags=["assets"])

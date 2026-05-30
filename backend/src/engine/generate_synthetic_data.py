@@ -52,11 +52,6 @@ ASSET_CONFIGS: List[AssetConfig] = [
     AssetConfig("PRESCO", 420.0, 0.10, 0.33, 700000.0),
     AssetConfig("WAPCO", 42.0, 0.09, 0.31, 1700000.0),
     AssetConfig("NESTLE", 1100.0, 0.07, 0.24, 180000.0),
-    AssetConfig("FLOURMILL", 42.0, 0.08, 0.30, 1400000.0),
-    AssetConfig("GUINNESS", 70.0, 0.08, 0.32, 900000.0),
-    AssetConfig("TOTAL", 510.0, 0.08, 0.25, 250000.0),
-    AssetConfig("INTBREW", 7.5, 0.09, 0.31, 2800000.0),
-    AssetConfig("JBERGER", 48.0, 0.09, 0.30, 850000.0),
 ]
 
 

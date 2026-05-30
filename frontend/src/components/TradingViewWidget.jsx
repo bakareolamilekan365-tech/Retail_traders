@@ -20,6 +20,7 @@ export default function TradingViewWidget({ symbol = 'BINANCE:BTCUSDT', interval
             container_id: containerRef.current.id,
             symbol,
             interval,
+            autosize: true,
             timezone: 'Etc/UTC',
             theme: isDark ? 'Dark' : 'Light',
             style: '1',
@@ -27,6 +28,8 @@ export default function TradingViewWidget({ symbol = 'BINANCE:BTCUSDT', interval
             toolbar_bg: toolbarBg,
             hide_top_toolbar: true,
             hide_side_toolbar: true,
+            hide_legend: true,
+            hide_volume: true,
             allow_symbol_change: false,
             withdateranges: false,
             details: false,
@@ -60,15 +63,42 @@ export default function TradingViewWidget({ symbol = 'BINANCE:BTCUSDT', interval
     document.head.appendChild(script);
 
     // watch for theme changes (documentElement.class) and re-init widget
+    // only when the widget is visible to avoid cross-page surprises.
+    let isVisible = true;
+    let pendingReinit = false;
+
+    const io = new IntersectionObserver((entries) => {
+      const entry = entries && entries[0];
+      const nowVisible = !!entry && entry.isIntersecting;
+      isVisible = nowVisible;
+      if (nowVisible && pendingReinit && containerRef.current) {
+        try {
+          containerRef.current.innerHTML = '';
+          delete containerRef.current.dataset.initialized;
+          pendingReinit = false;
+          attachWidget();
+        } catch (e) {
+          // ignore
+        }
+      }
+    }, { threshold: 0.05 });
+
+    if (containerRef.current) io.observe(containerRef.current);
+
     const obs = new MutationObserver(() => {
       try {
         if (!containerRef.current) return;
         const initialized = !!containerRef.current.dataset.initialized;
         if (initialized) {
-          // remove existing widget DOM so we can reattach with new theme
-          containerRef.current.innerHTML = '';
-          delete containerRef.current.dataset.initialized;
-          attachWidget();
+          // if visible and page is active, re-init immediately; otherwise defer until visible
+          const pageVisible = document.visibilityState === 'visible';
+          if (isVisible && pageVisible) {
+            containerRef.current.innerHTML = '';
+            delete containerRef.current.dataset.initialized;
+            attachWidget();
+          } else {
+            pendingReinit = true;
+          }
         }
       } catch (e) {
         // ignore
@@ -78,6 +108,7 @@ export default function TradingViewWidget({ symbol = 'BINANCE:BTCUSDT', interval
 
     return () => {
       obs.disconnect();
+      io.disconnect();
       // keep script to reuse across pages; do not remove
     };
   }, [symbol, interval]);
