@@ -6,6 +6,8 @@ import PredictionHistory from "./components/PredictionHistory.jsx";
 import SignalSimulator from "./components/SignalSimulator.jsx";
 import TopBar from "./components/TopBar.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
+import LandingPage from "./LandingPage.jsx";
+import QuickGuide from "./components/QuickGuide.jsx";
 import {
   changePassword,
   checkAdmin,
@@ -60,67 +62,7 @@ const deriveUserFromToken = (authToken) => {
   return { username: payload?.sub || "user", isAdmin: false };
 };
 
-const QuickGuideModal = ({ onClose, isAdmin }) => (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="quick-guide-title"
-  >
-    <div className="w-full max-w-lg rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] p-6 shadow-2xl">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--app-accent)]">
-            Quick Guide
-          </p>
-          <h2
-            id="quick-guide-title"
-            className="mt-1 text-xl font-semibold text-[var(--app-text)] dark:text-white"
-          >
-            Reading your signal dashboard
-          </h2>
-        </div>
-        <button
-          type="button"
-          aria-label="Close quick guide"
-          onClick={onClose}
-          className="rounded-full border border-[var(--app-border)] px-3 py-1 text-sm text-slate-700 dark:text-white"
-        >
-          Close
-        </button>
-      </div>
-      {isAdmin ? (
-        <ol className="mt-5 space-y-3 text-sm text-slate-700 dark:text-white">
-          <li>1. Use Admin to review users, predictions, and system stats.</li>
-          <li>2. Compare activity across traders before making changes.</li>
-          <li>3. Check the history tables to audit recent signal output.</li>
-          <li>4. Use Settings to update your password when needed.</li>
-          <li>5. Switch back to Dashboard to inspect live model behavior.</li>
-        </ol>
-      ) : (
-        <ol className="mt-5 space-y-3 text-sm text-slate-700 dark:text-white">
-          <li>
-            1. Choose an NGX equity or major cryptocurrency from the asset
-            control.
-          </li>
-          <li>
-            2. Read the candlestick chart and SMA overlays for recent price
-            direction.
-          </li>
-          <li>
-            3. Check RSI, volatility, and crossover indicators for momentum and
-            risk.
-          </li>
-          <li>
-            4. Review the model signal, expected return, and confidence
-            explanation.
-          </li>
-          <li>5. Open History to audit your recent generated signals.</li>
-        </ol>
-      )}
-    </div>
-  </div>
-);
+// QuickGuide component extracted to src/components/QuickGuide.jsx
 
 const SettingsPanel = ({
   showChangePassword,
@@ -316,6 +258,10 @@ const App = () => {
   }, [activeTheme]);
 
   const latestPredictionClose = latestPrediction?.ohlcv?.at(-1)?.close ?? null;
+  const showLandingPage =
+    !isAuthenticated &&
+    typeof window !== "undefined" &&
+    window.location.pathname === "/";
   const effectiveTab =
     adminChecked && !user.isAdmin && activeTab === "admin"
       ? "dashboard"
@@ -552,18 +498,20 @@ const App = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[var(--app-bg)] text-[var(--app-text)] dark:text-white transition-colors">
-      <TopBar
-        user={{ username: user.username || "user", isAdmin: user.isAdmin }}
-        showAvatar={isAuthenticated && adminChecked}
-        theme={theme}
-        onToggleTheme={toggleTheme}
-        onLogout={handleLogout}
-        onChangePassword={() => {
-          setShowChangePassword(true);
-          setActiveTab("settings");
-        }}
-      />
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-[var(--app-bg)] text-[var(--app-text)] dark:text-white transition-colors">
+      {!showLandingPage && (
+        <TopBar
+          user={{ username: user.username || "user", isAdmin: user.isAdmin }}
+          showAvatar={isAuthenticated && adminChecked}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onLogout={handleLogout}
+          onChangePassword={() => {
+            setShowChangePassword(true);
+            setActiveTab("settings");
+          }}
+        />
+      )}
 
       {isAuthenticated && (
         <div className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
@@ -598,8 +546,10 @@ const App = () => {
         </div>
       )}
 
-      <main className="mx-auto w-full max-w-7xl flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:py-8">
-        {!isAuthenticated ? (
+      <main className={`mx-auto w-full flex-1 ${showLandingPage ? "max-w-none p-0" : "max-w-7xl px-4 py-6 sm:px-6 lg:py-8"}`}>
+        {showLandingPage ? (
+          <LandingPage theme={theme} onToggleTheme={toggleTheme} />
+        ) : !isAuthenticated ? (
           <div className="flex min-h-full items-center justify-center">
             {authView === "login" ? (
               <LoginForm
@@ -724,7 +674,11 @@ const App = () => {
       </main>
 
       {shouldShowQuickGuide && (
-        <QuickGuideModal onClose={dismissQuickGuide} isAdmin={user.isAdmin} />
+        <QuickGuide
+          onClose={dismissQuickGuide}
+          isAdmin={user.isAdmin}
+          onNavigate={(tab) => setActiveTab(tab)}
+        />
       )}
     </div>
   );

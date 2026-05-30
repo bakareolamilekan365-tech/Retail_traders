@@ -14,8 +14,8 @@ import yfinance as yf
 LOGGER = logging.getLogger(__name__)
 
 START_DATE = "2022-01-01"
-END_DATE = "2025-01-01"
-FINAL_DATE = "2024-12-31"
+END_DATE = "2026-05-01"
+FINAL_DATE = "2026-04-30"
 
 
 @dataclass(frozen=True)
@@ -32,6 +32,11 @@ TICKER_CONFIGS: List[TickerConfig] = [
     TickerConfig("BNB", "BNB-USD"),
     TickerConfig("SOL", "SOL-USD"),
     TickerConfig("ADA", "ADA-USD"),
+    TickerConfig("XRP", "XRP-USD"),
+    TickerConfig("DOGE", "DOGE-USD"),
+    TickerConfig("LTC", "LTC-USD"),
+    TickerConfig("TRX", "TRX-USD"),
+    TickerConfig("DOT", "DOT-USD"),
     TickerConfig("DANGCEM", "DANGCEM.LG"),
     TickerConfig("MTNN", "MTNN.LG"),
     TickerConfig("AIRTELAFRI", "AIRTELAFRI.LG"),
@@ -39,9 +44,24 @@ TICKER_CONFIGS: List[TickerConfig] = [
     TickerConfig("GTCO", "GTCO.LG"),
     TickerConfig("ZENITHBANK", "ZENITHBANK.LG"),
     TickerConfig("SEPLAT", "SEPLAT.LG"),
-    TickerConfig("NB", "NB.LG"),
     TickerConfig("FBNH", "FBNH.LG"),
+    TickerConfig("NB", "NB.LG"),
     TickerConfig("ACCESSCORP", "ACCESSCORP.LG"),
+    TickerConfig("UBA", "UBA.LG"),
+    TickerConfig("STANBIC", "STANBIC.LG"),
+    TickerConfig("FIDELITYBK", "FIDELITYBK.LG"),
+    TickerConfig("FCMB", "FCMB.LG"),
+    TickerConfig("UCAP", "UCAP.LG"),
+    TickerConfig("TRANSCORP", "TRANSCORP.LG"),
+    TickerConfig("OANDO", "OANDO.LG"),
+    TickerConfig("PRESCO", "PRESCO.LG"),
+    TickerConfig("WAPCO", "WAPCO.LG"),
+    TickerConfig("NESTLE", "NESTLE.LG"),
+    TickerConfig("FLOURMILL", "FLOURMILL.LG"),
+    TickerConfig("GUINNESS", "GUINNESS.LG"),
+    TickerConfig("TOTAL", "TOTAL.LG"),
+    TickerConfig("INTBREW", "INTBREW.LG"),
+    TickerConfig("JBERGER", "JBERGER.LG"),
 ]
 
 
@@ -69,7 +89,7 @@ def _normalize_downloaded_data(raw: pd.DataFrame) -> pd.DataFrame:
 
 
 def download_all_assets(output_dir: str | Path | None = None) -> List[Path]:
-    """Download 3 years of daily OHLCV for all assets.
+    """Download daily OHLCV for all configured assets.
 
     Args:
         output_dir: Directory to write CSV files. Defaults to /backend/data.

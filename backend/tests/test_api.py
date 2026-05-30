@@ -63,7 +63,7 @@ def test_assets_returns_list(test_app: TestClient) -> None:
     assert response.status_code == 200
     payload = response.json()
     assert isinstance(payload, list)
-    assert len(payload) == 15
+    assert len(payload) == 30
 
 
 def test_predict_valid_asset_returns_shape_and_logs(test_app: TestClient) -> None:

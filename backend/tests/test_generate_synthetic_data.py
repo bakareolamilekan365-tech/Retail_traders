@@ -31,4 +31,4 @@ def test_generated_csvs_have_expected_shape_and_columns(tmp_path: Path) -> None:
         df = pd.read_csv(csv_path)
 
         assert df.columns.tolist() == expected_columns
-        assert len(df) == 1096
+        assert len(df) == 1581

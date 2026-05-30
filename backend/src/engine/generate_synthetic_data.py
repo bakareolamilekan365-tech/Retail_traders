@@ -27,6 +27,11 @@ ASSET_CONFIGS: List[AssetConfig] = [
     AssetConfig("BNB", 300.0, 0.16, 0.60, 90000.0),
     AssetConfig("SOL", 80.0, 0.22, 0.85, 110000.0),
     AssetConfig("ADA", 0.4, 0.14, 0.65, 150000.0),
+    AssetConfig("XRP", 0.7, 0.15, 0.70, 180000.0),
+    AssetConfig("DOGE", 0.12, 0.18, 0.75, 220000.0),
+    AssetConfig("LTC", 85.0, 0.13, 0.62, 90000.0),
+    AssetConfig("TRX", 0.09, 0.12, 0.58, 240000.0),
+    AssetConfig("DOT", 7.0, 0.16, 0.68, 100000.0),
     AssetConfig("DANGCEM", 650.0, 0.10, 0.35, 2200000.0),
     AssetConfig("MTNN", 250.0, 0.11, 0.32, 1800000.0),
     AssetConfig("AIRTELAFRI", 1700.0, 0.09, 0.30, 900000.0),
@@ -37,6 +42,21 @@ ASSET_CONFIGS: List[AssetConfig] = [
     AssetConfig("FBNH", 18.0, 0.07, 0.30, 3000000.0),
     AssetConfig("NB", 60.0, 0.09, 0.33, 1500000.0),
     AssetConfig("ACCESSCORP", 18.0, 0.08, 0.29, 3200000.0),
+    AssetConfig("UBA", 24.0, 0.08, 0.28, 3500000.0),
+    AssetConfig("STANBIC", 72.0, 0.08, 0.27, 1200000.0),
+    AssetConfig("FIDELITYBK", 10.0, 0.09, 0.30, 4200000.0),
+    AssetConfig("FCMB", 8.0, 0.09, 0.31, 3800000.0),
+    AssetConfig("UCAP", 24.0, 0.09, 0.29, 2200000.0),
+    AssetConfig("TRANSCORP", 14.0, 0.10, 0.34, 5000000.0),
+    AssetConfig("OANDO", 32.0, 0.11, 0.36, 2600000.0),
+    AssetConfig("PRESCO", 420.0, 0.10, 0.33, 700000.0),
+    AssetConfig("WAPCO", 42.0, 0.09, 0.31, 1700000.0),
+    AssetConfig("NESTLE", 1100.0, 0.07, 0.24, 180000.0),
+    AssetConfig("FLOURMILL", 42.0, 0.08, 0.30, 1400000.0),
+    AssetConfig("GUINNESS", 70.0, 0.08, 0.32, 900000.0),
+    AssetConfig("TOTAL", 510.0, 0.08, 0.25, 250000.0),
+    AssetConfig("INTBREW", 7.5, 0.09, 0.31, 2800000.0),
+    AssetConfig("JBERGER", 48.0, 0.09, 0.30, 850000.0),
 ]
 
 
@@ -109,7 +129,7 @@ def generate_all_assets(output_dir: str | Path | None = None, seed: int = 42) ->
     output_path = Path(output_dir).expanduser().resolve()
     output_path.mkdir(parents=True, exist_ok=True)
 
-    date_index = pd.date_range("2022-01-01", "2024-12-31", freq="D")
+    date_index = pd.date_range("2022-01-01", "2026-04-30", freq="D")
     rng = np.random.default_rng(seed)
 
     for config in ASSET_CONFIGS:
