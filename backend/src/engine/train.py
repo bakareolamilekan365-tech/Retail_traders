@@ -9,6 +9,7 @@ from typing import List, Tuple
 import pandas as pd
 from joblib import dump
 from sklearn.ensemble import RandomForestRegressor
+import os
 
 BACKEND_SRC = Path(__file__).resolve().parents[1]
 if str(BACKEND_SRC) not in sys.path:
@@ -163,10 +164,16 @@ def train_model(data_dir: str, model_path: str, forward_days: int = 7) -> Random
 
     features, labels = _load_training_data(data_path, forward_days)
 
+    # Allow conservative CPU usage by default during development. Set RF_N_JOBS to override.
+    try:
+        n_jobs = int(os.getenv("RF_N_JOBS", "1"))
+    except ValueError:
+        n_jobs = 1
+
     model = RandomForestRegressor(
         n_estimators=200,
         random_state=42,
-        n_jobs=-1,
+        n_jobs=n_jobs,
     )
     try:
         model.fit(features, labels)

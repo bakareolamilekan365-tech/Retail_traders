@@ -7,12 +7,15 @@ Follow these steps in order to showcase every feature without fumbling.
 
 **Total estimated time:** 5–7 minutes.
 
+Current state note: the data on disk spans `2020-01-01` to `2026-04-30`, the frontend includes a desktop sidebar plus mobile drawer, and the admin shell includes Audit Logs with search/filter.
+
 ---
 
 ### 0. Pre-Flight Checks (Before the Presentation)
 
-- [ ] Ensure `backend/data/` contains all 15 CSV files.
+- [ ] Ensure `backend/data/` contains the expected CSV files. If any are missing, do NOT run the downloader on a presentation machine unless you intentionally set `FORCE_DOWNLOAD=1`.
 - [ ] Ensure `model.joblib` exists in `backend/src/engine/`.
+ - [ ] Ensure `model.joblib` exists in `backend/src/engine/`.
 - [ ] Start the backend: `uvicorn src.api.main:app --port 8000`.
 - [ ] Build and start the frontend (or use single‑server mode).
 - [ ] Open a browser to the app.
@@ -36,7 +39,7 @@ Follow these steps in order to showcase every feature without fumbling.
 
 - **Point to:**
   - Asset Selector dropdown (top left).
-  - Price Chart (center, TradingView).
+  - Price Chart (center, TradingView-style charting).
   - Indicator Cards (RSI, Volatility, Crossover).
   - Prediction Panel (BUY/SELL/HOLD badge).
   - Insight Bar (bottom text).
@@ -52,7 +55,7 @@ Follow these steps in order to showcase every feature without fumbling.
 
 - **Point to:** Candlestick bars and SMA 14/50 lines.
 - **Action:** Use the Replay button to step through the historical candles, then stop to return to the full chart.
-- **Say:** "We use TradingView Lightweight Charts for professional‑grade financial visualization, and the replay control walks through past candles at a fixed pace."
+- **Say:** "We use TradingView-style charting for professional-grade financial visualization, and the replay control walks through past candles at a fixed pace."
 
 ### 6. Explain the Indicators
 
@@ -82,6 +85,8 @@ Follow these steps in order to showcase every feature without fumbling.
 - **Result:** Loading spinner appears briefly, data reloads.
 - **Say:** "Users can manually refresh at any time. An auto-refresh also runs every 5 minutes."
 
+Note: Auto-refresh and manual refresh trigger API calls that may be served from local CSVs. The demo avoids any automatic remote downloads by default.
+
 ### 11. Theme Handling
 
 - **Action:** Point out that the product is locked to the dark trading-terminal look for the defense build.
@@ -89,7 +94,7 @@ Follow these steps in order to showcase every feature without fumbling.
 
 ### 12. Prediction History
 
-- **Scroll to / point to:** The prediction history table (if implemented).
+- **Scroll to / point to:** The prediction history table.
 - **Say:** "Every prediction is logged to the database, giving users a history of signals for each asset."
 
 ### 13. Logout
@@ -116,6 +121,7 @@ Follow these steps in order to showcase every feature without fumbling.
 - **Result:** Dashboard appears, and an "Admin" link is visible in the user dropdown.
 - **Action:** Click Admin.
 - **Show:** Users tab (list of registered users), Predictions tab (filterable log), Stats tab (aggregate counts).
+- **Optional:** Open the Audit Logs page to show the rotated backend log stream and client-side search/filter.
 - **Say:** "Admin users have a dedicated monitoring panel to view all registered users, all predictions, and system usage stats — demonstrating role‑based access control."
 
 ### 17. API Documentation
@@ -126,7 +132,7 @@ Follow these steps in order to showcase every feature without fumbling.
 
 ### 18. Wrap Up
 
-- **Say:** "This system was built in under two weeks for $0, using only free and open‑source tools. It demonstrates a complete full‑stack machine learning pipeline, production‑grade engineering practices, and a real‑world use case for retail traders."
+- **Say:** "This system was built for a zero-cost academic defense, using only free and open-source tools. It demonstrates a complete full-stack machine learning pipeline, production-grade engineering practices, and a real-world use case for retail traders."
 
 ---
 
@@ -136,3 +142,4 @@ Follow these steps in order to showcase every feature without fumbling.
 - Show a passing test run in the terminal (`pytest -v` and `npm test`).
 - Show the CSV files in `backend/data/` to prove the offline data source.
 - Mention the environment variable configuration for secrets.
+- If the editor is unstable, mention that the large local directories are `backend/venv` and `frontend/node_modules`, not the data CSVs.

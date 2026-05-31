@@ -1,16 +1,41 @@
-# React + Vite
+# TradeSense NG Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the React + Vite client for the Intelligent Investment Recommendation Assistant.
 
-Currently, two official plugins are available:
+## What It Does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Login, register, and password change flows.
+- Dashboard with asset selector, chart, indicators, prediction panel, and insight bar.
+- Crypto charting with TradingView-style visualisation.
+- Desktop sidebar and mobile drawer navigation.
+- Admin Audit Logs page with client-side search and filter.
 
-## React Compiler
+## Development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+The dev server usually runs at http://localhost:5173.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Build
+
+```bash
+cd frontend
+npm run build
+```
+
+## Tests
+
+```bash
+cd frontend
+npx vitest run
+```
+
+## Notes
+
+- The frontend expects the backend API to be running locally.
+- The chart view slices the series returned by the backend instead of requesting short live windows.
+- This project is designed for the local demo build; no Docker is required on this machine.

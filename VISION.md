@@ -4,62 +4,54 @@
 
 ### 1. Problem Statement
 
-Retail traders in Nigeria and the broader crypto market lack accessible, affordable tools for data‑driven investment decisions.  
-They rely on manual technical analysis, emotional trading, and fragmented information sources — leading to slow decisions, missed opportunities, and financial losses.
-
-This project addresses that gap with a **zero‑cost, offline‑capable AI investment recommendation system** built specifically for retail traders.
+Retail traders in Nigeria and the broader crypto market need accessible, low-cost tools for data-driven investment decisions. This project addresses that gap with a zero-cost, offline-capable AI recommendation system built for demonstration and academic submission.
 
 ### 2. Scope
 
-- **15 assets** — 5 major cryptocurrencies (BTC, ETH, BNB, SOL, ADA) + 10 Nigerian Stock Exchange equities (DANGCEM, MTNN, AIRTELAFRI, BUACEMENT, GTCO, ZENITHBANK, SEPLAT, FBNH, NB, ACCESSCORP).
-- **3 years of historical data** — OHLCV (Open, High, Low, Close, Volume) from 2022‑01‑01 to 2024‑12‑31, stored locally as CSV files.
-- **3 core technical indicators** — SMA Crossover (14‑day vs 50‑day), RSI (14‑day), Market Volatility (14‑day rolling standard deviation).
-- **1 machine learning model** — Random Forest Regressor predicting 7‑day future returns, mapped to BUY / SELL / HOLD signals.
-- **1 full‑stack dashboard** — React frontend with TradingView charts, indicator cards, prediction panel, insight generation, and admin monitoring panel.
+- 15 assets total: 5 cryptocurrencies and 10 Nigerian market equities.
+- Local historical OHLCV data stored as CSV files, spanning `2020-01-01` to `2026-04-30` in the current workspace.
+- Three core indicators: SMA crossover, RSI, and volatility.
+- One Random Forest model that predicts 7-day future return and maps it to BUY / SELL / HOLD.
+- One full-stack dashboard with TradingView-style charts, indicator cards, prediction panel, sidebar navigation, and admin monitoring.
 
 ### 3. Target Users
 
 - Retail investors and traders in Nigeria and the crypto space.
-- Individuals with basic computer literacy who want clear, AI‑backed trade signals without deep technical analysis knowledge.
-- University supervisors evaluating a complete, production‑style final‑year project.
+- Students and supervisors evaluating a complete final-year project.
+- Users who want clear, AI-backed signals without deep technical analysis.
 
 ### 4. Core Features
 
-- **Automated Technical Analysis:** SMA, RSI, and volatility computed instantly from historical data.
-- **AI‑Powered Predictions:** Random Forest model classifies every asset as BUY, SELL, or HOLD with expected return and confidence score.
-- **Intelligent Insights:** Plain‑English commentary generated from indicator values and model output — no AI/NLP, fully deterministic.
-- **User Authentication:** Full registration, login, password change, and role‑based access (user / admin).
-- **Admin Monitoring:** Admin panel to view registered users, prediction logs, and system usage statistics.
-- **Responsive Dashboard:** Works on desktop and mobile, with dark/light mode toggle.
-- **Offline & Free:** No live APIs, no paid services, no cloud costs — runs entirely on local machine.
+- Automated technical analysis from historical data.
+- Deterministic insight generation from indicator values and model output.
+- Full authentication: register, login, change password, role-based admin access.
+- Admin monitoring with users, prediction logs, and audit logs.
+- Responsive dashboard with dark trading-terminal styling and mobile drawer support.
+- Offline operation with no live API dependency by default.
 
 ### 5. Technology Highlights
 
-- **Backend:** Python 3.10+, FastAPI, Pandas, NumPy, Scikit‑learn, SQLite, JWT authentication, bcrypt password hashing.
-- **Frontend:** React 18+ (Vite), TradingView Lightweight Charts, Tailwind CSS, Vitest.
-- **Testing:** Pytest (backend), Vitest (frontend) — test‑driven development throughout.
-- **Deployment:** Single‑command launch (FastAPI serves built React app).
+- Backend: FastAPI, Pandas, NumPy, scikit-learn, SQLite, JWT, bcrypt.
+- Frontend: React 18+ / 19, Vite, Tailwind CSS, TradingView Lightweight Charts, Vitest.
+- Testing: Pytest for backend, Vitest for frontend.
+- Deployment: single-server mode supported when the frontend is built.
 
-### 6. Success Criteria (Defense Readiness)
+### 6. Success Criteria
 
-- All technical indicators are correctly computed and visually validated on charts.
-- The Random Forest model produces explainable predictions with measurable accuracy.
-- The dashboard is intuitive, responsive, and visually professional.
-- The full authentication and admin monitoring flow works end‑to‑end.
-- All tests pass (backend + frontend).
-- Documentation is complete (architecture, data sources, README, demo flow).
-- The system can be launched with a single command and demonstrated live.
+- Indicators render correctly and match the data.
+- Predictions are explainable and stable across assets.
+- The dashboard is responsive and visually consistent.
+- Auth and admin flows work end to end.
+- Tests pass and the documentation matches the current build.
 
 ### 7. Constraints
 
-- **Budget:** $0 — no paid APIs, no cloud services.
-- **Timeline:** 2 weeks from start to defense.
-- **Data:** Static CSV files only; no live streaming or external feeds.
-- **Over‑engineering avoided:** Single API endpoint for predictions, no router, no global state manager, minimal dependencies.
+- Budget: $0.
+- No live market feed in the default demo path.
+- Avoid over-engineering; keep the prediction path simple and auditable.
 
 ### 8. What This Project Demonstrates
 
-- End‑to‑end full‑stack development skills.
-- Applied machine learning pipeline (data preprocessing, feature engineering, model training, inference).
-- Production‑grade software engineering (testing, security, error handling, documentation).
-- Academic research methodology (data collection, system analysis, design, implementation, evaluation).
+- End-to-end full-stack development.
+- Applied machine learning workflow.
+- Production-minded engineering: testing, security, documentation, and operational safety.

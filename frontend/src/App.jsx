@@ -315,7 +315,9 @@ const App = () => {
 
   useEffect(() => {
     const syncRouteFromLocation = () => {
-      setActiveRoute(window.location.pathname === "/admin/logs" ? "audit-logs" : "main");
+      setActiveRoute(
+        window.location.pathname === "/admin/logs" ? "audit-logs" : "main",
+      );
     };
 
     window.addEventListener("popstate", syncRouteFromLocation);
@@ -361,7 +363,10 @@ const App = () => {
 
   const handleLogout = useCallback(() => {
     clearToken();
-    if (typeof window !== "undefined" && window.location.pathname === "/admin/logs") {
+    if (
+      typeof window !== "undefined" &&
+      window.location.pathname === "/admin/logs"
+    ) {
       window.history.pushState({}, "", "/");
     }
     setToken(null);
@@ -713,7 +718,9 @@ const App = () => {
                   )}
 
                 <div className="flex flex-col gap-2 px-1 text-xs text-slate-700 dark:text-white sm:flex-row sm:items-center sm:justify-between">
-                  <span>This is an educational tool, not financial advice.</span>
+                  <span>
+                    This is an educational tool, not financial advice.
+                  </span>
                 </div>
 
                 {showAuditLogsPage ? (
@@ -721,16 +728,18 @@ const App = () => {
                     canAccess={adminChecked ? user.isAdmin : true}
                     onBack={returnToAdminPanel}
                   />
-                ) : effectiveTab === "dashboard" && (
-                  <Dashboard
-                    chartTheme={chartTheme}
-                    onPredictionGenerated={(prediction) => {
-                      setLatestPrediction(prediction);
-                      if (effectiveTab === "history") {
-                        void loadHistory();
-                      }
-                    }}
-                  />
+                ) : (
+                  effectiveTab === "dashboard" && (
+                    <Dashboard
+                      chartTheme={chartTheme}
+                      onPredictionGenerated={(prediction) => {
+                        setLatestPrediction(prediction);
+                        if (effectiveTab === "history") {
+                          void loadHistory();
+                        }
+                      }}
+                    />
+                  )
                 )}
 
                 {effectiveTab === "simulator" && (
@@ -763,9 +772,10 @@ const App = () => {
                   />
                 )}
 
-                {!showAuditLogsPage && effectiveTab === "admin" && adminChecked && user.isAdmin && (
-                  <AdminPanel />
-                )}
+                {!showAuditLogsPage &&
+                  effectiveTab === "admin" &&
+                  adminChecked &&
+                  user.isAdmin && <AdminPanel />}
               </div>
             )}
           </div>

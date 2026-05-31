@@ -57,7 +57,9 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
     fetchAssets();
   }, []);
 
-  const selectedAssetMeta = assets.find((asset) => asset.symbol === selectedAsset);
+  const selectedAssetMeta = assets.find(
+    (asset) => asset.symbol === selectedAsset,
+  );
   const isCryptoAsset = selectedAssetMeta?.type === "crypto";
 
   useEffect(() => {
@@ -69,7 +71,9 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
     setLoading(true);
     setError("");
     try {
-      const response = await apiFetch(`/predict?asset=${asset}&days=${MAX_HISTORY_DAYS}`);
+      const response = await apiFetch(
+        `/predict?asset=${asset}&days=${MAX_HISTORY_DAYS}`,
+      );
       if (!response.ok) {
         if (response.status === 404) throw new Error("Asset not found");
         throw new Error("Failed to load prediction");
@@ -104,7 +108,9 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
     return () => clearInterval(interval);
   }, [autoRefreshEnabled, selectedAsset]);
 
-  const rangeOptions = isCryptoAsset ? CRYPTO_INTERVAL_OPTIONS : NGX_RANGE_OPTIONS;
+  const rangeOptions = isCryptoAsset
+    ? CRYPTO_INTERVAL_OPTIONS
+    : NGX_RANGE_OPTIONS;
   const chartSelectionValue = rangeOptions.some(
     (option) => option.value === viewSelection,
   )

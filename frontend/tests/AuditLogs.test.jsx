@@ -24,7 +24,9 @@ describe("AuditLogs", () => {
     render(<AuditLogs canAccess onBack={vi.fn()} />);
 
     expect(await screen.findByLabelText(/audit logs/i)).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByDisplayValue(/line one/)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByDisplayValue(/line one/)).toBeInTheDocument(),
+    );
     expect(screen.getByText(/2 lines/i)).toBeInTheDocument();
   });
 
@@ -36,8 +38,11 @@ describe("AuditLogs", () => {
 
     render(<AuditLogs canAccess onBack={vi.fn()} />);
 
-    const searchInput = await screen.findByPlaceholderText(/search log messages/i);
-    await waitFor(() => expect(screen.getByDisplayValue(/error boot/)).toBeInTheDocument());
+    const searchInput =
+      await screen.findByPlaceholderText(/search log messages/i);
+    await waitFor(() =>
+      expect(screen.getByDisplayValue(/error boot/)).toBeInTheDocument(),
+    );
 
     fireEvent.change(searchInput, { target: { value: "error" } });
 

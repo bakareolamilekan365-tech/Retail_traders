@@ -18,3 +18,14 @@ agent.prompt.md
 agent.instructions.md
 agent.context.md
 agent.tasks.md
+# Generic agent files pattern (ignore any agent.*.md files)
+agent.*.md
+
+# Runtime and local files
+*.log
+backend/logs/*.log
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -10,7 +10,7 @@ The system is split into two isolated layers:
 - **Backend** – Python (FastAPI) responsible for data processing, indicator computation, model inference, authentication, and API delivery.
 - **Frontend** – React (Vite) responsible for rendering the dashboard, charts, and user interactions.
 
-All data is sourced from static CSV files stored locally — no live APIs, no cloud costs.
+All data is sourced primarily from static CSV files stored locally — no live APIs by default. The repository includes utilities to fetch remote data, but those are disabled by default for safety; see `FORCE_DOWNLOAD` in the README.
 
 ---
 
@@ -135,6 +135,11 @@ text
 - Columns: `Date, Open, High, Low, Close, Volume`
 - Date format: `YYYY-MM-DD`
 - All numeric columns: float (except Date)
+/backend/data/\*.csv : 15 assets × historical OHLCV snapshot (current disk range 2020-01-01 to 2026-04-30)
+
+Notes on resource safety
+- Download script `download_real_data.py` requires `FORCE_DOWNLOAD=1` to run (prevents accidental network/disk usage during development).
+- Training defaults to `RF_N_JOBS=1` in development to avoid saturating CPU cores. Override only when intentionally training with parallelism.
 
 ### 5.2 SQLite Database (`app.db`)
 
@@ -264,6 +269,6 @@ Add email verification and password reset.
 
 Migrate to PostgreSQL for production multi‑user concurrency.
 
-Containerise with Docker for environment consistency.
+Optional future improvement: containerise only if the deployment environment supports Docker.
 
 Add CI/CD pipeline for automated testing and deployment.

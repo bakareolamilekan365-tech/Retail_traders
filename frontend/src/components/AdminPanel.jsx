@@ -9,7 +9,13 @@ const formatPercent = (value) => {
   return `${sign}${Number(value).toFixed(2)}%`;
 };
 
-const ConfirmModal = ({ title, message, confirmLabel, onCancel, onConfirm }) => (
+const ConfirmModal = ({
+  title,
+  message,
+  confirmLabel,
+  onCancel,
+  onConfirm,
+}) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4">
     <div className="w-full max-w-md rounded-2xl border border-[var(--app-border)] bg-[var(--app-card)] p-5 shadow-2xl">
       <h3 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
@@ -47,13 +53,17 @@ const AdminPanel = () => {
     setLoading(true);
     setError("");
     try {
-      const [usersResponse, predictionsResponse, statsResponse, assetsResponse] =
-        await Promise.all([
-          apiFetch("/admin/users"),
-          apiFetch("/admin/predictions"),
-          apiFetch("/admin/stats"),
-          apiFetch("/admin/assets"),
-        ]);
+      const [
+        usersResponse,
+        predictionsResponse,
+        statsResponse,
+        assetsResponse,
+      ] = await Promise.all([
+        apiFetch("/admin/users"),
+        apiFetch("/admin/predictions"),
+        apiFetch("/admin/stats"),
+        apiFetch("/admin/assets"),
+      ]);
 
       if (
         !usersResponse.ok ||
@@ -135,7 +145,9 @@ const AdminPanel = () => {
           });
           if (!response.ok) {
             const payload = await response.json().catch(() => ({}));
-            throw new Error(payload.detail || "Failed to clear prediction history");
+            throw new Error(
+              payload.detail || "Failed to clear prediction history",
+            );
           }
         }, "Cleared prediction history"),
     });
@@ -156,7 +168,9 @@ const AdminPanel = () => {
   if (loading) {
     return (
       <div className="card p-6">
-        <p className="text-sm text-slate-700 dark:text-white">Loading admin panel...</p>
+        <p className="text-sm text-slate-700 dark:text-white">
+          Loading admin panel...
+        </p>
       </div>
     );
   }
@@ -234,26 +248,36 @@ const AdminPanel = () => {
                 "Retrain Model"
               )}
             </button>
-            <button type="button" className="btn-secondary" onClick={loadAdminData}>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={loadAdminData}
+            >
               Refresh Admin Data
             </button>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-lg border border-[var(--app-border)] p-4">
-              <p className="text-xs uppercase text-slate-700 dark:text-white">Users</p>
+              <p className="text-xs uppercase text-slate-700 dark:text-white">
+                Users
+              </p>
               <p className="mt-2 text-2xl font-semibold text-[var(--app-text)] dark:text-white">
                 {stats.total_users}
               </p>
             </div>
             <div className="rounded-lg border border-[var(--app-border)] p-4">
-              <p className="text-xs uppercase text-slate-700 dark:text-white">Predictions</p>
+              <p className="text-xs uppercase text-slate-700 dark:text-white">
+                Predictions
+              </p>
               <p className="mt-2 text-2xl font-semibold text-[var(--app-text)] dark:text-white">
                 {stats.total_predictions}
               </p>
             </div>
             <div className="rounded-lg border border-[var(--app-border)] p-4">
-              <p className="text-xs uppercase text-slate-700 dark:text-white">Top Asset</p>
+              <p className="text-xs uppercase text-slate-700 dark:text-white">
+                Top Asset
+              </p>
               <p className="mt-2 text-lg font-semibold text-[var(--app-text)] dark:text-white">
                 {stats.top_asset || "N/A"}
               </p>
@@ -285,16 +309,25 @@ const AdminPanel = () => {
             </thead>
             <tbody>
               {users.map((row) => (
-                <tr key={row.id} className="border-t border-[var(--app-border)]">
-                  <td className="py-2 pr-4 text-slate-700 dark:text-white">{row.id}</td>
+                <tr
+                  key={row.id}
+                  className="border-t border-[var(--app-border)]"
+                >
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
+                    {row.id}
+                  </td>
                   <td className="py-2 pr-4 font-medium text-[var(--app-text)] dark:text-white">
                     {row.username}
                   </td>
-                  <td className="py-2 pr-4 text-slate-700 dark:text-white">{row.email}</td>
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
+                    {row.email}
+                  </td>
                   <td className="py-2 pr-4 text-slate-700 dark:text-white">
                     {row.is_admin ? "Admin" : "Trader"}
                   </td>
-                  <td className="py-2 pr-4 text-slate-700 dark:text-white">{row.created_at}</td>
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
+                    {row.created_at}
+                  </td>
                   <td className="py-2 pr-4">
                     <button
                       type="button"
@@ -339,13 +372,22 @@ const AdminPanel = () => {
               </thead>
               <tbody>
                 {predictions.map((row) => (
-                  <tr key={row.id} className="border-t border-[var(--app-border)]">
-                    <td className="py-2 pr-4 text-slate-700 dark:text-white">{row.timestamp}</td>
-                    <td className="py-2 pr-4 text-slate-700 dark:text-white">{row.user_id || "N/A"}</td>
+                  <tr
+                    key={row.id}
+                    className="border-t border-[var(--app-border)]"
+                  >
+                    <td className="py-2 pr-4 text-slate-700 dark:text-white">
+                      {row.timestamp}
+                    </td>
+                    <td className="py-2 pr-4 text-slate-700 dark:text-white">
+                      {row.user_id || "N/A"}
+                    </td>
                     <td className="py-2 pr-4 font-medium text-[var(--app-text)] dark:text-white">
                       {row.asset}
                     </td>
-                    <td className="py-2 pr-4 text-slate-700 dark:text-white">{row.signal}</td>
+                    <td className="py-2 pr-4 text-slate-700 dark:text-white">
+                      {row.signal}
+                    </td>
                     <td className="py-2 pr-4 text-slate-700 dark:text-white">
                       {formatPercent(row.expected_return)}
                     </td>
@@ -373,12 +415,19 @@ const AdminPanel = () => {
             </thead>
             <tbody>
               {assets.map((row) => (
-                <tr key={row.symbol} className="border-t border-[var(--app-border)]">
+                <tr
+                  key={row.symbol}
+                  className="border-t border-[var(--app-border)]"
+                >
                   <td className="py-2 pr-4 font-medium text-[var(--app-text)] dark:text-white">
                     {row.symbol}
                   </td>
-                  <td className="py-2 pr-4 text-slate-700 dark:text-white">{row.name}</td>
-                  <td className="py-2 pr-4 text-slate-700 dark:text-white">{row.status}</td>
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
+                    {row.name}
+                  </td>
+                  <td className="py-2 pr-4 text-slate-700 dark:text-white">
+                    {row.status}
+                  </td>
                   <td className="py-2 pr-4">
                     <button
                       type="button"

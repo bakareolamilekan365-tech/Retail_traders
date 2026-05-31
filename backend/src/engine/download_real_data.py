@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List
@@ -137,4 +138,13 @@ def download_all_assets(output_dir: str | Path | None = None) -> List[Path]:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    # Prevent accidental large downloads during development.
+    # Explicitly require FORCE_DOWNLOAD=1 in the environment to enable actual network downloads.
+    if os.getenv("FORCE_DOWNLOAD", "0") != "1":
+        print(
+            "Download disabled. To run this script and fetch data, set FORCE_DOWNLOAD=1 in your environment."
+        )
+        print("Example (Windows): set FORCE_DOWNLOAD=1 && python download_real_data.py")
+        raise SystemExit(0)
+
     download_all_assets()

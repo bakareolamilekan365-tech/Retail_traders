@@ -70,7 +70,9 @@ const AuditLogs = ({ compact = false, canAccess = true, onBack }) => {
       return lines.join("\n");
     }
 
-    return lines.filter((line) => line.toLowerCase().includes(normalizedQuery)).join("\n");
+    return lines
+      .filter((line) => line.toLowerCase().includes(normalizedQuery))
+      .join("\n");
   }, [logs, searchTerm]);
 
   const filteredLineCount = useMemo(() => {
@@ -111,7 +113,8 @@ const AuditLogs = ({ compact = false, canAccess = true, onBack }) => {
               Backend activity stream
             </h2>
             <p className="mt-1 text-sm text-slate-700 dark:text-white">
-              Review the latest backend events without leaving the dashboard shell.
+              Review the latest backend events without leaving the dashboard
+              shell.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -181,7 +184,8 @@ const AuditLogs = ({ compact = false, canAccess = true, onBack }) => {
         value={
           loading && !logs
             ? "Loading audit logs..."
-            : filteredLogs || (searchTerm ? "No matching log lines." : "No logs available.")
+            : filteredLogs ||
+              (searchTerm ? "No matching log lines." : "No logs available.")
         }
         className={`w-full rounded-xl border border-[var(--app-border)] bg-[var(--app-card)] p-4 text-xs leading-6 text-[var(--app-text)] dark:text-white ${compact ? "h-72" : "h-[32rem]"}`}
       />
