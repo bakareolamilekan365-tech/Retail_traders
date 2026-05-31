@@ -57,16 +57,7 @@ const Sidebar = ({
           </div>
         )}
         <div className="space-y-6">
-          {!mobileMode && (
-            <div className="px-4">
-              <h2 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
-                TradeSense NG
-              </h2>
-              <p className="mt-1 text-xs text-slate-700 dark:text-white">
-                AI Investment Signals
-              </p>
-            </div>
-          )}
+          {/* Desktop branding removed to avoid duplicate header; TopBar displays branding */}
 
           <nav className="px-2">
             <NavItem
@@ -159,7 +150,7 @@ const Sidebar = ({
         </div>
 
         <div className="px-3 pb-4">
-          <div className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-[var(--app-soft)]">
+          <div className="flex items-center justify-between gap-3 rounded-md px-3 py-2 hover:bg-[var(--app-soft)]">
             <div className="flex-1 text-sm">
               <div className="font-semibold text-[var(--app-text)] dark:text-white">
                 {user.username || "User"}
@@ -168,11 +159,12 @@ const Sidebar = ({
                 {user.isAdmin ? "Administrator" : "Trader"}
               </div>
             </div>
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={toggleTheme}
                 className="btn-ghost text-sm"
+                aria-label="Toggle theme"
               >
                 {theme === "dark" ? "☀️" : "🌙"}
               </button>
