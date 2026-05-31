@@ -7,6 +7,7 @@ import SignalSimulator from "./components/SignalSimulator.jsx";
 import TopBar from "./components/TopBar.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
 import AuditLogs from "./components/AuditLogs.jsx";
+import Sidebar from "./components/Sidebar.jsx";
 import LandingPage from "./LandingPage.jsx";
 import QuickGuide from "./components/QuickGuide.jsx";
 import {
@@ -251,6 +252,7 @@ const App = () => {
   );
   const [connectionBanner, setConnectionBanner] = useState(null);
   const [latestPrediction, setLatestPrediction] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isAuthenticated = useMemo(() => Boolean(token), [token]);
   const activeTheme = THEMES[theme];
@@ -554,6 +556,7 @@ const App = () => {
             setShowChangePassword(true);
             setActiveTab("settings");
           }}
+          onOpenMenu={() => setMobileMenuOpen(true)}
         />
       )}
 
@@ -593,139 +596,180 @@ const App = () => {
       <main
         className={`mx-auto w-full flex-1 ${showLandingPage ? "max-w-none p-0" : "max-w-7xl px-4 py-6 sm:px-6 lg:py-8"}`}
       >
-        {showLandingPage ? (
-          <LandingPage theme={theme} onToggleTheme={toggleTheme} />
-        ) : !isAuthenticated ? (
-          <div className="flex min-h-full items-center justify-center">
-            {authView === "login" ? (
-              <LoginForm
-                onSubmit={handleLogin}
-                onSwitch={() => setAuthView("register")}
-                loading={authLoading}
-                error={authError}
+        <div className="flex gap-6">
+          {isAuthenticated && !showLandingPage && (
+            <Sidebar
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              openAuditLogs={openAuditLogs}
+              toggleTheme={toggleTheme}
+              user={user}
+              theme={theme}
+              onLogout={handleLogout}
+            />
+          )}
+
+          {mobileMenuOpen && (
+            <div className="md:hidden fixed inset-0 z-50">
+              <Sidebar
+                mobileMode
+                onClose={() => setMobileMenuOpen(false)}
+                activeTab={activeTab}
+                setActiveTab={(tab) => {
+                  setActiveTab(tab);
+                  setMobileMenuOpen(false);
+                }}
+                openAuditLogs={() => {
+                  openAuditLogs();
+                  setMobileMenuOpen(false);
+                }}
+                toggleTheme={toggleTheme}
+                user={user}
                 theme={theme}
-                onToggleTheme={toggleTheme}
-              />
-            ) : (
-              <RegisterForm
-                onSubmit={handleRegister}
-                onSwitch={() => setAuthView("login")}
-                loading={authLoading}
-                error={authError}
-                theme={theme}
-                onToggleTheme={toggleTheme}
-              />
-            )}
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {connectionBanner && (
-              <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-sm font-medium text-red-100">
-                    {connectionBanner.message}
-                  </p>
-                  <div className="flex items-center gap-2 self-start sm:self-auto">
-                    <button
-                      type="button"
-                      className="btn-secondary border-red-400/30 text-red-100"
-                      onClick={retryConnection}
-                    >
-                      Retry
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Dismiss backend banner"
-                      onClick={dismissConnectionBanner}
-                      className="text-sm font-semibold text-red-200"
-                    >
-                      Dismiss
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {showDemoBanner &&
-              ((user.isAdmin && effectiveTab === "admin") ||
-                (!user.isAdmin && effectiveTab === "dashboard")) && (
-                <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-2.5">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-sm font-medium text-[var(--app-text)]">
-                      {user.isAdmin
-                        ? "Welcome back, Administrator. Your admin panel is ready."
-                        : user.username === "demo"
-                          ? "Welcome back, Demo Trader. Your signal dashboard is ready."
-                          : "Welcome back, Trader. Your signal dashboard is ready."}
-                    </p>
-                    <button
-                      type="button"
-                      aria-label="Dismiss welcome banner"
-                      onClick={() => setShowDemoBanner(false)}
-                      className="self-start text-sm font-semibold text-[var(--app-accent)] sm:self-auto"
-                    >
-                      Dismiss
-                    </button>
-                  </div>
-                </div>
-              )}
-
-            <div className="flex flex-col gap-2 px-1 text-xs text-slate-700 dark:text-white sm:flex-row sm:items-center sm:justify-between">
-              <span>This is an educational tool, not financial advice.</span>
-            </div>
-
-            {showAuditLogsPage ? (
-              <AuditLogs
-                canAccess={adminChecked ? user.isAdmin : true}
-                onBack={returnToAdminPanel}
-              />
-            ) : effectiveTab === "dashboard" && (
-              <Dashboard
-                chartTheme={chartTheme}
-                onPredictionGenerated={(prediction) => {
-                  setLatestPrediction(prediction);
-                  if (effectiveTab === "history") {
-                    void loadHistory();
-                  }
+                onLogout={() => {
+                  handleLogout();
+                  setMobileMenuOpen(false);
                 }}
               />
-            )}
+            </div>
+          )}
 
-            {effectiveTab === "simulator" && (
-              <SignalSimulator
-                asset={latestPrediction?.asset || ""}
-                prediction={latestPrediction?.prediction || null}
-                latestClose={latestPredictionClose}
-              />
-            )}
+          <div className="flex-1">
+            {showLandingPage ? (
+              <LandingPage theme={theme} onToggleTheme={toggleTheme} />
+            ) : !isAuthenticated ? (
+              <div className="flex min-h-full items-center justify-center">
+                {authView === "login" ? (
+                  <LoginForm
+                    onSubmit={handleLogin}
+                    onSwitch={() => setAuthView("register")}
+                    loading={authLoading}
+                    error={authError}
+                    theme={theme}
+                    onToggleTheme={toggleTheme}
+                  />
+                ) : (
+                  <RegisterForm
+                    onSubmit={handleRegister}
+                    onSwitch={() => setAuthView("login")}
+                    loading={authLoading}
+                    error={authError}
+                    theme={theme}
+                    onToggleTheme={toggleTheme}
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {connectionBanner && (
+                  <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-sm font-medium text-red-100">
+                        {connectionBanner.message}
+                      </p>
+                      <div className="flex items-center gap-2 self-start sm:self-auto">
+                        <button
+                          type="button"
+                          className="btn-secondary border-red-400/30 text-red-100"
+                          onClick={retryConnection}
+                        >
+                          Retry
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="Dismiss backend banner"
+                          onClick={dismissConnectionBanner}
+                          className="text-sm font-semibold text-red-200"
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-            {effectiveTab === "history" && (
-              <PredictionHistory
-                history={history}
-                loading={historyLoading}
-                error={historyError}
-                onRefresh={loadHistory}
-              />
-            )}
+                {showDemoBanner &&
+                  ((user.isAdmin && effectiveTab === "admin") ||
+                    (!user.isAdmin && effectiveTab === "dashboard")) && (
+                    <div className="rounded-lg border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-2.5">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="text-sm font-medium text-[var(--app-text)]">
+                          {user.isAdmin
+                            ? "Welcome back, Administrator. Your admin panel is ready."
+                            : user.username === "demo"
+                              ? "Welcome back, Demo Trader. Your signal dashboard is ready."
+                              : "Welcome back, Trader. Your signal dashboard is ready."}
+                        </p>
+                        <button
+                          type="button"
+                          aria-label="Dismiss welcome banner"
+                          onClick={() => setShowDemoBanner(false)}
+                          className="self-start text-sm font-semibold text-[var(--app-accent)] sm:self-auto"
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
-            {effectiveTab === "settings" && (
-              <SettingsPanel
-                showChangePassword={showChangePassword}
-                onOpenChangePassword={() => setShowChangePassword(true)}
-                onCloseChangePassword={() => setShowChangePassword(false)}
-                onOpenQuickGuide={openQuickGuide}
-                onChangePassword={handleChangePassword}
-                passwordForm={passwordForm}
-                setPasswordForm={setPasswordForm}
-                passwordStatus={passwordStatus}
-              />
-            )}
+                <div className="flex flex-col gap-2 px-1 text-xs text-slate-700 dark:text-white sm:flex-row sm:items-center sm:justify-between">
+                  <span>This is an educational tool, not financial advice.</span>
+                </div>
 
-            {!showAuditLogsPage && effectiveTab === "admin" && adminChecked && user.isAdmin && (
-              <AdminPanel />
+                {showAuditLogsPage ? (
+                  <AuditLogs
+                    canAccess={adminChecked ? user.isAdmin : true}
+                    onBack={returnToAdminPanel}
+                  />
+                ) : effectiveTab === "dashboard" && (
+                  <Dashboard
+                    chartTheme={chartTheme}
+                    onPredictionGenerated={(prediction) => {
+                      setLatestPrediction(prediction);
+                      if (effectiveTab === "history") {
+                        void loadHistory();
+                      }
+                    }}
+                  />
+                )}
+
+                {effectiveTab === "simulator" && (
+                  <SignalSimulator
+                    asset={latestPrediction?.asset || ""}
+                    prediction={latestPrediction?.prediction || null}
+                    latestClose={latestPredictionClose}
+                  />
+                )}
+
+                {effectiveTab === "history" && (
+                  <PredictionHistory
+                    history={history}
+                    loading={historyLoading}
+                    error={historyError}
+                    onRefresh={loadHistory}
+                  />
+                )}
+
+                {effectiveTab === "settings" && (
+                  <SettingsPanel
+                    showChangePassword={showChangePassword}
+                    onOpenChangePassword={() => setShowChangePassword(true)}
+                    onCloseChangePassword={() => setShowChangePassword(false)}
+                    onOpenQuickGuide={openQuickGuide}
+                    onChangePassword={handleChangePassword}
+                    passwordForm={passwordForm}
+                    setPasswordForm={setPasswordForm}
+                    passwordStatus={passwordStatus}
+                  />
+                )}
+
+                {!showAuditLogsPage && effectiveTab === "admin" && adminChecked && user.isAdmin && (
+                  <AdminPanel />
+                )}
+              </div>
             )}
           </div>
-        )}
+        </div>
       </main>
 
       {shouldShowQuickGuide && (

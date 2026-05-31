@@ -43,7 +43,7 @@ describe("AuditLogs", () => {
 
     expect(screen.getByText(/1 \/ 3 lines/i)).toBeInTheDocument();
     expect(screen.getByDisplayValue(/error boot/)).toBeInTheDocument();
-    expect(screen.getByDisplayValue(/info ready/)).not.toBeInTheDocument();
+    expect(screen.queryByDisplayValue(/info ready/)).not.toBeInTheDocument();
     expect(searchInput).toHaveValue("error");
   });
 });

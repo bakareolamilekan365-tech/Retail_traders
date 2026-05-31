@@ -33,6 +33,7 @@ const TopBar = ({
   onToggleTheme,
   onLogout,
   onChangePassword,
+  onOpenMenu,
 }) => {
   const isDarkMode = theme === "dark";
 
@@ -48,6 +49,7 @@ const TopBar = ({
           </p>
         </div>
         <div className="ml-auto flex items-center gap-3">
+          <button type="button" aria-label="Open menu" onClick={onOpenMenu} className="md:hidden mr-2 btn-ghost">☰</button>
           <button
             type="button"
             aria-label={
