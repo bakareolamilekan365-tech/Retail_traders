@@ -60,6 +60,18 @@ Frontend: http://localhost:5173
 
 Backend docs: http://localhost:8000/docs
 
+## GitHub Codespaces
+
+This repository now includes a `.devcontainer/` configuration for GitHub Codespaces.
+
+Use Codespaces if your local machine is low on disk space or VS Code keeps reloading. The container excludes the heavy local development folders from watcher/search indexing:
+
+- `backend/venv`
+- `frontend/node_modules`
+- `backend/logs`
+
+In Codespaces, open the repo and let the container install dependencies automatically on first launch.
+
 ## Demo / Defense Mode
 
 Build the frontend:

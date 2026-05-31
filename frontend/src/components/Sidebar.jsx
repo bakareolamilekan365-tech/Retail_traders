@@ -37,15 +37,7 @@ const Sidebar = ({
         className={`flex ${mobileMode ? "flex-col h-full justify-between" : "sticky top-4 flex h-[calc(100vh-32px)] flex-col justify-between"}`}
       >
         {mobileMode && (
-          <div className="flex items-center justify-between px-2 pb-2">
-            <div>
-              <h2 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
-                TradeSense NG
-              </h2>
-              <p className="mt-1 text-xs text-slate-700 dark:text-white">
-                AI Investment Signals
-              </p>
-            </div>
+          <div className="flex items-center justify-end px-2 pb-2">
             <button
               type="button"
               onClick={onClose}
@@ -57,14 +49,16 @@ const Sidebar = ({
           </div>
         )}
         <div className="space-y-6">
-          <div className="px-4">
-            <h2 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
-              TradeSense NG
-            </h2>
-            <p className="mt-1 text-xs text-slate-700 dark:text-white">
-              AI Investment Signals
-            </p>
-          </div>
+          {!mobileMode && (
+            <div className="px-4">
+              <h2 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
+                TradeSense NG
+              </h2>
+              <p className="mt-1 text-xs text-slate-700 dark:text-white">
+                AI Investment Signals
+              </p>
+            </div>
+          )}
 
           <nav className="px-2">
             <NavItem
