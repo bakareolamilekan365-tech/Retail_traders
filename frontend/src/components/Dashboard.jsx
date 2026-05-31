@@ -132,12 +132,18 @@ const Dashboard = ({ chartTheme, theme, onPredictionGenerated = () => {} }) => {
       />
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <TimeRangeSelector
-          label={isCryptoAsset ? "Interval" : "Range"}
-          value={chartSelectionValue}
-          onChange={setViewSelection}
-          options={rangeOptions}
-        />
+        {isCryptoAsset ? (
+          <TimeRangeSelector
+            label="Interval"
+            value={chartSelectionValue}
+            onChange={setViewSelection}
+            options={rangeOptions}
+          />
+        ) : (
+          <div className="text-sm text-slate-700 dark:text-white">
+            Use the range controls inside the chart card.
+          </div>
+        )}
         <div className="flex flex-wrap items-center gap-3 text-sm text-slate-700 dark:text-white">
           <button
             type="button"
@@ -185,7 +191,7 @@ const Dashboard = ({ chartTheme, theme, onPredictionGenerated = () => {} }) => {
                   </p>
                 </div>
               </div>
-              <div className="h-[420px] md:h-[500px]">
+              <div className="h-[220px] sm:h-[320px] md:h-[500px]">
                 <TradingViewWidget
                   symbol={`BINANCE:${selectedAsset}USDT`}
                   interval={String(chartSelectionValue)}

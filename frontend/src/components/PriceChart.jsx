@@ -272,7 +272,7 @@ const PriceChart = ({ data, chartTheme, rangeDays, onRangeChange }) => {
         : "Replay history";
 
   return (
-    <div className="card p-4">
+    <div className="card p-3 sm:p-4">
       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="text-sm font-semibold text-[var(--app-text)] dark:text-white">
@@ -283,7 +283,7 @@ const PriceChart = ({ data, chartTheme, rangeDays, onRangeChange }) => {
             candle and is not live data.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 text-left sm:text-right">
           <div className="rounded-full border border-[var(--app-border)] px-3 py-1.5 text-xs font-semibold text-[var(--app-text)] dark:text-white">
             Range: {rangeDays}d
           </div>
@@ -313,7 +313,7 @@ const PriceChart = ({ data, chartTheme, rangeDays, onRangeChange }) => {
           </button>
         </div>
       </div>
-      <div ref={containerRef} className="w-full h-[420px] md:h-[500px]" />
+      <div ref={containerRef} className="w-full h-[220px] sm:h-[300px] md:h-[500px]" />
     </div>
   );
 };
