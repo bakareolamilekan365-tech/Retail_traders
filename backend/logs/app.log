@@ -1051,3 +1051,7 @@
 2026-05-30 23:09:12,534 INFO watchfiles.main: 1 change detected
 2026-05-30 23:09:12,903 INFO watchfiles.main: 1 change detected
 2026-05-30 23:09:13,269 INFO watchfiles.main: 1 change detected
+2026-05-30 23:58:27,677 INFO src.api.main: Serving frontend build from C:\Users\DELL\Documents\Retail_traders\frontend\dist
+2026-05-30 23:58:28,929 INFO src.api.main: Admin user already exists
+2026-05-30 23:58:29,634 INFO src.api.main: Demo user already exists
+2026-05-30 23:58:29,933 INFO src.api.main: Database initialized and seeded

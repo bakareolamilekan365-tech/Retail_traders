@@ -28,7 +28,7 @@ const Sidebar = ({
   onClose = () => {},
 }) => {
   const containerClass = mobileMode
-    ? "flex md:hidden w-72 flex-col gap-6 bg-[var(--app-card)] dark:bg-[var(--app-card)] fixed inset-0 z-50 p-4 shadow-2xl"
+    ? "fixed inset-y-0 right-0 z-50 flex w-[min(20rem,85vw)] flex-col gap-6 bg-[var(--app-card)] dark:bg-[var(--app-card)] px-4 py-4 shadow-2xl ring-1 ring-white/10"
     : "hidden md:flex md:w-64 md:flex-col md:gap-6";
 
   return (
@@ -37,7 +37,15 @@ const Sidebar = ({
         className={`flex ${mobileMode ? "flex-col h-full justify-between" : "sticky top-4 flex h-[calc(100vh-32px)] flex-col justify-between"}`}
       >
         {mobileMode && (
-          <div className="flex items-center justify-end px-2 pb-2">
+          <div className="flex items-center justify-between px-2 pb-2">
+            <div>
+              <h2 className="text-lg font-semibold text-[var(--app-text)] dark:text-white">
+                TradeSense NG
+              </h2>
+              <p className="mt-1 text-xs text-slate-700 dark:text-white">
+                AI Investment Signals
+              </p>
+            </div>
             <button
               type="button"
               onClick={onClose}

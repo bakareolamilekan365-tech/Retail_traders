@@ -615,7 +615,13 @@ const App = () => {
           )}
 
           {mobileMenuOpen && (
-            <div className="md:hidden fixed inset-0 z-50">
+            <div className="fixed inset-0 z-50 md:hidden">
+              <button
+                type="button"
+                aria-label="Close mobile menu overlay"
+                onClick={() => setMobileMenuOpen(false)}
+                className="absolute inset-0 bg-slate-950/70 backdrop-blur-[2px]"
+              />
               <Sidebar
                 mobileMode
                 onClose={() => setMobileMenuOpen(false)}
