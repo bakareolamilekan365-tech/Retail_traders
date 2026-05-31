@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { createChart, CandlestickSeries, LineSeries } from "lightweight-charts";
+import TimeRangeSelector from "./TimeRangeSelector.jsx";
 
 const REPLAY_INTERVAL_MS = 500;
 
@@ -14,17 +15,20 @@ const PriceChart = ({ data, chartTheme }) => {
   const replayIndexRef = useRef(0);
 
   const [replayState, setReplayState] = useState("idle");
+  const [rangeDays, setRangeDays] = useState(180);
+
+  const sourceOhlcv = data?.full_ohlcv || data?.ohlcv || [];
 
   const chartData = useMemo(() => {
-    if (!data) return [];
-    return data.ohlcv.map((row) => ({
+    if (!sourceOhlcv.length) return [];
+    return sourceOhlcv.map((row) => ({
       time: row.date,
       open: row.open,
       high: row.high,
       low: row.low,
       close: row.close,
     }));
-  }, [data]);
+  }, [sourceOhlcv]);
 
   const indicatorData = useMemo(() => {
     if (!data) return { sma14: [], sma50: [] };
@@ -39,6 +43,15 @@ const PriceChart = ({ data, chartTheme }) => {
       })),
     };
   }, [data]);
+
+  const computeVisible = (allSeries, days) => {
+    if (!allSeries || !allSeries.length) return [];
+    if (!days || days <= 0) return allSeries;
+    const last = allSeries[allSeries.length - 1];
+    const lastDate = new Date(last.time);
+    const startTs = new Date(lastDate.getTime() - days * 24 * 60 * 60 * 1000);
+    return allSeries.filter((r) => new Date(r.time) >= startTs);
+  };
 
   const clearReplayTimer = () => {
     if (replayTimerRef.current) {
@@ -114,13 +127,18 @@ const PriceChart = ({ data, chartTheme }) => {
     });
 
     if (chartData.length) {
-      candleSeriesRef.current.setData(chartData);
-      sma14SeriesRef.current.setData(
-        indicatorData.sma14.filter((row) => row.value !== null),
-      );
-      sma50SeriesRef.current.setData(
-        indicatorData.sma50.filter((row) => row.value !== null),
-      );
+      const visibleCandles = computeVisible(chartData, rangeDays);
+      const visibleSma14 = computeVisible(
+        indicatorData.sma14,
+        rangeDays,
+      ).filter((row) => row.value !== null);
+      const visibleSma50 = computeVisible(
+        indicatorData.sma50,
+        rangeDays,
+      ).filter((row) => row.value !== null);
+      candleSeriesRef.current.setData(visibleCandles);
+      sma14SeriesRef.current.setData(visibleSma14);
+      sma50SeriesRef.current.setData(visibleSma50);
       chartRef.current.timeScale().fitContent();
     }
 
@@ -173,11 +191,14 @@ const PriceChart = ({ data, chartTheme }) => {
         return;
       }
 
-      const candle = chartData[currentIndex];
-      const sma14 = indicatorData.sma14[currentIndex];
-      const sma50 = indicatorData.sma50[currentIndex];
+      const visibleCandles = computeVisible(chartData, rangeDays);
+      const visibleSma14 = computeVisible(indicatorData.sma14, rangeDays);
+      const visibleSma50 = computeVisible(indicatorData.sma50, rangeDays);
+      const candle = visibleCandles[currentIndex];
+      const sma14 = visibleSma14[currentIndex];
+      const sma50 = visibleSma50[currentIndex];
 
-      candleSeriesRef.current?.update(candle);
+      if (candle) candleSeriesRef.current?.update(candle);
       if (sma14?.value !== null && sma14?.value !== undefined) {
         sma14SeriesRef.current?.update(sma14);
       }
@@ -241,6 +262,7 @@ const PriceChart = ({ data, chartTheme }) => {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <TimeRangeSelector value={rangeDays} onChange={setRangeDays} />
           <button
             type="button"
             className="btn-secondary px-3 py-1.5 text-xs"
@@ -266,6 +288,15 @@ const PriceChart = ({ data, chartTheme }) => {
 
 PriceChart.propTypes = {
   data: PropTypes.shape({
+    full_ohlcv: PropTypes.arrayOf(
+      PropTypes.shape({
+        date: PropTypes.string.isRequired,
+        open: PropTypes.number.isRequired,
+        high: PropTypes.number.isRequired,
+        low: PropTypes.number.isRequired,
+        close: PropTypes.number.isRequired,
+      }),
+    ),
     ohlcv: PropTypes.arrayOf(
       PropTypes.shape({
         date: PropTypes.string.isRequired,
@@ -275,6 +306,7 @@ PriceChart.propTypes = {
         close: PropTypes.number.isRequired,
       }),
     ).isRequired,
+    rangeDays: PropTypes.number,
     indicators: PropTypes.arrayOf(
       PropTypes.shape({
         date: PropTypes.string.isRequired,

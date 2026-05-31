@@ -12,6 +12,10 @@ if str(BACKEND_SRC) not in sys.path:
 from engine.generate_synthetic_data import ASSET_CONFIGS, generate_all_assets
 
 
+def _expected_row_count() -> int:
+    return len(pd.date_range("2020-01-01", "2026-04-30", freq="D"))
+
+
 def test_generate_all_assets_creates_csvs(tmp_path: Path) -> None:
     output_dir = generate_all_assets(output_dir=tmp_path)
 
@@ -31,4 +35,4 @@ def test_generated_csvs_have_expected_shape_and_columns(tmp_path: Path) -> None:
         df = pd.read_csv(csv_path)
 
         assert df.columns.tolist() == expected_columns
-        assert len(df) == 1581
+        assert len(df) == _expected_row_count()

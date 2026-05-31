@@ -8,6 +8,7 @@ import sqlite3
 import sys
 from datetime import datetime
 from pathlib import Path
+from logging.handlers import RotatingFileHandler
 from typing import Dict, List
 
 import pandas as pd
@@ -50,7 +51,11 @@ def _setup_logging(log_dir: Path) -> None:
     stream_handler.setFormatter(formatter)
     root_logger.addHandler(stream_handler)
 
-    file_handler = logging.FileHandler(log_dir / "app.log")
+    file_handler = RotatingFileHandler(
+        log_dir / "app.log",
+        maxBytes=1_000_000,
+        backupCount=3,
+    )
     file_handler.setFormatter(formatter)
     root_logger.addHandler(file_handler)
 
@@ -202,6 +207,21 @@ def _load_model(model_path: Path) -> RandomForestRegressor:
 
 def create_app(load_on_startup: bool = True) -> FastAPI:
     app = FastAPI(title="Intelligent Investment Recommendation Assistant")
+
+    @app.middleware("http")
+    async def spa_fallback_middleware(request: Request, call_next):
+        path = request.url.path
+        if (
+            request.method == "GET"
+            and not path.startswith("/api/")
+            and path not in {"/", "/docs", "/redoc", "/openapi.json"}
+            and not path.startswith("/assets/")
+            and not path.startswith("/favicon")
+            and "." not in Path(path).name
+        ):
+            request.scope["path"] = "/"
+
+        return await call_next(request)
 
     log_dir = Path(__file__).resolve().parents[2] / "logs"
     _setup_logging(log_dir)

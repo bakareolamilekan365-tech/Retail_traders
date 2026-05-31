@@ -79,6 +79,7 @@ class PredictResponse(BaseModel):
     indicators: List[IndicatorRow]
     prediction: PredictionOut
     insight: str
+    full_ohlcv: List[OHLCVRow] | None = None
 
 
 def _to_optional_float(value: float) -> float | None:
@@ -373,12 +374,17 @@ def predict_asset(
     latest_row = data.iloc[-1]
     insight = _build_insight(latest_row, signal, expected_return_pct, confidence)
 
+    # Return the full available series to the client and let the frontend
+    # control visible windowing. This prevents server-side truncation that
+    # caused charts to be cut off for shorter `days` requests.
+    # preserve backward-compatible sliced `ohlcv` for callers/tests
     subset = data.tail(min(days, len(data)))
     response = PredictResponse(
         asset=asset,
         timestamp=datetime.now(timezone.utc).isoformat(),
         ohlcv=_serialize_ohlcv(subset),
         indicators=_serialize_indicators(subset),
+        full_ohlcv=_serialize_ohlcv(data),
         prediction=PredictionOut(
             signal=signal,
             expected_return_7d=expected_return_pct,

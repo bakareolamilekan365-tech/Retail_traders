@@ -8,6 +8,27 @@ import IndicatorCards from "./IndicatorCards.jsx";
 import PredictionPanel from "./PredictionPanel.jsx";
 import InsightBar from "./InsightBar.jsx";
 import TimeRangeSelector from "./TimeRangeSelector.jsx";
+import TradingViewWidget from "./TradingViewWidget.jsx";
+
+const MAX_HISTORY_DAYS = 3650;
+
+const CRYPTO_INTERVAL_OPTIONS = [
+  { label: "1m", value: "1" },
+  { label: "30m", value: "30" },
+  { label: "1h", value: "60" },
+  { label: "1D", value: "1D" },
+  { label: "1W", value: "1W" },
+  { label: "1M", value: "1M" },
+];
+
+const NGX_RANGE_OPTIONS = [
+  { label: "7d", value: 7 },
+  { label: "30d", value: 30 },
+  { label: "90d", value: 90 },
+  { label: "180d", value: 180 },
+  { label: "365d", value: 365 },
+  { label: "All", value: 3650 },
+];
 
 const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
   const [assets, setAssets] = useState([]);
@@ -17,7 +38,7 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
   const [error, setError] = useState("");
   const [lastRefresh, setLastRefresh] = useState(null);
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true);
-  const [timeRange, setTimeRange] = useState(180);
+  const [viewSelection, setViewSelection] = useState(180);
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -36,11 +57,19 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
     fetchAssets();
   }, []);
 
-  const fetchPrediction = async (asset = selectedAsset, range = timeRange) => {
+  const selectedAssetMeta = assets.find((asset) => asset.symbol === selectedAsset);
+  const isCryptoAsset = selectedAssetMeta?.type === "crypto";
+
+  useEffect(() => {
+    if (!selectedAssetMeta) return;
+    setViewSelection(isCryptoAsset ? "1D" : 180);
+  }, [selectedAssetMeta, isCryptoAsset]);
+
+  const fetchPrediction = async (asset = selectedAsset) => {
     setLoading(true);
     setError("");
     try {
-      const response = await apiFetch(`/predict?asset=${asset}&days=${range}`);
+      const response = await apiFetch(`/predict?asset=${asset}&days=${MAX_HISTORY_DAYS}`);
       if (!response.ok) {
         if (response.status === 404) throw new Error("Asset not found");
         throw new Error("Failed to load prediction");
@@ -60,9 +89,9 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
 
   useEffect(() => {
     if (selectedAsset) {
-      fetchPrediction(selectedAsset, timeRange);
+      fetchPrediction(selectedAsset);
     }
-  }, [selectedAsset, timeRange]);
+  }, [selectedAsset]);
 
   useEffect(() => {
     if (!autoRefreshEnabled) return () => {};
@@ -73,7 +102,14 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
       5 * 60 * 1000,
     );
     return () => clearInterval(interval);
-  }, [autoRefreshEnabled, selectedAsset, timeRange]);
+  }, [autoRefreshEnabled, selectedAsset]);
+
+  const rangeOptions = isCryptoAsset ? CRYPTO_INTERVAL_OPTIONS : NGX_RANGE_OPTIONS;
+  const chartSelectionValue = rangeOptions.some(
+    (option) => option.value === viewSelection,
+  )
+    ? viewSelection
+    : rangeOptions[0]?.value;
 
   return (
     <div className="space-y-6">
@@ -90,7 +126,12 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
       />
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
+        <TimeRangeSelector
+          label={isCryptoAsset ? "Interval" : "Range"}
+          value={chartSelectionValue}
+          onChange={setViewSelection}
+          options={rangeOptions}
+        />
         <div className="flex flex-wrap items-center gap-3 text-sm text-slate-700 dark:text-white">
           <button
             type="button"
@@ -126,7 +167,32 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
         </div>
       ) : predictionData ? (
         <div className="space-y-6">
-          <PriceChart data={predictionData} chartTheme={chartTheme} />
+          {isCryptoAsset ? (
+            <div className="card p-4">
+              <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-[var(--app-text)] dark:text-white">
+                    Price Chart
+                  </h3>
+                  <p className="text-xs text-slate-700 dark:text-white">
+                    Crypto uses TradingView intervals for a market-style view.
+                  </p>
+                </div>
+              </div>
+              <div className="h-[420px] md:h-[500px]">
+                <TradingViewWidget
+                  symbol={`BINANCE:${selectedAsset}USDT`}
+                  interval={String(chartSelectionValue)}
+                />
+              </div>
+            </div>
+          ) : (
+            <PriceChart
+              data={predictionData}
+              chartTheme={chartTheme}
+              rangeDays={Number(chartSelectionValue)}
+            />
+          )}
           <IndicatorCards indicators={predictionData.indicators} />
           <PredictionPanel prediction={predictionData.prediction} />
           <InsightBar insight={predictionData.insight} />

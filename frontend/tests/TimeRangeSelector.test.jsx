@@ -8,7 +8,17 @@ describe('TimeRangeSelector', () => {
     const user = userEvent.setup()
     const handleChange = vi.fn()
 
-    render(<TimeRangeSelector value={180} onChange={handleChange} />)
+    render(
+      <TimeRangeSelector
+        label="Range"
+        value={180}
+        onChange={handleChange}
+        options={[
+          { label: '30d', value: 30 },
+          { label: '180d', value: 180 },
+        ]}
+      />,
+    )
 
     await user.click(screen.getByRole('button', { name: /30d/i }))
     expect(handleChange).toHaveBeenCalledWith(30)

@@ -48,16 +48,18 @@ describe("LoginForm", () => {
         /analyze historical price action, technical indicators, and model-backed 7-day signals/i,
       ),
     ).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /back to home/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /back to home/i }),
+    ).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText(/enter your username/i),
     ).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText(/enter your password/i),
     ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /continue with google/i }),
-      ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /continue with google/i }),
+    ).toBeInTheDocument();
   });
 
   it("shows forgot-password guidance when requested", async () => {

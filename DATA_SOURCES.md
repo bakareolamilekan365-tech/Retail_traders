@@ -2,29 +2,29 @@
 
 ## Data Collection & Provenance
 
-All historical market data used in this project was sourced as static CSV files to ensure offline reproducibility, eliminate network dependencies, and avoid costs. No live APIs or paid services were used.
+The dataset is a static snapshot built from real market downloads where available, with synthetic fallback CSVs only for assets that could not be downloaded reliably. This keeps the demo offline-friendly and stable while still using real data for the assets that support it.
 
 ---
 
-### Cryptocurrency Data (5 assets)
+### Cryptocurrency Data
 
-- **Source:** CoinGecko
-- **Assets:** BTC, ETH, BNB, SOL, ADA
+- **Source:** Real historical market downloads (offline CSV snapshot)
+- **Assets:** BTC, ETH, BNB, SOL, ADA, XRP, DOGE, LTC, TRX, DOT
 - **Granularity:** Daily OHLCV (Open, High, Low, Close, Volume)
-- **Date Range:** 2022‑01‑01 to 2024‑12‑31
-- **Acquisition Method:** Manual CSV export from the CoinGecko website (free tier).
-- **Reliability:** CoinGecko is a widely cited, industry‑standard crypto data aggregator used in academic and professional research.
+- **Date Range:** 2020‑01‑01 to 2026‑04‑30
+- **Acquisition Method:** Downloaded once and stored locally as CSV files.
+- **Note:** These assets are treated as real data in the demo because they were fetched from the source feed and stored locally.
 
 ---
 
-### Nigerian Stock Exchange Data (10 assets)
+### Nigerian Stock Exchange Data
 
-- **Source:** Investing.com (Nigeria section)
-- **Assets:** DANGCEM, MTNN, AIRTELAFRI, BUACEMENT, GTCO, ZENITHBANK, SEPLAT, FBNH, NB, ACCESSCORP
+- **Source:** Best-effort historical downloads; fallback synthetic CSVs for unavailable symbols
+- **Assets:** DANGCEM, MTNN, AIRTELAFRI, BUACEMENT, GTCO, ZENITHBANK, SEPLAT, FBNH, NB, ACCESSCORP, UBA, STANBIC, FIDELITYBK, FCMB, UCAP, TRANSCORP, OANDO, PRESCO, WAPCO, NESTLE
 - **Granularity:** Daily OHLCV
-- **Date Range:** 2022‑01‑01 to 2024‑12‑31
-- **Acquisition Method:** Manual historical data download from Investing.com.
-- **Reliability:** Investing.com provides verified exchange data and is commonly referenced in financial research and academic studies.
+- **Date Range:** 2020‑01‑01 to 2026‑04‑30
+- **Acquisition Method:** Downloaded where available; missing tickers are generated as synthetic fallback so the demo still runs.
+- **Note:** The demo labels these assets transparently; fallback symbols are not presented as live exchange data.
 
 ---
 
@@ -33,6 +33,11 @@ All historical market data used in this project was sourced as static CSV files 
 - All CSV files are stored in `/backend/data/` with the naming convention `{SYMBOL}.csv`.
 - Each file contains the columns: `Date, Open, High, Low, Close, Volume`.
 - Data is pre‑validated before use; missing files or malformed rows are handled gracefully by the preprocessing engine.
+
+### Audit Logs
+
+- Backend activity logs are written to `/backend/logs/app.log` and surfaced in the admin Audit Logs page.
+- The log file is capped and rotated to keep the demo lightweight.
 
 ---
 

@@ -2,7 +2,14 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import heroImage from "../assets/hero.png";
 
-const RegisterForm = ({ onSubmit, onSwitch, loading, error, theme, onToggleTheme }) => {
+const RegisterForm = ({
+  onSubmit,
+  onSwitch,
+  loading,
+  error,
+  theme,
+  onToggleTheme,
+}) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +38,9 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error, theme, onToggleTheme
         </button>
         <button
           type="button"
-          aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          aria-label={
+            theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+          }
           className="grid h-11 w-11 place-items-center rounded-full border border-slate-700/70 bg-slate-950/50 text-slate-100"
           onClick={onToggleTheme}
         >
@@ -54,7 +63,9 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error, theme, onToggleTheme
                 <div className="text-lg font-semibold leading-none tracking-tight">
                   TradeSense <span className="text-green-400">NG</span>
                 </div>
-                <div className="text-xs text-slate-400">AI Investment Signals</div>
+                <div className="text-xs text-slate-400">
+                  AI Investment Signals
+                </div>
               </div>
             </div>
             <div className="h-11 lg:hidden" />
@@ -67,26 +78,45 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error, theme, onToggleTheme
               </div>
 
               <h2 className="max-w-[12ch] text-[2.55rem] font-black leading-[0.96] tracking-tight text-white sm:text-[3.25rem] lg:text-[4.25rem]">
-                AI-Powered Signals for <span className="text-green-400">NGX Stocks</span> and <span className="text-green-400">Crypto</span>
+                AI-Powered Signals for{" "}
+                <span className="text-green-400">NGX Stocks</span> and{" "}
+                <span className="text-green-400">Crypto</span>
               </h2>
 
               <p className="max-w-[32rem] text-sm leading-6 text-slate-300 sm:text-[1rem]">
-                Analyze historical price action, technical indicators, and model-backed 7-day signals in one focused dashboard.
+                Analyze historical price action, technical indicators, and
+                model-backed 7-day signals in one focused dashboard.
               </p>
 
               <div className="space-y-3 pt-1">
                 {[
-                  ["Smart AI Signals", "Model-backed buy/sell signals across stocks & crypto"],
-                  ["Data-Driven Insights", "Advanced analytics and technical indicators you can trust"],
-                  ["Real-Time Advantage", "Stay ahead with live updates and market intelligence"],
+                  [
+                    "Smart AI Signals",
+                    "Model-backed buy/sell signals across stocks & crypto",
+                  ],
+                  [
+                    "Data-Driven Insights",
+                    "Advanced analytics and technical indicators you can trust",
+                  ],
+                  [
+                    "Real-Time Advantage",
+                    "Stay ahead with live updates and market intelligence",
+                  ],
                 ].map(([title, body]) => (
-                  <div key={title} className="flex gap-3 rounded-2xl border border-white/10 bg-slate-950/30 p-3.5 backdrop-blur-sm">
+                  <div
+                    key={title}
+                    className="flex gap-3 rounded-2xl border border-white/10 bg-slate-950/30 p-3.5 backdrop-blur-sm"
+                  >
                     <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-emerald-400/25 bg-emerald-400/10 text-green-400">
                       ↑
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-white">{title}</div>
-                      <div className="mt-1 text-sm leading-5 text-slate-300">{body}</div>
+                      <div className="text-sm font-semibold text-white">
+                        {title}
+                      </div>
+                      <div className="mt-1 text-sm leading-5 text-slate-300">
+                        {body}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -111,7 +141,10 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error, theme, onToggleTheme
 
           <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="text-sm font-medium text-slate-700 dark:text-white" htmlFor="register-username">
+              <label
+                className="text-sm font-medium text-slate-700 dark:text-white"
+                htmlFor="register-username"
+              >
                 Username
               </label>
               <input
@@ -126,7 +159,10 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error, theme, onToggleTheme
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-700 dark:text-white" htmlFor="register-email">
+              <label
+                className="text-sm font-medium text-slate-700 dark:text-white"
+                htmlFor="register-email"
+              >
                 Email
               </label>
               <input
@@ -141,7 +177,10 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error, theme, onToggleTheme
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-700 dark:text-white" htmlFor="register-password">
+              <label
+                className="text-sm font-medium text-slate-700 dark:text-white"
+                htmlFor="register-password"
+              >
                 Password
               </label>
               <input
@@ -155,12 +194,18 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error, theme, onToggleTheme
               />
             </div>
 
-            <button type="submit" className="btn-primary w-full py-3" disabled={loading}>
+            <button
+              type="submit"
+              className="btn-primary w-full py-3"
+              disabled={loading}
+            >
               {loading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 
-          <div className="mt-4 text-center text-sm text-slate-700 dark:text-white">OR</div>
+          <div className="mt-4 text-center text-sm text-slate-700 dark:text-white">
+            OR
+          </div>
 
           <button
             type="button"
@@ -178,7 +223,11 @@ const RegisterForm = ({ onSubmit, onSwitch, loading, error, theme, onToggleTheme
 
           <div className="mt-5 text-center text-sm text-slate-700 dark:text-white">
             Already have an account?{" "}
-            <button type="button" className="font-semibold text-[var(--app-accent)]" onClick={onSwitch}>
+            <button
+              type="button"
+              className="font-semibold text-[var(--app-accent)]"
+              onClick={onSwitch}
+            >
               Sign in
             </button>
           </div>

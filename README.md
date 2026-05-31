@@ -77,7 +77,7 @@ If `frontend/dist/` exists, FastAPI serves it automatically.
 | Admin     | `admin`  | `ADMIN_PASSWORD` or `admin123` |
 | Demo user | `demo`   | `demo123`                      |
 
-The demo user is seeded with prediction history.
+The demo user is seeded with prediction history. The dataset is a mixed snapshot: real downloaded market data is used where available, and synthetic fallback CSVs fill the remaining gaps so the demo stays stable offline.
 
 ## Testing
 
@@ -106,10 +106,13 @@ npx vitest run
 - `GET /api/v1/admin/users`
 - `GET /api/v1/admin/predictions`
 - `GET /api/v1/admin/stats`
+- `GET /admin/logs` and the in-app Audit Logs page in the admin shell
 
 ## Demo Notes
 
 - The dashboard uses historical offline data only.
 - The Replay control steps through historical candles at about 500ms per candle.
 - The Simulator tab is a what-if estimate, not paper trading or brokerage execution.
+- The admin shell includes a dedicated Audit Logs page backed by `/api/v1/admin/logs`.
+- Non-API frontend routes fall back to the SPA entrypoint so admin pages like `/admin/logs` open directly.
 - The application is intended for academic demonstration and decision support only, not financial advice.

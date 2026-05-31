@@ -61,7 +61,12 @@ export default function QuickGuide({ onClose, isAdmin, onNavigate }) {
                 type="button"
                 className="btn-secondary"
                 onClick={() => {
-                  // non-destructive admin helper action - open logs in new tab if available
+                  if (onNavigate) {
+                    onNavigate("audit-logs");
+                    onClose();
+                    return;
+                  }
+
                   try {
                     window.open("/admin/logs", "_blank");
                   } catch (e) {
@@ -69,7 +74,7 @@ export default function QuickGuide({ onClose, isAdmin, onNavigate }) {
                   }
                 }}
               >
-                View Audit Logs
+                Open Audit Logs
               </button>
             </div>
           </div>

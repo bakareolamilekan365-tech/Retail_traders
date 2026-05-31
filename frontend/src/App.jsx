@@ -6,6 +6,7 @@ import PredictionHistory from "./components/PredictionHistory.jsx";
 import SignalSimulator from "./components/SignalSimulator.jsx";
 import TopBar from "./components/TopBar.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
+import AuditLogs from "./components/AuditLogs.jsx";
 import LandingPage from "./LandingPage.jsx";
 import QuickGuide from "./components/QuickGuide.jsx";
 import {
@@ -234,6 +235,10 @@ const App = () => {
     success: "",
   });
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeRoute, setActiveRoute] = useState(() => {
+    if (typeof window === "undefined") return "main";
+    return window.location.pathname === "/admin/logs" ? "audit-logs" : "main";
+  });
   const [adminChecked, setAdminChecked] = useState(() => !initialToken);
   const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -269,6 +274,7 @@ const App = () => {
     typeof window !== "undefined" &&
     window.location.pathname === "/" &&
     !new URLSearchParams(window.location.search || "").has("auth");
+  const showAuditLogsPage = activeRoute === "audit-logs" && isAuthenticated;
   const effectiveTab =
     adminChecked && !user.isAdmin && activeTab === "admin"
       ? "dashboard"
@@ -303,6 +309,17 @@ const App = () => {
 
   useEffect(() => {
     document.title = "TradeSense NG – AI Investment Signals";
+  }, []);
+
+  useEffect(() => {
+    const syncRouteFromLocation = () => {
+      setActiveRoute(window.location.pathname === "/admin/logs" ? "audit-logs" : "main");
+    };
+
+    window.addEventListener("popstate", syncRouteFromLocation);
+    return () => {
+      window.removeEventListener("popstate", syncRouteFromLocation);
+    };
   }, []);
 
   useEffect(() => {
@@ -342,6 +359,9 @@ const App = () => {
 
   const handleLogout = useCallback(() => {
     clearToken();
+    if (typeof window !== "undefined" && window.location.pathname === "/admin/logs") {
+      window.history.pushState({}, "", "/");
+    }
     setToken(null);
     setUser({ username: "", isAdmin: false });
     setAdminChecked(true);
@@ -351,6 +371,7 @@ const App = () => {
     setShowChangePassword(false);
     setQuickGuideDismissed(true);
     setActiveTab("dashboard");
+    setActiveRoute("main");
     setHistory([]);
     setLatestPrediction(null);
   }, []);
@@ -480,6 +501,22 @@ const App = () => {
     }
   };
 
+  const openAuditLogs = () => {
+    if (typeof window !== "undefined") {
+      window.history.pushState({}, "", "/admin/logs");
+    }
+    setActiveRoute("audit-logs");
+    setActiveTab("admin");
+  };
+
+  const returnToAdminPanel = () => {
+    if (typeof window !== "undefined") {
+      window.history.pushState({}, "", "/");
+    }
+    setActiveRoute("main");
+    setActiveTab("admin");
+  };
+
   const dismissQuickGuide = () => {
     localStorage.setItem("quickGuideDismissed", "true");
     setQuickGuideDismissed(true);
@@ -520,7 +557,7 @@ const App = () => {
         />
       )}
 
-      {isAuthenticated && (
+      {isAuthenticated && !showAuditLogsPage && (
         <div className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
             <div className="flex max-w-full flex-wrap items-center gap-2 overflow-x-auto pb-1">
@@ -637,7 +674,12 @@ const App = () => {
               <span>This is an educational tool, not financial advice.</span>
             </div>
 
-            {effectiveTab === "dashboard" && (
+            {showAuditLogsPage ? (
+              <AuditLogs
+                canAccess={adminChecked ? user.isAdmin : true}
+                onBack={returnToAdminPanel}
+              />
+            ) : effectiveTab === "dashboard" && (
               <Dashboard
                 chartTheme={chartTheme}
                 onPredictionGenerated={(prediction) => {
@@ -679,7 +721,7 @@ const App = () => {
               />
             )}
 
-            {effectiveTab === "admin" && adminChecked && user.isAdmin && (
+            {!showAuditLogsPage && effectiveTab === "admin" && adminChecked && user.isAdmin && (
               <AdminPanel />
             )}
           </div>
@@ -690,7 +732,14 @@ const App = () => {
         <QuickGuide
           onClose={dismissQuickGuide}
           isAdmin={user.isAdmin}
-          onNavigate={(tab) => setActiveTab(tab)}
+          onNavigate={(tab) => {
+            if (tab === "audit-logs") {
+              openAuditLogs();
+              return;
+            }
+
+            setActiveTab(tab);
+          }}
         />
       )}
     </div>

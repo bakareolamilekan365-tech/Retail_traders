@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import Iterable, List
 
 import numpy as np
 import pandas as pd
@@ -53,6 +53,9 @@ ASSET_CONFIGS: List[AssetConfig] = [
     AssetConfig("WAPCO", 42.0, 0.09, 0.31, 1700000.0),
     AssetConfig("NESTLE", 1100.0, 0.07, 0.24, 180000.0),
 ]
+
+START_DATE = "2020-01-01"
+END_DATE = "2026-04-30"
 
 
 def _simulate_gbm(
@@ -124,7 +127,7 @@ def generate_all_assets(output_dir: str | Path | None = None, seed: int = 42) ->
     output_path = Path(output_dir).expanduser().resolve()
     output_path.mkdir(parents=True, exist_ok=True)
 
-    date_index = pd.date_range("2022-01-01", "2026-04-30", freq="D")
+    date_index = pd.date_range(START_DATE, END_DATE, freq="D")
     rng = np.random.default_rng(seed)
 
     for config in ASSET_CONFIGS:
@@ -143,6 +146,46 @@ def generate_all_assets(output_dir: str | Path | None = None, seed: int = 42) ->
             ohlcv.to_csv(output_file, index=False)
         except OSError as exc:
             raise OSError(f"Failed to write CSV for {config.symbol}: {exc}") from exc
+
+    return output_path
+
+
+def generate_selected_assets(
+    symbols: Iterable[str],
+    output_dir: str | Path | None = None,
+    seed: int = 42,
+) -> Path:
+    """Generate synthetic OHLCV CSVs for only the requested symbols.
+
+    This is used as a safe fallback when real downloads are unavailable for
+    specific assets, without overwriting real CSVs that already exist.
+    """
+    if output_dir is None:
+        output_dir = Path(__file__).resolve().parents[2] / "data"
+
+    output_path = Path(output_dir).expanduser().resolve()
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    selected = {symbol for symbol in symbols}
+    if not selected:
+        return output_path
+
+    date_index = pd.date_range(START_DATE, END_DATE, freq="D")
+    rng = np.random.default_rng(seed)
+
+    for config in ASSET_CONFIGS:
+        if config.symbol not in selected:
+            continue
+        close_prices = _simulate_gbm(
+            start_price=config.start_price,
+            days=len(date_index),
+            annual_drift=config.annual_drift,
+            annual_volatility=config.annual_volatility,
+            rng=rng,
+        )
+        ohlcv = _build_ohlcv(close_prices, config.volume_base, rng)
+        ohlcv.insert(0, "Date", date_index)
+        ohlcv.to_csv(output_path / f"{config.symbol}.csv", index=False)
 
     return output_path
 

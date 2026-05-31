@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { apiFetch } from "../utils/api.js";
+import AuditLogs from "./AuditLogs.jsx";
 
 const formatPercent = (value) => {
   if (value === null || value === undefined) return "N/A";
@@ -35,7 +36,6 @@ const AdminPanel = () => {
   const [predictions, setPredictions] = useState([]);
   const [stats, setStats] = useState(null);
   const [assets, setAssets] = useState([]);
-  const [logs, setLogs] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionMessage, setActionMessage] = useState("");
@@ -47,39 +47,35 @@ const AdminPanel = () => {
     setLoading(true);
     setError("");
     try {
-      const [usersResponse, predictionsResponse, statsResponse, assetsResponse, logsResponse] =
+      const [usersResponse, predictionsResponse, statsResponse, assetsResponse] =
         await Promise.all([
           apiFetch("/admin/users"),
           apiFetch("/admin/predictions"),
           apiFetch("/admin/stats"),
           apiFetch("/admin/assets"),
-          apiFetch("/admin/logs"),
         ]);
 
       if (
         !usersResponse.ok ||
         !predictionsResponse.ok ||
         !statsResponse.ok ||
-        !assetsResponse.ok ||
-        !logsResponse.ok
+        !assetsResponse.ok
       ) {
         throw new Error("Failed to load admin data");
       }
 
-      const [usersPayload, predictionsPayload, statsPayload, assetsPayload, logsPayload] =
+      const [usersPayload, predictionsPayload, statsPayload, assetsPayload] =
         await Promise.all([
           usersResponse.json(),
           predictionsResponse.json(),
           statsResponse.json(),
           assetsResponse.json(),
-          logsResponse.json(),
         ]);
 
       setUsers(usersPayload);
       setPredictions(predictionsPayload);
       setStats(statsPayload);
       setAssets(assetsPayload);
-      setLogs(logsPayload.content || logsPayload.lines?.join("\n") || "");
     } catch (loadError) {
       setError(loadError.message);
     } finally {
@@ -400,20 +396,8 @@ const AdminPanel = () => {
       )}
 
       {activeView === "logs" && (
-        <div className="mt-6 space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-slate-700 dark:text-white">
-              Backend logs (last 100 lines)
-            </p>
-            <button type="button" className="btn-secondary" onClick={loadAdminData}>
-              Refresh logs
-            </button>
-          </div>
-          <textarea
-            readOnly
-            value={logs || "No logs available."}
-            className="h-72 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-card)] p-3 text-xs leading-6 text-[var(--app-text)] dark:text-white"
-          />
+        <div className="mt-6">
+          <AuditLogs compact />
         </div>
       )}
 
