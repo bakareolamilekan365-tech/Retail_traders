@@ -552,9 +552,7 @@ const App = () => {
         />
       )}
 
-      {isAuthenticated && !showAuditLogsPage && (
-        null
-      )}
+      {isAuthenticated && !showAuditLogsPage && null}
 
       <main
         className={`mx-auto w-full flex-1 ${showLandingPage ? "max-w-none p-0" : "max-w-7xl px-4 py-6 sm:px-6 lg:py-8"}`}

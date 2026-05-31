@@ -135,9 +135,10 @@ text
 - Columns: `Date, Open, High, Low, Close, Volume`
 - Date format: `YYYY-MM-DD`
 - All numeric columns: float (except Date)
-/backend/data/\*.csv : 15 assets × historical OHLCV snapshot (current disk range 2020-01-01 to 2026-04-30)
+  /backend/data/\*.csv : 15 assets × historical OHLCV snapshot (current disk range 2020-01-01 to 2026-04-30)
 
 Notes on resource safety
+
 - Download script `download_real_data.py` requires `FORCE_DOWNLOAD=1` to run (prevents accidental network/disk usage during development).
 - Training defaults to `RF_N_JOBS=1` in development to avoid saturating CPU cores. Override only when intentionally training with parallelism.
 

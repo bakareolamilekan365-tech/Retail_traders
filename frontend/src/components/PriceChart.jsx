@@ -329,7 +329,10 @@ const PriceChart = ({
           </button>
         </div>
       </div>
-      <div ref={containerRef} className="w-full h-[220px] sm:h-[300px] md:h-[500px]" />
+      <div
+        ref={containerRef}
+        className="w-full h-[220px] sm:h-[300px] md:h-[500px]"
+      />
     </div>
   );
 };

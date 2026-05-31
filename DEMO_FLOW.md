@@ -15,7 +15,7 @@ Current state note: the data on disk spans `2020-01-01` to `2026-04-30`, the fro
 
 - [ ] Ensure `backend/data/` contains the expected CSV files. If any are missing, do NOT run the downloader on a presentation machine unless you intentionally set `FORCE_DOWNLOAD=1`.
 - [ ] Ensure `model.joblib` exists in `backend/src/engine/`.
- - [ ] Ensure `model.joblib` exists in `backend/src/engine/`.
+- [ ] Ensure `model.joblib` exists in `backend/src/engine/`.
 - [ ] Start the backend: `uvicorn src.api.main:app --port 8000`.
 - [ ] Build and start the frontend (or use single‑server mode).
 - [ ] Open a browser to the app.
