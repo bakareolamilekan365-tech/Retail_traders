@@ -205,6 +205,8 @@ const Dashboard = ({ chartTheme, theme, onPredictionGenerated = () => {} }) => {
               chartTheme={chartTheme}
               rangeDays={Number(chartSelectionValue)}
               onRangeChange={setViewSelection}
+              rangeOptions={NGX_RANGE_OPTIONS}
+              rangeLabel="Range"
             />
           )}
           <IndicatorCards indicators={predictionData.indicators} />

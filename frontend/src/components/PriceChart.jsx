@@ -1,10 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { createChart, CandlestickSeries, LineSeries } from "lightweight-charts";
+import TimeRangeSelector from "./TimeRangeSelector.jsx";
 
 const REPLAY_INTERVAL_MS = 500;
 
-const PriceChart = ({ data, chartTheme, rangeDays, onRangeChange }) => {
+const PriceChart = ({
+  data,
+  chartTheme,
+  rangeDays,
+  onRangeChange,
+  rangeOptions,
+  rangeLabel,
+}) => {
   const chartRef = useRef(null);
   const containerRef = useRef(null);
   const candleSeriesRef = useRef(null);
@@ -284,6 +292,14 @@ const PriceChart = ({ data, chartTheme, rangeDays, onRangeChange }) => {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-left sm:text-right">
+          {rangeOptions?.length ? (
+            <TimeRangeSelector
+              label={rangeLabel}
+              value={rangeDays}
+              onChange={onRangeChange}
+              options={rangeOptions}
+            />
+          ) : null}
           <div className="rounded-full border border-[var(--app-border)] px-3 py-1.5 text-xs font-semibold text-[var(--app-text)] dark:text-white">
             Range: {rangeDays}d
           </div>
@@ -358,10 +374,20 @@ PriceChart.propTypes = {
   }).isRequired,
   rangeDays: PropTypes.number.isRequired,
   onRangeChange: PropTypes.func,
+  rangeOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
+    }),
+  ),
+  rangeLabel: PropTypes.string,
 };
 
 PriceChart.defaultProps = {
   onRangeChange: () => {},
+  rangeOptions: null,
+  rangeLabel: "Range",
 };
 
 export default PriceChart;
