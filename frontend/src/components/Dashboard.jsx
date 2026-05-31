@@ -30,7 +30,7 @@ const NGX_RANGE_OPTIONS = [
   { label: "All", value: 3650 },
 ];
 
-const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
+const Dashboard = ({ chartTheme, theme, onPredictionGenerated = () => {} }) => {
   const [assets, setAssets] = useState([]);
   const [selectedAsset, setSelectedAsset] = useState("");
   const [predictionData, setPredictionData] = useState(null);
@@ -189,6 +189,7 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
                 <TradingViewWidget
                   symbol={`BINANCE:${selectedAsset}USDT`}
                   interval={String(chartSelectionValue)}
+                  theme={theme}
                 />
               </div>
             </div>
@@ -197,6 +198,7 @@ const Dashboard = ({ chartTheme, onPredictionGenerated = () => {} }) => {
               data={predictionData}
               chartTheme={chartTheme}
               rangeDays={Number(chartSelectionValue)}
+              onRangeChange={setViewSelection}
             />
           )}
           <IndicatorCards indicators={predictionData.indicators} />
@@ -235,6 +237,7 @@ Dashboard.propTypes = {
     sma14: PropTypes.string.isRequired,
     sma50: PropTypes.string.isRequired,
   }).isRequired,
+  theme: PropTypes.oneOf(["dark", "light"]).isRequired,
   onPredictionGenerated: PropTypes.func,
 };
 

@@ -283,19 +283,6 @@ const App = () => {
       : activeTab;
   const shouldShowQuickGuide = isAuthenticated && !quickGuideDismissed;
 
-  const tabs = useMemo(() => {
-    const visibleTabs = [
-      { id: "dashboard", label: "Dashboard" },
-      { id: "simulator", label: "Simulator" },
-      { id: "history", label: "History" },
-      { id: "settings", label: "Settings" },
-    ];
-    if (adminChecked && user.isAdmin) {
-      visibleTabs.push({ id: "admin", label: "Admin" });
-    }
-    return visibleTabs;
-  }, [adminChecked, user.isAdmin]);
-
   const loadHistory = useCallback(async () => {
     setHistoryLoading(true);
     setHistoryError("");
@@ -566,36 +553,7 @@ const App = () => {
       )}
 
       {isAuthenticated && !showAuditLogsPage && (
-        <div className="border-b border-[var(--app-border)] bg-[var(--app-bg)]">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
-            <div className="flex max-w-full flex-wrap items-center gap-2 overflow-x-auto pb-1">
-              {tabs.map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
-                      isActive
-                        ? "bg-[var(--app-accent)] text-white"
-                        : "border border-[var(--app-border)] text-[var(--app-text)] dark:text-white"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                className="shrink-0 rounded-full border border-[var(--app-border)] px-4 py-2 text-sm font-semibold text-[var(--app-text)] dark:text-white transition hover:bg-[var(--app-soft)]"
-                onClick={openQuickGuide}
-              >
-                Quick Guide
-              </button>
-            </div>
-          </div>
-        </div>
+        null
       )}
 
       <main
@@ -607,6 +565,7 @@ const App = () => {
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               openAuditLogs={openAuditLogs}
+              showAdminLink={adminChecked && user.isAdmin}
               toggleTheme={toggleTheme}
               user={user}
               theme={theme}
@@ -634,6 +593,7 @@ const App = () => {
                   openAuditLogs();
                   setMobileMenuOpen(false);
                 }}
+                showAdminLink={adminChecked && user.isAdmin}
                 toggleTheme={toggleTheme}
                 user={user}
                 theme={theme}
@@ -723,12 +683,6 @@ const App = () => {
                     </div>
                   )}
 
-                <div className="flex flex-col gap-2 px-1 text-xs text-slate-700 dark:text-white sm:flex-row sm:items-center sm:justify-between">
-                  <span>
-                    This is an educational tool, not financial advice.
-                  </span>
-                </div>
-
                 {showAuditLogsPage ? (
                   <AuditLogs
                     canAccess={adminChecked ? user.isAdmin : true}
@@ -738,6 +692,7 @@ const App = () => {
                   effectiveTab === "dashboard" && (
                     <Dashboard
                       chartTheme={chartTheme}
+                      theme={theme}
                       onPredictionGenerated={(prediction) => {
                         setLatestPrediction(prediction);
                         if (effectiveTab === "history") {
@@ -782,6 +737,10 @@ const App = () => {
                   effectiveTab === "admin" &&
                   adminChecked &&
                   user.isAdmin && <AdminPanel />}
+
+                <footer className="mt-2 rounded-xl border border-[var(--app-border)] bg-[var(--app-soft)] px-4 py-3 text-xs text-[var(--app-text)]/80 dark:text-white/80">
+                  This is an educational tool, not financial advice.
+                </footer>
               </div>
             )}
           </div>

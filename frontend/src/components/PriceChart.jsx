@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { createChart, CandlestickSeries, LineSeries } from "lightweight-charts";
-import TimeRangeSelector from "./TimeRangeSelector.jsx";
 
 const REPLAY_INTERVAL_MS = 500;
 
-const PriceChart = ({ data, chartTheme }) => {
+const PriceChart = ({ data, chartTheme, rangeDays, onRangeChange }) => {
   const chartRef = useRef(null);
   const containerRef = useRef(null);
   const candleSeriesRef = useRef(null);
@@ -15,8 +14,6 @@ const PriceChart = ({ data, chartTheme }) => {
   const replayIndexRef = useRef(0);
 
   const [replayState, setReplayState] = useState("idle");
-  const [rangeDays, setRangeDays] = useState(180);
-
   const sourceOhlcv = data?.full_ohlcv || data?.ohlcv || [];
 
   const chartData = useMemo(() => {
@@ -79,6 +76,29 @@ const PriceChart = ({ data, chartTheme }) => {
     chartRef.current?.timeScale().fitContent();
   };
 
+  const applyVisibleData = () => {
+    if (
+      !candleSeriesRef.current ||
+      !sma14SeriesRef.current ||
+      !sma50SeriesRef.current
+    ) {
+      return;
+    }
+
+    const visibleCandles = computeVisible(chartData, rangeDays);
+    const visibleSma14 = computeVisible(indicatorData.sma14, rangeDays).filter(
+      (row) => row.value !== null,
+    );
+    const visibleSma50 = computeVisible(indicatorData.sma50, rangeDays).filter(
+      (row) => row.value !== null,
+    );
+
+    candleSeriesRef.current.setData(visibleCandles);
+    sma14SeriesRef.current.setData(visibleSma14);
+    sma50SeriesRef.current.setData(visibleSma50);
+    chartRef.current?.timeScale().fitContent();
+  };
+
   const stopReplay = (restoreHistory = true) => {
     clearReplayTimer();
     replayIndexRef.current = 0;
@@ -101,10 +121,23 @@ const PriceChart = ({ data, chartTheme }) => {
         vertLines: { color: chartTheme.grid },
         horzLines: { color: chartTheme.grid },
       },
+      handleScale: {
+        axisPressedMouseMove: true,
+        pinch: true,
+        mouseWheel: true,
+      },
+      handleScroll: {
+        mouseWheel: true,
+        pressedMouseMove: true,
+        horzTouchDrag: true,
+        vertTouchDrag: true,
+      },
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight,
       timeScale: {
         borderColor: chartTheme.grid,
+        timeVisible: true,
+        secondsVisible: false,
       },
     });
 
@@ -127,19 +160,7 @@ const PriceChart = ({ data, chartTheme }) => {
     });
 
     if (chartData.length) {
-      const visibleCandles = computeVisible(chartData, rangeDays);
-      const visibleSma14 = computeVisible(
-        indicatorData.sma14,
-        rangeDays,
-      ).filter((row) => row.value !== null);
-      const visibleSma50 = computeVisible(
-        indicatorData.sma50,
-        rangeDays,
-      ).filter((row) => row.value !== null);
-      candleSeriesRef.current.setData(visibleCandles);
-      sma14SeriesRef.current.setData(visibleSma14);
-      sma50SeriesRef.current.setData(visibleSma50);
-      chartRef.current.timeScale().fitContent();
+      applyVisibleData();
     }
 
     const handleResize = () => {
@@ -175,7 +196,8 @@ const PriceChart = ({ data, chartTheme }) => {
     }
 
     stopReplay(true);
-  }, [chartData, indicatorData]);
+    applyVisibleData();
+  }, [chartData, indicatorData, rangeDays]);
 
   useEffect(() => {
     if (replayState !== "playing") {
@@ -210,7 +232,7 @@ const PriceChart = ({ data, chartTheme }) => {
     }, REPLAY_INTERVAL_MS);
 
     return () => clearReplayTimer();
-  }, [replayState, chartData, indicatorData]);
+  }, [replayState, chartData, indicatorData, rangeDays]);
 
   const startReplay = () => {
     if (
@@ -262,7 +284,17 @@ const PriceChart = ({ data, chartTheme }) => {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <TimeRangeSelector value={rangeDays} onChange={setRangeDays} />
+          <div className="rounded-full border border-[var(--app-border)] px-3 py-1.5 text-xs font-semibold text-[var(--app-text)] dark:text-white">
+            Range: {rangeDays}d
+          </div>
+          <button
+            type="button"
+            className="btn-secondary px-3 py-1.5 text-xs"
+            onClick={() => onRangeChange?.(180)}
+            disabled={rangeDays === 180}
+          >
+            Reset
+          </button>
           <button
             type="button"
             className="btn-secondary px-3 py-1.5 text-xs"
@@ -324,6 +356,12 @@ PriceChart.propTypes = {
     sma14: PropTypes.string.isRequired,
     sma50: PropTypes.string.isRequired,
   }).isRequired,
+  rangeDays: PropTypes.number.isRequired,
+  onRangeChange: PropTypes.func,
+};
+
+PriceChart.defaultProps = {
+  onRangeChange: () => {},
 };
 
 export default PriceChart;

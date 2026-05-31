@@ -1,9 +1,27 @@
 import PropTypes from "prop-types";
 
+const LogoutIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-4 w-4">
+    <path
+      d="M10 7V5.5A1.5 1.5 0 0 1 11.5 4h5A1.5 1.5 0 0 1 18 5.5v13A1.5 1.5 0 0 1 16.5 20h-5A1.5 1.5 0 0 1 10 18.5V17"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M3 12h11m0 0-3-3m3 3-3 3"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 const NavItem = ({ active, onClick, icon, label }) => (
   <button
     type="button"
-    aria-hidden="true"
     onClick={onClick}
     className={`w-full flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition text-[var(--app-text)] dark:text-white hover:bg-[var(--app-soft)] ${
       active ? "bg-[var(--app-accent)] text-white" : ""
@@ -20,6 +38,7 @@ const Sidebar = ({
   activeTab,
   setActiveTab,
   openAuditLogs,
+  showAdminLink = false,
   toggleTheme,
   user,
   theme,
@@ -56,10 +75,8 @@ const Sidebar = ({
             </button>
           </div>
         )}
-        <div className="space-y-6">
-          {/* Desktop branding removed to avoid duplicate header; TopBar displays branding */}
-
-          <nav className="px-2">
+        <div className="space-y-4">
+          <nav className="space-y-1 px-2">
             <NavItem
               active={activeTab === "dashboard"}
               onClick={() => setActiveTab("dashboard")}
@@ -125,27 +142,29 @@ const Sidebar = ({
               }
             />
 
-            <div className="mt-4 border-t border-[var(--app-border)] pt-4">
-              <NavItem
-                active={false}
-                onClick={() => {
-                  setActiveTab("admin");
-                  openAuditLogs();
-                }}
-                label="Admin / Audit Logs"
-                icon={
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M12 2l3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7l3-7z"
-                      stroke="currentColor"
-                      strokeWidth="1.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                }
-              />
-            </div>
+            {showAdminLink && (
+              <div className="mt-3 border-t border-[var(--app-border)] pt-3">
+                <NavItem
+                  active={false}
+                  onClick={() => {
+                    setActiveTab("admin");
+                    openAuditLogs();
+                  }}
+                  label="Admin / Audit Logs"
+                  icon={
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 2l3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7l3-7z"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  }
+                />
+              </div>
+            )}
           </nav>
         </div>
 
@@ -171,9 +190,10 @@ const Sidebar = ({
               <button
                 type="button"
                 onClick={onLogout}
-                className="btn-ghost text-sm"
+                className="btn-ghost inline-flex items-center gap-2 text-sm"
               >
-                Sign out
+                <LogoutIcon />
+                <span>Sign out</span>
               </button>
             </div>
           </div>
@@ -199,6 +219,7 @@ Sidebar.propTypes = {
   activeTab: PropTypes.string.isRequired,
   setActiveTab: PropTypes.func.isRequired,
   openAuditLogs: PropTypes.func.isRequired,
+  showAdminLink: PropTypes.bool,
   toggleTheme: PropTypes.func.isRequired,
   user: PropTypes.shape({ username: PropTypes.string, isAdmin: PropTypes.bool })
     .isRequired,
