@@ -91,6 +91,19 @@ Open http://localhost:8000.
 
 If `frontend/dist/` exists, FastAPI serves it automatically.
 
+## Render Deployment
+
+This repo now includes a Docker-based Render blueprint in [render.yaml](render.yaml) and a matching [Dockerfile](Dockerfile).
+
+Use it for the least risky production path because the backend and frontend stay in one service:
+
+1. Push the branch to GitHub.
+2. Create a new Render Blueprint from the repo root.
+3. Keep the provided `DATABASE_URL` disk mount so SQLite persists across restarts.
+4. Let Render generate the JWT secret, and change `ADMIN_PASSWORD` in the Render dashboard only if you want to move away from the built-in demo default.
+
+The build context excludes local development artifacts via [.dockerignore](.dockerignore), which keeps the image lean and avoids shipping `venv`, `node_modules`, logs, or a stale local `app.db`.
+
 ## Demo Accounts
 
 | Role      | Username | Password                       |

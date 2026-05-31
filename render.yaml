@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: tradesense-ng
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    autoDeployTrigger: commit
+    healthCheckPath: /health
+    disk:
+      name: tradesense-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:////var/data/app.db
+      - key: SECRET_KEY
+        generateValue: true
