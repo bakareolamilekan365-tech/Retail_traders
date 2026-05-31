@@ -189,7 +189,9 @@ body {
 }
 
 /* Ensure TradingView iframe fills its parent container and is responsive */
-#tv-container, #tv-container > iframe, .crypto-widget iframe {
+#tv-container,
+#tv-container > iframe,
+.crypto-widget iframe {
   width: 100% !important;
   height: 100% !important;
   min-height: 0;

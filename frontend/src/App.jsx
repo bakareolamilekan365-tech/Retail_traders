@@ -506,7 +506,7 @@ const App = () => {
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-[var(--app-bg)] text-[var(--app-text)] dark:text-white transition-colors">
-      {!showLandingPage && (
+      {isAuthenticated && !showLandingPage && (
         <TopBar
           user={{ username: user.username || "user", isAdmin: user.isAdmin }}
           showAvatar={isAuthenticated && adminChecked}
@@ -553,7 +553,9 @@ const App = () => {
         </div>
       )}
 
-      <main className={`mx-auto w-full flex-1 ${showLandingPage ? "max-w-none p-0" : "max-w-7xl px-4 py-6 sm:px-6 lg:py-8"}`}>
+      <main
+        className={`mx-auto w-full flex-1 ${showLandingPage ? "max-w-none p-0" : "max-w-7xl px-4 py-6 sm:px-6 lg:py-8"}`}
+      >
         {showLandingPage ? (
           <LandingPage theme={theme} onToggleTheme={toggleTheme} />
         ) : !isAuthenticated ? (
@@ -564,6 +566,8 @@ const App = () => {
                 onSwitch={() => setAuthView("register")}
                 loading={authLoading}
                 error={authError}
+                theme={theme}
+                onToggleTheme={toggleTheme}
               />
             ) : (
               <RegisterForm
@@ -571,6 +575,8 @@ const App = () => {
                 onSwitch={() => setAuthView("login")}
                 loading={authLoading}
                 error={authError}
+                theme={theme}
+                onToggleTheme={toggleTheme}
               />
             )}
           </div>

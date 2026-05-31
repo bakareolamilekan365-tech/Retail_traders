@@ -8,7 +8,8 @@ export default function LandingPage() {
   const [openMenu, setOpenMenu] = React.useState(null);
   const navRef = useRef(null);
 
-  const toggleMenu = (key) => setOpenMenu((prev) => (prev === key ? null : key));
+  const toggleMenu = (key) =>
+    setOpenMenu((prev) => (prev === key ? null : key));
 
   const openQuickGuide = () => setShowQuickGuide(true);
   const closeQuickGuide = () => setShowQuickGuide(false);
@@ -83,17 +84,26 @@ export default function LandingPage() {
             <div className="font-semibold text-xl md:text-[1.75rem] leading-none tracking-tight">
               TradeSense <span className="text-green-400">NG</span>
             </div>
-            <div className="text-xs md:text-sm text-slate-400">AI Investment Signals</div>
+            <div className="text-xs md:text-sm text-slate-400">
+              AI Investment Signals
+            </div>
           </div>
         </div>
 
         {/* Theme toggle intentionally hidden on landing to simplify header */}
 
-        <nav ref={navRef} role="menubar" aria-label="Landing navigation" className="hidden xl:flex items-center gap-6 text-[1.02rem] text-slate-300">
+        <nav
+          ref={navRef}
+          role="menubar"
+          aria-label="Landing navigation"
+          className="hidden xl:flex items-center gap-6 text-[1.02rem] text-slate-300"
+        >
           <div className="relative">
             <button
               onClick={() => toggleMenu("features")}
-              onKeyDown={(e) => handleTriggerKeyDown(e, "features", "features-menu")}
+              onKeyDown={(e) =>
+                handleTriggerKeyDown(e, "features", "features-menu")
+              }
               aria-controls="features-menu"
               aria-haspopup="true"
               aria-expanded={openMenu === "features"}
@@ -103,12 +113,35 @@ export default function LandingPage() {
               Features <span className="text-slate-400">▾</span>
             </button>
             {openMenu === "features" && (
-              <div id="features-menu" role="menu" tabIndex={-1} className="absolute z-50 mt-2 left-0 w-64 bg-slate-900/95 border border-slate-700 rounded-md p-3 text-sm text-slate-200 shadow-lg">
+              <div
+                id="features-menu"
+                role="menu"
+                tabIndex={-1}
+                className="absolute z-50 mt-2 left-0 w-64 bg-slate-900/95 border border-slate-700 rounded-md p-3 text-sm text-slate-200 shadow-lg"
+              >
                 <div className="font-semibold mb-1">Key Features</div>
                 <ul className="space-y-1">
-                  <li role="menuitem" tabIndex={0} onKeyDown={(e) => handleMenuItemKeyDown(e, "features-menu")}>AI signals & alerts</li>
-                  <li role="menuitem" tabIndex={0} onKeyDown={(e) => handleMenuItemKeyDown(e, "features-menu")}>Backtested strategies</li>
-                  <li role="menuitem" tabIndex={0} onKeyDown={(e) => handleMenuItemKeyDown(e, "features-menu")}>Portfolio insights</li>
+                  <li
+                    role="menuitem"
+                    tabIndex={0}
+                    onKeyDown={(e) => handleMenuItemKeyDown(e, "features-menu")}
+                  >
+                    AI signals & alerts
+                  </li>
+                  <li
+                    role="menuitem"
+                    tabIndex={0}
+                    onKeyDown={(e) => handleMenuItemKeyDown(e, "features-menu")}
+                  >
+                    Backtested strategies
+                  </li>
+                  <li
+                    role="menuitem"
+                    tabIndex={0}
+                    onKeyDown={(e) => handleMenuItemKeyDown(e, "features-menu")}
+                  >
+                    Portfolio insights
+                  </li>
                 </ul>
               </div>
             )}
@@ -116,7 +149,7 @@ export default function LandingPage() {
 
           <div className="relative">
             <button
-              onClick={() => toggleMenu("how") }
+              onClick={() => toggleMenu("how")}
               onKeyDown={(e) => handleTriggerKeyDown(e, "how", "how-menu")}
               aria-controls="how-menu"
               aria-haspopup="true"
@@ -127,9 +160,22 @@ export default function LandingPage() {
               How It Works <span className="text-slate-400">▾</span>
             </button>
             {openMenu === "how" && (
-              <div id="how-menu" role="menu" tabIndex={-1} className="absolute z-50 mt-2 left-0 w-64 bg-slate-900/95 border border-slate-700 rounded-md p-3 text-sm text-slate-200 shadow-lg">
+              <div
+                id="how-menu"
+                role="menu"
+                tabIndex={-1}
+                className="absolute z-50 mt-2 left-0 w-64 bg-slate-900/95 border border-slate-700 rounded-md p-3 text-sm text-slate-200 shadow-lg"
+              >
                 <div className="font-semibold mb-1">Overview</div>
-                <div role="menuitem" tabIndex={0} onKeyDown={(e) => handleMenuItemKeyDown(e, "how-menu")} className="text-slate-400">We analyze market data and surface high-probability opportunities.</div>
+                <div
+                  role="menuitem"
+                  tabIndex={0}
+                  onKeyDown={(e) => handleMenuItemKeyDown(e, "how-menu")}
+                  className="text-slate-400"
+                >
+                  We analyze market data and surface high-probability
+                  opportunities.
+                </div>
               </div>
             )}
           </div>
@@ -139,7 +185,11 @@ export default function LandingPage() {
               <button
                 onClick={() => toggleMenu(label)}
                 onKeyDown={(e) =>
-                  handleTriggerKeyDown(e, label, `${label.replace(/\s+/g, "-").toLowerCase()}-menu`)
+                  handleTriggerKeyDown(
+                    e,
+                    label,
+                    `${label.replace(/\s+/g, "-").toLowerCase()}-menu`,
+                  )
                 }
                 aria-controls={`${label.replace(/\s+/g, "-").toLowerCase()}-menu`}
                 aria-haspopup="true"
@@ -150,9 +200,26 @@ export default function LandingPage() {
                 {label} <span className="text-slate-400">▾</span>
               </button>
               {openMenu === label && (
-                <div id={`${label.replace(/\s+/g, "-").toLowerCase()}-menu`} role="menu" tabIndex={-1} className="absolute z-50 mt-2 left-0 w-56 bg-amber-900/95 border border-amber-700 rounded-md p-3 text-sm text-amber-100 shadow-lg">
+                <div
+                  id={`${label.replace(/\s+/g, "-").toLowerCase()}-menu`}
+                  role="menu"
+                  tabIndex={-1}
+                  className="absolute z-50 mt-2 left-0 w-56 bg-amber-900/95 border border-amber-700 rounded-md p-3 text-sm text-amber-100 shadow-lg"
+                >
                   <div className="font-semibold">Demo</div>
-                  <div role="menuitem" tabIndex={0} onKeyDown={(e) => handleMenuItemKeyDown(e, `${label.replace(/\s+/g, "-").toLowerCase()}-menu`)} className="text-amber-100/90">This is a demo experience. Full content coming soon.</div>
+                  <div
+                    role="menuitem"
+                    tabIndex={0}
+                    onKeyDown={(e) =>
+                      handleMenuItemKeyDown(
+                        e,
+                        `${label.replace(/\s+/g, "-").toLowerCase()}-menu`,
+                      )
+                    }
+                    className="text-amber-100/90"
+                  >
+                    This is a demo experience. Full content coming soon.
+                  </div>
                 </div>
               )}
             </div>
@@ -205,7 +272,7 @@ export default function LandingPage() {
                 window.location.href = "/?auth=register";
               }}
             >
-              Get Started Free  →
+              Get Started Free →
             </button>
             <button
               className="px-6 py-3.5 rounded-2xl border border-slate-700 bg-slate-950/25 text-slate-100 text-base md:text-lg font-semibold"
@@ -220,7 +287,10 @@ export default function LandingPage() {
           {/* social proof removed from landing to reduce visual clutter */}
 
           <div className="mt-4">
-            <button className="btn-secondary text-sm md:text-base" onClick={openQuickGuide}>
+            <button
+              className="btn-secondary text-sm md:text-base"
+              onClick={openQuickGuide}
+            >
               Quick Guide
             </button>
           </div>
@@ -230,8 +300,12 @@ export default function LandingPage() {
           <div className="mx-auto max-w-[760px] w-full xl:ml-auto">
             <div className="rounded-3xl bg-[linear-gradient(180deg,rgba(11,24,40,0.94),rgba(7,18,30,0.98))] border border-cyan-400/25 p-4 md:p-5 shadow-[0_0_55px_rgba(34,197,94,0.14)] backdrop-blur-xl">
               <div className="flex items-center justify-between mb-3 md:mb-4">
-                <div className="text-slate-100 font-semibold text-lg">BTC • Bitcoin</div>
-                <div className="text-emerald-300 text-sm bg-emerald-900/30 border border-emerald-500/25 px-3 py-1 rounded-full">Market: Active</div>
+                <div className="text-slate-100 font-semibold text-lg">
+                  BTC • Bitcoin
+                </div>
+                <div className="text-emerald-300 text-sm bg-emerald-900/30 border border-emerald-500/25 px-3 py-1 rounded-full">
+                  Market: Active
+                </div>
               </div>
 
               <div className="h-[280px] sm:h-[310px] md:h-[340px] lg:h-[370px] xl:h-[390px] rounded-2xl overflow-hidden border border-slate-800/80 bg-slate-950/40">

@@ -27,7 +27,7 @@ describe("LoginForm", () => {
     });
   });
 
-  it("shows trading-focused copy and standard placeholders", () => {
+  it("shows the split-auth hero copy and standard placeholders", () => {
     render(
       <LoginForm
         onSubmit={() => {}}
@@ -38,19 +38,26 @@ describe("LoginForm", () => {
     );
 
     expect(
-      screen.getByText(/ai-powered signals for ngx stocks and crypto/i),
+      screen.getByRole("heading", {
+        level: 2,
+        name: /ai-powered signals for ngx stocks and crypto/i,
+      }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
         /analyze historical price action, technical indicators, and model-backed 7-day signals/i,
       ),
     ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /back to home/i })).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText(/enter your username/i),
     ).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText(/enter your password/i),
     ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /continue with google/i }),
+      ).toBeInTheDocument();
   });
 
   it("shows forgot-password guidance when requested", async () => {

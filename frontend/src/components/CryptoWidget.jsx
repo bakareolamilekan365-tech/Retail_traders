@@ -7,8 +7,12 @@ export default function CryptoWidget({ useTradingView = true }) {
     return (
       <div className="h-full w-full flex items-center justify-center">
         <div className="w-full h-full rounded-md bg-gradient-to-br from-[#041018] to-[#07202a] border border-slate-800 flex flex-col items-center justify-center text-slate-400">
-          <div className="text-xl font-semibold text-slate-200">Chart Placeholder</div>
-          <div className="text-sm mt-2">TradingView / lightweight-charts goes here (lazy loaded)</div>
+          <div className="text-xl font-semibold text-slate-200">
+            Chart Placeholder
+          </div>
+          <div className="text-sm mt-2">
+            TradingView / lightweight-charts goes here (lazy loaded)
+          </div>
         </div>
       </div>
     );
@@ -16,7 +20,11 @@ export default function CryptoWidget({ useTradingView = true }) {
 
   return (
     <div className="crypto-widget widget-monument w-full h-full relative">
-      <Suspense fallback={<div className="h-full w-full bg-gradient-to-b from-slate-900 to-slate-800 animate-pulse rounded-md" />}>
+      <Suspense
+        fallback={
+          <div className="h-full w-full bg-gradient-to-b from-slate-900 to-slate-800 animate-pulse rounded-md" />
+        }
+      >
         <TradingViewWidget />
       </Suspense>
 
