@@ -97,6 +97,19 @@ def test_predict_valid_asset_returns_shape_and_logs(test_app: TestClient) -> Non
     assert count == 1
 
 
+def test_predict_uses_fallback_when_model_missing(test_app: TestClient) -> None:
+    test_app.app.state.model = None
+
+    response = test_app.get("/api/v1/predict?asset=BTC&days=5", headers=_auth_headers())
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["asset"] == "BTC"
+    assert payload["prediction"]["signal"] in {"BUY", "SELL", "HOLD"}
+    assert isinstance(payload["prediction"]["expected_return_7d"], float)
+    assert 0.55 <= payload["prediction"]["confidence"] <= 0.85
+
+
 def test_prediction_history_returns_authenticated_user_rows(test_app: TestClient) -> None:
     db_path = test_app.app.state.database_path
     with sqlite3.connect(db_path) as connection:

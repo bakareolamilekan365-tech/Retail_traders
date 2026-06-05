@@ -141,6 +141,39 @@ def _estimate_confidence(predicted_return: float) -> float:
     return float(min(max(confidence, 0.55), 0.85))
 
 
+def _fallback_predicted_return(feature_frame: pd.DataFrame) -> float:
+    """Estimate a 7-day return when the trained model is unavailable."""
+    latest = feature_frame.iloc[-1]
+    recent = feature_frame.tail(min(14, len(feature_frame)))
+
+    rolling_mean = latest.get("Rolling_Return_Mean_7", 0.0)
+    if pd.isna(rolling_mean):
+        rolling_mean = recent["Return_1d"].mean()
+
+    momentum = float(rolling_mean) * 7
+    trend_bonus = 0.01 if latest.get("SMA_Crossover", 0) > 0 else -0.01
+
+    rsi = latest.get("RSI_14")
+    if pd.isna(rsi):
+        rsi_adjustment = 0.0
+    elif rsi <= 30:
+        rsi_adjustment = 0.012
+    elif rsi >= 70:
+        rsi_adjustment = -0.012
+    else:
+        rsi_adjustment = 0.0
+
+    volatility = latest.get("Volatility_14")
+    close = latest.get("Close")
+    if pd.isna(volatility) or pd.isna(close) or close == 0:
+        volatility_penalty = 0.0
+    else:
+        volatility_penalty = min(float(volatility / close), 0.03) * 0.25
+
+    predicted_return = momentum + trend_bonus + rsi_adjustment - volatility_penalty
+    return float(np.clip(predicted_return, -0.12, 0.12))
+
+
 def _build_insight(
     latest_row: pd.Series,
     signal: str,
@@ -345,13 +378,6 @@ def predict_asset(
                 detail="Indicator computation failed",
             ) from exc
 
-    model = getattr(request.app.state, "model", None)
-    if model is None:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Model not loaded",
-        )
-
     feature_frame = prepare_features(data).dropna()
     if feature_frame.empty:
         raise HTTPException(
@@ -360,13 +386,18 @@ def predict_asset(
         )
 
     latest_features = feature_frame.tail(1)
-    try:
-        predicted_return = float(np.asarray(model.predict(latest_features))[0])
-    except (ValueError, TypeError) as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Model prediction failed",
-        ) from exc
+    model = getattr(request.app.state, "model", None)
+    if model is None:
+        LOGGER.warning("Model unavailable; using fallback prediction for %s.", asset)
+        predicted_return = _fallback_predicted_return(feature_frame)
+    else:
+        try:
+            predicted_return = float(np.asarray(model.predict(latest_features))[0])
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Model prediction failed",
+            ) from exc
 
     signal = _map_signal(predicted_return)
     expected_return_pct = round(predicted_return * 100, 2)

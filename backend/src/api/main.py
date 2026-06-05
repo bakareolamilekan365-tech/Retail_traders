@@ -229,7 +229,7 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
         if (
             request.method == "GET"
             and not path.startswith("/api/")
-            and path not in {"/", "/docs", "/redoc", "/openapi.json"}
+            and path not in {"/", "/health", "/docs", "/redoc", "/openapi.json"}
             and not path.startswith("/assets/")
             and not path.startswith("/favicon")
             and "." not in Path(path).name
