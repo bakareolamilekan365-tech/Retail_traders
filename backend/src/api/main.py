@@ -32,6 +32,7 @@ from api.limiter import limiter
 from api.predict import router as predict_router
 from engine.preprocessing import compute_indicators, load_and_preprocess
 from engine.train import train_model
+import threading
 
 LOGGER = logging.getLogger(__name__)
 
@@ -283,7 +284,16 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
             _initialize_database(app.state.database_path)
 
             app.state.data_cache = _load_data_cache(data_dir, asset_symbols)
-            app.state.model = _load_or_train_model(model_path, data_dir)
+            # Load or train the model in a background thread so startup doesn't block
+            def _bg_model_loader():
+                model = _load_or_train_model(model_path, data_dir)
+                app.state.model = model
+                if model is not None:
+                    LOGGER.info("Model loaded in background from %s", model_path)
+                else:
+                    LOGGER.warning("Model not available after background load")
+
+            threading.Thread(target=_bg_model_loader, daemon=True).start()
 
     @app.get("/health")
     def health_check() -> Dict[str, str]:
