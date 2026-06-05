@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export default function TradingViewWidget({
   symbol = "BINANCE:BTCUSDT",
@@ -10,26 +10,26 @@ export default function TradingViewWidget({
   useEffect(() => {
     if (typeof window === "undefined") return;
     // Don't run in test env
-    if (process.env.NODE_ENV === "test") return;
+    if (import.meta.env.MODE === "test") return;
 
-    if (containerRef.current) {
-      containerRef.current.innerHTML = "";
-      delete containerRef.current.dataset.initialized;
+    const container = containerRef.current;
+
+    if (container) {
+      container.innerHTML = "";
+      delete container.dataset.initialized;
     }
 
     const attachWidget = () => {
       try {
-        // eslint-disable-next-line no-undef
         if (
           window.TradingView &&
-          containerRef.current &&
-          !containerRef.current.dataset.initialized
+          container &&
+          !container.dataset.initialized
         ) {
           const isDark = theme === "dark";
           const toolbarBg = isDark ? "#0b1220" : "#f1f3f6";
-          // eslint-disable-next-line no-undef
           new window.TradingView.widget({
-            container_id: containerRef.current.id,
+            container_id: container.id,
             symbol,
             interval,
             autosize: true,
@@ -49,11 +49,11 @@ export default function TradingViewWidget({
             calendar: false,
             studies: [],
           });
-          containerRef.current.dataset.initialized = "1";
+          container.dataset.initialized = "1";
         }
-      } catch (e) {
+      } catch {
         // swallow errors for safety
-        // console.warn('TradingView failed to init', e);
+        // console.warn('TradingView failed to init');
       }
     };
 
@@ -71,9 +71,9 @@ export default function TradingViewWidget({
     document.head.appendChild(script);
 
     return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = "";
-        delete containerRef.current.dataset.initialized;
+      if (container) {
+        container.innerHTML = "";
+        delete container.dataset.initialized;
       }
       // keep script to reuse across pages; do not remove
     };

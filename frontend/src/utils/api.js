@@ -33,7 +33,7 @@ const decodeTokenPayload = (token) => {
   try {
     const payload = JSON.parse(atob(parts[1]));
     return payload;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -58,7 +58,7 @@ const apiFetch = async (path, options = {}) => {
   } catch (error) {
     const message = "Backend not reachable. Please retry.";
     dispatchApiEvent("tradesense:network-error", { message, error });
-    throw new Error(message);
+    throw new Error(message, { cause: error });
   }
 
   if (response.status === 401) {

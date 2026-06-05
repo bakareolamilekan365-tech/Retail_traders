@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function QuickGuide({ onClose, isAdmin, onNavigate }) {
   return (
     <div
@@ -69,7 +67,7 @@ export default function QuickGuide({ onClose, isAdmin, onNavigate }) {
 
                   try {
                     window.open("/admin/logs", "_blank");
-                  } catch (e) {
+                  } catch {
                     // noop
                   }
                 }}

@@ -31,6 +31,7 @@ from api.auth import router as auth_router, hash_password
 from api.limiter import limiter
 from api.predict import router as predict_router
 from engine.preprocessing import compute_indicators, load_and_preprocess
+from engine.train import train_model
 
 LOGGER = logging.getLogger(__name__)
 
@@ -205,6 +206,19 @@ def _load_model(model_path: Path) -> RandomForestRegressor:
     return model
 
 
+def _load_or_train_model(model_path: Path, data_dir: Path) -> RandomForestRegressor | None:
+    try:
+        return _load_model(model_path)
+    except FileNotFoundError:
+        LOGGER.warning("Model file missing at %s; training a new model from %s.", model_path, data_dir)
+
+    try:
+        return train_model(str(data_dir), str(model_path))
+    except (FileNotFoundError, ValueError, OSError, RuntimeError) as exc:
+        LOGGER.error("Failed to load or train model: %s", exc)
+        return None
+
+
 def create_app(load_on_startup: bool = True) -> FastAPI:
     app = FastAPI(title="Intelligent Investment Recommendation Assistant")
 
@@ -269,11 +283,7 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
             _initialize_database(app.state.database_path)
 
             app.state.data_cache = _load_data_cache(data_dir, asset_symbols)
-            try:
-                app.state.model = _load_model(model_path)
-            except (FileNotFoundError, RuntimeError) as exc:
-                LOGGER.error("Startup failed: %s", exc)
-                raise
+            app.state.model = _load_or_train_model(model_path, data_dir)
 
     @app.get("/health")
     def health_check() -> Dict[str, str]:

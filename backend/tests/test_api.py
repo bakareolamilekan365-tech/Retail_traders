@@ -8,12 +8,13 @@ import numpy as np
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
+from sklearn.ensemble import RandomForestRegressor
 
 BACKEND_SRC = Path(__file__).resolve().parents[1] / "src"
 if str(BACKEND_SRC) not in sys.path:
     sys.path.append(str(BACKEND_SRC))
 
-from api.main import create_app
+from api.main import _load_or_train_model, create_app
 from api.predict import _build_insight, _serialize_indicators
 from api.security import create_access_token
 from engine.preprocessing import compute_indicators
@@ -36,6 +37,19 @@ def _make_df(rows: int = 120) -> pd.DataFrame:
             "Volume": [1000.0] * rows,
         }
     )
+
+
+def test_load_or_train_model_trains_when_missing(tmp_path: Path) -> None:
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    model_path = tmp_path / "model.joblib"
+
+    _make_df(80).to_csv(data_dir / "asset.csv", index=False)
+
+    model = _load_or_train_model(model_path, data_dir)
+
+    assert model_path.exists()
+    assert isinstance(model, RandomForestRegressor)
 
 
 @pytest.fixture()
