@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=tradesense-ng" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        try {
+          const savedTheme = localStorage.getItem("tradesense-theme");
+          const isDark = savedTheme !== "light";
+          document.documentElement.classList.toggle("dark", isDark);
+        } catch (error) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+    <title>TradeSense NG – AI Investment Signals</title>
+    <script type="module" crossorigin src="/assets/index-DIxot9NM.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BY7-PKKy.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

@@ -104,6 +104,13 @@ Use it for the least risky production path because the backend and frontend stay
 
 The build context excludes local development artifacts via [.dockerignore](.dockerignore), which keeps the image lean and avoids shipping `venv`, `node_modules`, logs, or a stale local `app.db`.
 
+If you are using an existing non-Docker Render web service, set:
+
+- Build Command: `sh scripts/render-build.sh`
+- Start Command: `sh scripts/render-start.sh`
+
+The homepage returns `{"detail":"Not Found"}` when that service only installs Python dependencies and never runs the Vite build, because FastAPI has no `frontend/dist/` directory to serve.
+
 ## Demo Accounts
 
 | Role      | Username | Password                       |

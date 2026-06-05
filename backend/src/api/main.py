@@ -260,6 +260,10 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
     app.include_router(predict_router)
     app.include_router(admin_router)
 
+    @app.get("/health")
+    def health_check() -> Dict[str, str]:
+        return {"status": "ok"}
+
     app.state.data_cache = {}
     app.state.model = None
     app.state.database_path = _resolve_database_path()
@@ -294,10 +298,6 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
                     LOGGER.warning("Model not available after background load")
 
             threading.Thread(target=_bg_model_loader, daemon=True).start()
-
-    @app.get("/health")
-    def health_check() -> Dict[str, str]:
-        return {"status": "ok"}
 
     return app
 
