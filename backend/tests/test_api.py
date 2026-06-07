@@ -14,7 +14,7 @@ BACKEND_SRC = Path(__file__).resolve().parents[1] / "src"
 if str(BACKEND_SRC) not in sys.path:
     sys.path.append(str(BACKEND_SRC))
 
-from api.main import _load_or_train_model, create_app
+from api.main import STARTUP_CACHE_ROWS, _load_data_cache, _load_or_train_model, create_app
 from api.predict import _build_insight, _serialize_indicators
 from api.security import create_access_token
 from engine.preprocessing import compute_indicators
@@ -50,6 +50,18 @@ def test_load_or_train_model_trains_when_missing(tmp_path: Path) -> None:
 
     assert model_path.exists()
     assert isinstance(model, RandomForestRegressor)
+
+
+def test_load_data_cache_keeps_recent_rows(tmp_path: Path) -> None:
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    source = _make_df(240)
+    source.to_csv(data_dir / "BTC.csv", index=False)
+
+    cache = _load_data_cache(data_dir, ["BTC"])
+
+    assert len(cache["BTC"]) == STARTUP_CACHE_ROWS
+    assert pd.to_datetime(cache["BTC"].iloc[0]["Date"]) == source.iloc[-STARTUP_CACHE_ROWS]["Date"]
 
 
 @pytest.fixture()
@@ -108,6 +120,22 @@ def test_predict_uses_fallback_when_model_missing(test_app: TestClient) -> None:
     assert payload["prediction"]["signal"] in {"BUY", "SELL", "HOLD"}
     assert isinstance(payload["prediction"]["expected_return_7d"], float)
     assert 0.55 <= payload["prediction"]["confidence"] <= 0.85
+
+
+def test_predict_long_window_loads_asset_from_disk(test_app: TestClient, tmp_path: Path) -> None:
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    full_data = _make_df(240)
+    full_data.to_csv(data_dir / "BTC.csv", index=False)
+    test_app.app.state.data_dir = data_dir
+    test_app.app.state.data_cache = {"BTC": compute_indicators(full_data).tail(STARTUP_CACHE_ROWS).copy()}
+
+    response = test_app.get("/api/v1/predict?asset=BTC&days=220", headers=_auth_headers())
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload["ohlcv"]) == 220
+    assert len(payload["full_ohlcv"]) == 240
 
 
 def test_prediction_history_returns_authenticated_user_rows(test_app: TestClient) -> None:

@@ -38,6 +38,7 @@ LOGGER = logging.getLogger(__name__)
 
 DEFAULT_FRONTEND_ORIGIN = "http://localhost:5173"
 DEFAULT_FRONTEND_ORIGIN_REGEX = r"^http://(?:localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+):(?:5173|5174)$"
+STARTUP_CACHE_ROWS = 180
 
 
 def _setup_logging(log_dir: Path) -> None:
@@ -189,7 +190,9 @@ def _load_data_cache(data_dir: Path, asset_symbols: List[str]) -> Dict[str, pd.D
         except (FileNotFoundError, ValueError, pd.errors.ParserError) as exc:
             LOGGER.warning("Skipping %s due to data error: %s", symbol, exc)
             continue
-        data_cache[symbol] = enriched
+        # Keep only 180 recent rows in memory so the demo fits Render's
+        # 512 MB free tier; longer chart windows are loaded from disk on demand.
+        data_cache[symbol] = enriched.tail(STARTUP_CACHE_ROWS).copy()
     if not data_cache:
         LOGGER.warning("No asset data loaded from %s", data_dir)
     return data_cache
@@ -267,6 +270,7 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
     app.state.data_cache = {}
     app.state.model = None
     app.state.database_path = _resolve_database_path()
+    app.state.data_dir = Path(__file__).resolve().parents[2] / "data"
 
     serve_frontend = os.getenv("SERVE_FRONTEND", "1").strip().lower() not in {"0", "false", "no"}
     frontend_dist = Path(__file__).resolve().parents[3] / "frontend" / "dist"
@@ -280,7 +284,7 @@ def create_app(load_on_startup: bool = True) -> FastAPI:
 
         @app.on_event("startup")
         async def startup_event() -> None:
-            data_dir = Path(__file__).resolve().parents[2] / "data"
+            data_dir = app.state.data_dir
             model_path = Path(os.getenv("MODEL_PATH", str(Path(__file__).resolve().parents[2] / "model.joblib")))
             asset_symbols = [asset.symbol for asset in ASSET_METADATA]
 

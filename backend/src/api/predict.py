@@ -21,12 +21,13 @@ BACKEND_SRC = Path(__file__).resolve().parents[1]
 if str(BACKEND_SRC) not in sys.path:
     sys.path.append(str(BACKEND_SRC))
 
-from engine.preprocessing import compute_indicators
+from engine.preprocessing import compute_indicators, load_and_preprocess
 from engine.train import prepare_features
 
 LOGGER = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1", tags=["predict"])
+CACHE_WINDOW_DAYS = 180
 
 
 class OHLCVRow(BaseModel):
@@ -125,6 +126,21 @@ def _serialize_indicators(df: pd.DataFrame) -> List[IndicatorRow]:
             )
         )
     return rows
+
+
+def _load_asset_from_disk(data_dir: Path, asset: str) -> pd.DataFrame:
+    csv_path = data_dir / f"{asset}.csv"
+    if not csv_path.exists():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset data unavailable")
+
+    try:
+        raw = load_and_preprocess(str(csv_path))
+        return compute_indicators(raw)
+    except (FileNotFoundError, ValueError, pd.errors.ParserError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Asset data load failed",
+        ) from exc
 
 
 def _map_signal(predicted_return: float) -> str:
@@ -365,6 +381,12 @@ def predict_asset(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset not found")
 
     data = data_cache[asset].copy()
+    if days > CACHE_WINDOW_DAYS:
+        data_dir = getattr(request.app.state, "data_dir", None)
+        if data_dir is None:
+            data_dir = Path(__file__).resolve().parents[2] / "data"
+        data = _load_asset_from_disk(Path(data_dir), asset)
+
     if data.empty:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset data unavailable")
 
