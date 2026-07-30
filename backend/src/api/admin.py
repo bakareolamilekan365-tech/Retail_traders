@@ -47,6 +47,7 @@ class AdminStatsOut(BaseModel):
     total_predictions: int
     top_asset: str | None
     most_active_user: str | None
+    average_confidence: float| None
 
 
 class AdminAssetOut(BaseModel):
@@ -223,6 +224,10 @@ def get_stats(request: Request, _: Dict[str, Any] = Depends(_get_admin_user)) ->
                 LIMIT 1
                 """
             ).fetchone()
+            avg_row = connection.execute(
+                "SELECT AVG(confidence) from prediction_log"
+            ).fetchone()
+            avg_conf = round(avg_row[0], 2) if avg_row[0] is not None else None
     except sqlite3.Error as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -234,6 +239,7 @@ def get_stats(request: Request, _: Dict[str, Any] = Depends(_get_admin_user)) ->
         total_predictions=int(total_predictions),
         top_asset=top_asset_row["asset"] if top_asset_row else None,
         most_active_user=most_active_user_row["username"] if most_active_user_row else None,
+        average_confidence=avg_conf,
     )
 
 

@@ -257,7 +257,7 @@ const AdminPanel = () => {
             </button>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <div className="rounded-lg border border-[var(--app-border)] p-4">
               <p className="text-xs uppercase text-slate-700 dark:text-white">
                 Users
@@ -288,6 +288,16 @@ const AdminPanel = () => {
               </p>
               <p className="mt-2 text-lg font-semibold text-[var(--app-text)] dark:text-white">
                 {stats.most_active_user || "N/A"}
+              </p>
+            </div>
+            <div className="rounded-lg border border-[var(--app-border)] p-4">
+              <p className="text-xs uppercase text-slate-700 dark:text-white">
+                Avg Confidence
+              </p>
+              <p className="mt-2 text-2xl font-semibold text-[var(--app-text)] dark:text-white">
+                {stats?.average_confidence != null
+                  ? `${(stats.average_confidence * 100).toFixed(0)}%`
+                  : "N/A"}
               </p>
             </div>
           </div>

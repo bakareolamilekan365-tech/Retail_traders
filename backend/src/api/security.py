@@ -6,7 +6,9 @@ import os
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict
 
-from fastapi import Header, HTTPException, status
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
 from jose import JWTError, jwt
 
 ALGORITHM = "HS256"
@@ -39,14 +41,13 @@ def create_access_token(
     return jwt.encode(payload, secret_key, algorithm=ALGORITHM)
 
 
-def get_current_user(authorization: str | None = Header(default=None)) -> Dict[str, Any]:
-    """Validate a bearer token and return decoded claims."""
-    if not authorization:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+security_scheme = HTTPBearer()
 
-    scheme, _, token = authorization.partition(" ")
-    if scheme.lower() != "bearer" or not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication header")
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security_scheme)) -> Dict[str, Any]:
+    """Validate a bearer token and return decoded claims."""
+    token = credentials.credentials
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 
     secret_key = _get_secret_key()
     try:
